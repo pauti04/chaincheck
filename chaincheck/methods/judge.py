@@ -111,6 +111,7 @@ async def _verify_claim(
 
     prompt = _build_judge_prompt(claim, context)
 
+    last_err: str = ""
     for attempt in range(retries):
         try:
             raw = await complete(prompt, model, max_tokens=256)
@@ -121,14 +122,15 @@ async def _verify_claim(
                 raw = match.group(1)
             data = json.loads(raw)
             return JudgeVerdict(**data)
-        except (json.JSONDecodeError, Exception):
+        except Exception as exc:
+            last_err = str(exc)
             if attempt < retries - 1:
                 await asyncio.sleep(2**attempt)
 
     return JudgeVerdict(
         label="unknown",
         confidence=0.0,
-        evidence="failed to parse judge response after retries",
+        evidence=f"failed after {retries} retries: {last_err[:120]}",
     )
 
 

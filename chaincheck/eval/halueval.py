@@ -9,6 +9,7 @@ so the evaluation set is balanced.
 
 from __future__ import annotations
 
+import asyncio
 import time
 from dataclasses import dataclass, field
 from typing import Literal
@@ -57,12 +58,7 @@ async def run_halueval(
 
     samples = _load_samples(_DEFAULT_SPLIT, n_samples)
 
-    y_true: list[str] = []
-    y_pred: list[str] = []
-    latencies: list[float] = []
-    raw_results: list[dict] = []
-
-    for sample in samples:
+    async def _eval_one(sample: EvalSample) -> dict:
         start = time.time()
         result = await detect(
             sample.response,
@@ -71,24 +67,31 @@ async def run_halueval(
             methods=[method],
         )
         latency = (time.time() - start) * 1000
+        return {
+            "question": sample.question,
+            "response": sample.response[:200],
+            "ground_truth": sample.ground_truth,
+            "predicted": _predict_label(result.aggregate_score),
+            "score": result.aggregate_score,
+            "latency_ms": latency,
+        }
 
-        predicted = _predict_label(result.aggregate_score)
-        y_true.append(sample.ground_truth)
-        y_pred.append(predicted)
-        latencies.append(latency)
-        raw_results.append(
-            {
-                "question": sample.question,
-                "response": sample.response[:200],
-                "ground_truth": sample.ground_truth,
-                "predicted": predicted,
-                "score": result.aggregate_score,
-                "latency_ms": latency,
-            }
-        )
+    # Sequential with small delay to stay within OpenAI tier-1 rate limits
+    raw_results: list[dict] = []
+    for i, sample in enumerate(samples):
+        raw_results.append(await _eval_one(sample))
+        if (i + 1) % 10 == 0:
+            print(f"  {i + 1}/{len(samples)} done", flush=True)
+            await asyncio.sleep(0.5)
+
+    y_true = [r["ground_truth"] for r in raw_results]
+    y_pred = [r["predicted"] for r in raw_results]
+    latencies = [r["latency_ms"] for r in raw_results]
 
     metrics = compute_metrics(y_true, y_pred, latencies)
-    return EvalRun(method=method, samples=len(samples), metrics=metrics, raw_results=raw_results)
+    return EvalRun(
+        method=method, samples=len(raw_results), metrics=metrics, raw_results=raw_results
+    )
 
 
 def _load_samples(split: str, n: int) -> list[EvalSample]:
@@ -100,7 +103,7 @@ def _load_samples(split: str, n: int) -> list[EvalSample]:
     """
     from datasets import load_dataset
 
-    ds = load_dataset(_HALUEVAL_REPO, split, split="data", trust_remote_code=True)
+    ds = load_dataset(_HALUEVAL_REPO, split, split="data")
     samples: list[EvalSample] = []
 
     for row in ds:
