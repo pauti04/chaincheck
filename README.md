@@ -24,7 +24,7 @@ Input response (+ optional context / prompt)
         │
         ▼
 ┌───────────────────────┐
-│   decompose()         │  Claude Haiku → JSON array of atomic claims
+│   decompose()         │  gpt-4o-mini → JSON array of atomic claims
 │   + diskcache (24h)   │
 └───────────┬───────────┘
             │  claims: list[str]
@@ -68,7 +68,7 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 | Consistency | 0.182     | 0.156  | 0.168 | 1951 ms     | 4150 ms     |
 | Logprobs    | 0.263     | 0.084  | 0.127 | 1401 ms     | 2859 ms     |
 
-> Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json).
+> Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json), [`logprobs_eval_results.json`](logprobs_eval_results.json).
 > Run `bash scripts/run_eval.sh` to reproduce. Results are committed weekly by the [eval workflow](.github/workflows/eval.yml).
 
 ---
@@ -213,9 +213,9 @@ All settings via environment variables:
 
 **Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.168 on HaluEval — below random (accuracy 0.228). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
 
-**Latency is the real cost, not the accuracy.** NLI is 10× faster than judge (114 ms vs 1.1 s) for similar F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~8× with negligible accuracy loss.
+**Latency is the real cost, not the accuracy.** NLI is 34× faster than judge (51 ms vs 1755 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~34× while keeping precision above 0.80.
 
-**Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. Claude Haiku's decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling.
+**Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. The decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling. Logprobs F1 (0.127) reflects this: token-level uncertainty alone is not sufficient signal without claim-level grounding.
 
 ---
 
@@ -227,7 +227,7 @@ npm install -g @railway/cli
 railway login
 
 # Set secrets
-railway variables set ANTHROPIC_API_KEY=sk-...
+railway variables set OPENAI_API_KEY=sk-...
 
 # Deploy
 bash scripts/deploy.sh
