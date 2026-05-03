@@ -96,21 +96,12 @@ async def _sample_responses(
     """
     Draw n independent LLM responses for the given prompt in parallel.
 
-    Uses asyncio.gather over Anthropic AsyncAnthropic calls.
+    Routes through llm.complete() so any provider (Anthropic, OpenAI, Ollama)
+    can be used by setting CONSISTENCY_MODEL to the appropriate model ID.
     """
-    import anthropic
+    from chaincheck.llm import complete
 
-    client = anthropic.AsyncAnthropic()
-
-    async def _single() -> str:
-        msg = await client.messages.create(
-            model=model,
-            max_tokens=512,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        return msg.content[0].text
-
-    return list(await asyncio.gather(*[_single() for _ in range(n)]))
+    return list(await asyncio.gather(*[complete(prompt, model, max_tokens=512) for _ in range(n)]))
 
 
 def _embed_texts(texts: list[str]) -> np.ndarray:
@@ -141,7 +132,7 @@ def _embed_texts(texts: list[str]) -> np.ndarray:
 
     if to_encode:
         new_embeddings = model.encode(to_encode, convert_to_numpy=True)
-        for idx, text, emb in zip(to_encode_indices, to_encode, new_embeddings):
+        for idx, text, emb in zip(to_encode_indices, to_encode, new_embeddings, strict=True):
             cache.set(_text_hash(text), emb.tolist())
             result.append((idx, emb.astype(np.float32)))
 

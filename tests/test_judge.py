@@ -5,6 +5,7 @@ from __future__ import annotations
 from unittest.mock import patch
 
 import pytest
+from pydantic import ValidationError
 
 from chaincheck.methods.judge import (
     JudgeVerdict,
@@ -21,11 +22,11 @@ class TestJudgeVerdict:
         assert v.confidence == 0.9
 
     def test_confidence_too_high_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             JudgeVerdict(label="supported", confidence=1.5, evidence="e")
 
     def test_confidence_negative_raises(self):
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             JudgeVerdict(label="supported", confidence=-0.1, evidence="e")
 
     def test_confidence_boundary_values(self):

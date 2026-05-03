@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "LLM hallucination detection toolkit — claim-level verification via NLI, self-consistency, and LLM-as-judge"
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "Your Name", email = "your@email.com" }]
+authors = [{ name = "Parth Auti", email = "parth.auti@gmail.com" }]
 requires-python = ">=3.11"
 keywords = ["llm", "hallucination", "detection", "nlp", "rag", "factuality"]
 classifiers = [
@@ -46,9 +46,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/chaincheck"
-Repository = "https://github.com/yourusername/chaincheck"
-Documentation = "https://github.com/yourusername/chaincheck#readme"
+Homepage = "https://github.com/pauti04/chaincheck"
+Repository = "https://github.com/pauti04/chaincheck"
+Documentation = "https://github.com/pauti04/chaincheck#readme"
 
 [project.scripts]
 chaincheck = "chaincheck.cli:app"
@@ -61,8 +61,11 @@ target-version = "py311"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W", "UP"]
-ignore = []
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = [
+    "B008",   # do not perform function calls in default argument values
+    "SIM108", # ternary operator — less readable in complex cases
+]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

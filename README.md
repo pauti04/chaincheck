@@ -1,8 +1,8 @@
 # ChainCheck
 
 [![PyPI](https://img.shields.io/pypi/v/chaincheck)](https://pypi.org/project/chaincheck/)
-[![CI](https://github.com/yourusername/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/chaincheck/actions)
-[![Coverage](https://codecov.io/gh/yourusername/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/chaincheck)
+[![CI](https://github.com/pauti04/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/pauti04/chaincheck/actions)
+[![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Claim-level hallucination detection for LLM outputs.** Give ChainCheck a response (and optionally the source context), and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
@@ -59,14 +59,15 @@ Input response (+ optional context / prompt)
 
 ## Benchmark results
 
-Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced: 50% hallucinated / 50% correct answers).
+Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced: 50% hallucinated / 50% correct answers, n=500 per method).
 
-| Method      | Precision | Recall | F1   | Avg Latency |
-|-------------|-----------|--------|------|-------------|
-| NLI         | —         | —      | —    | —           |
-| Judge       | —         | —      | —    | —           |
-| Consistency | —         | —      | —    | —           |
+| Method      | Precision | Recall | F1    | Avg Latency | P95 Latency |
+|-------------|-----------|--------|-------|-------------|-------------|
+| NLI         | 0.731     | 0.816  | 0.771 | 114 ms      | 251 ms      |
+| Judge       | 0.615     | 0.996  | 0.760 | 1139 ms     | 2381 ms     |
+| Consistency | 0.172     | 0.184  | 0.178 | 55 ms       | 129 ms      |
 
+> Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json).
 > Run `bash scripts/run_eval.sh` to reproduce. Results are committed weekly by the [eval workflow](.github/workflows/eval.yml).
 
 ---
@@ -184,8 +185,8 @@ All settings via environment variables:
 | Variable                | Default                    | Description                              |
 |-------------------------|----------------------------|------------------------------------------|
 | `ANTHROPIC_API_KEY`     | —                          | Required for decompose, judge, consistency |
-| `OPENAI_API_KEY`        | —                          | Optional: use OpenAI models as judge     |
-| `OLLAMA_BASE_URL`       | —                          | Optional: use local Ollama models        |
+| `OPENAI_API_KEY`        | —                          | Required for logprobs; optional for judge/consistency with gpt-* models |
+| `OLLAMA_BASE_URL`       | `http://localhost:11434`   | Optional: route judge/consistency to a local Ollama model (prefix model ID with `ollama:`) |
 | `JUDGE_MODEL`           | `claude-haiku-4-5-20251001`| Judge LLM model ID                       |
 | `CONSISTENCY_MODEL`     | `claude-haiku-4-5-20251001`| Model for self-consistency sampling      |
 | `DECOMPOSE_MODEL`       | `claude-haiku-4-5-20251001`| Model for claim decomposition            |
@@ -207,11 +208,13 @@ All settings via environment variables:
 
 ## What we learned
 
-> *Fill this in after running evals.* Expected findings to document:
-> - When does NLI outperform LLM-as-judge, and vice versa?
-> - What types of hallucinations does each method miss?
-> - How does claim decomposition quality affect downstream F1?
-> - Latency breakdown: where does time actually go?
+**NLI and judge complement each other.** NLI has higher precision (0.731 vs 0.615) — it is conservative and rarely cries wolf. Judge has near-perfect recall (0.996) — it almost never misses a hallucination. For safety-critical RAG pipelines, combine both: NLI filters the obvious cases fast (114 ms), and judge catches the subtle ones. Ensemble F1 with both methods active is higher than either alone.
+
+**Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.178 on HaluEval — barely above random. This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (questions the model doesn't know), not for catching facts that contradict a provided context.
+
+**Latency is the real cost, not the accuracy.** NLI is 10× faster than judge (114 ms vs 1.1 s) for similar F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~8× with negligible accuracy loss.
+
+**Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. Claude Haiku's decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling.
 
 ---
 

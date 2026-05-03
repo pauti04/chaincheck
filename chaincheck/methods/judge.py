@@ -63,7 +63,7 @@ async def check_judge(
     # Shuffle to mitigate position bias; track original indices to restore order
     indexed = list(enumerate(claims))
     random.shuffle(indexed)
-    original_indices, shuffled_claims = zip(*indexed)
+    original_indices, shuffled_claims = zip(*indexed, strict=False)
 
     verdicts = list(
         await asyncio.gather(*[_verify_claim(c, truncated_ctx, model) for c in shuffled_claims])
@@ -71,11 +71,11 @@ async def check_judge(
 
     # Restore original claim order
     ordered: list[JudgeVerdict | None] = [None] * len(claims)
-    for orig_idx, verdict in zip(original_indices, verdicts):
+    for orig_idx, verdict in zip(original_indices, verdicts, strict=True):
         ordered[orig_idx] = verdict
 
     claim_results: list[ClaimResult] = []
-    for claim, verdict in zip(claims, ordered):
+    for claim, verdict in zip(claims, ordered, strict=True):
         raw_label = verdict.label.lower() if verdict else "unknown"
         label = raw_label if raw_label in _VALID_LABELS else "unknown"
         claim_results.append(
@@ -105,20 +105,16 @@ async def _verify_claim(
     Send a single claim to the judge model and parse structured JSON output.
 
     Retries with exponential backoff on malformed JSON (up to retries attempts).
+    Supports any provider via llm.complete() — Anthropic, OpenAI, or Ollama.
     """
-    import anthropic
+    from chaincheck.llm import complete
 
-    client = anthropic.AsyncAnthropic()
     prompt = _build_judge_prompt(claim, context)
 
     for attempt in range(retries):
         try:
-            msg = await client.messages.create(
-                model=model,
-                max_tokens=256,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = msg.content[0].text.strip()
+            raw = await complete(prompt, model, max_tokens=256)
+            raw = raw.strip()
             # Strip markdown code fences if present
             match = re.search(r"```(?:json)?\s*(.*?)```", raw, re.DOTALL)
             if match:

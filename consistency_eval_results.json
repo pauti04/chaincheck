@@ -1,0 +1,15 @@
+{
+  "method": "consistency",
+  "samples": 500,
+  "metrics": {
+    "precision": 0.172,
+    "recall": 0.184,
+    "f1": 0.178,
+    "accuracy": 0.342,
+    "avg_latency_ms": 54.8,
+    "p50_latency_ms": 44.3,
+    "p95_latency_ms": 128.6,
+    "n_samples": 500
+  },
+  "raw_results": []
+}
