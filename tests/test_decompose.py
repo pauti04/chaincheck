@@ -76,17 +76,10 @@ async def test_decompose_returns_list_of_strings():
     """decompose() should return a list of strings when the API returns valid JSON."""
     from chaincheck.decompose import decompose
 
-    mock_content = MagicMock()
-    mock_content.text = '["The Eiffel Tower is in Paris.", "It was built in 1889."]'
-    mock_msg = MagicMock()
-    mock_msg.content = [mock_content]
-
-    mock_client = MagicMock()
-    mock_client.messages.create = AsyncMock(return_value=mock_msg)
-
+    fake_json = '["The Eiffel Tower is in Paris.", "It was built in 1889."]'
     with (
         patch("chaincheck.decompose._get_cache") as mock_cache_fn,
-        patch("anthropic.AsyncAnthropic", return_value=mock_client),
+        patch("chaincheck.llm.complete", new=AsyncMock(return_value=fake_json)),
     ):
         mock_cache = MagicMock()
         mock_cache.get.return_value = None
@@ -105,17 +98,9 @@ async def test_decompose_falls_back_on_bad_json():
     """decompose() should use sentence_split_fallback when JSON is malformed."""
     from chaincheck.decompose import decompose
 
-    mock_content = MagicMock()
-    mock_content.text = "not json at all"
-    mock_msg = MagicMock()
-    mock_msg.content = [mock_content]
-
-    mock_client = MagicMock()
-    mock_client.messages.create = AsyncMock(return_value=mock_msg)
-
     with (
         patch("chaincheck.decompose._get_cache") as mock_cache_fn,
-        patch("anthropic.AsyncAnthropic", return_value=mock_client),
+        patch("chaincheck.llm.complete", new=AsyncMock(return_value="not json at all")),
     ):
         mock_cache = MagicMock()
         mock_cache.get.return_value = None
@@ -139,8 +124,8 @@ async def test_decompose_uses_cache_on_second_call():
         mock_cache.get.return_value = cached_claims
         mock_cache_fn.return_value = mock_cache
 
-        with patch("anthropic.AsyncAnthropic") as mock_anthropic:
+        with patch("chaincheck.llm.complete", new=AsyncMock()) as mock_complete:
             result = await decompose("The sky is blue.")
-            mock_anthropic.assert_not_called()
+            mock_complete.assert_not_called()
 
     assert result == cached_claims

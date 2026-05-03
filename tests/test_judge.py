@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from pydantic import ValidationError
@@ -91,9 +91,9 @@ async def test_check_judge_empty_claims():
     """check_judge() with empty claims returns score=0.0 without API calls."""
     from chaincheck.methods.judge import check_judge
 
-    with patch("anthropic.AsyncAnthropic") as mock_cls:
+    with patch("chaincheck.llm.complete", new=AsyncMock()) as mock_complete:
         result = await check_judge([], "context")
-    mock_cls.assert_not_called()
+    mock_complete.assert_not_called()
     assert result.raw_score == 0.0
 
 

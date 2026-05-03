@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 _CACHE_PATH = os.getenv("CACHE_PATH", ".chaincheck_cache")
 _CACHE: diskcache.Cache | None = None
-_DECOMPOSE_MODEL = os.getenv("DECOMPOSE_MODEL", "claude-haiku-4-5-20251001")
+_DECOMPOSE_MODEL = os.getenv("DECOMPOSE_MODEL", "gpt-4o-mini")
 _CACHE_TTL = 60 * 60 * 24  # 24 hours
 
 
