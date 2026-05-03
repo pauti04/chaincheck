@@ -1,0 +1,67 @@
+[project]
+name = "chaincheck"
+version = "0.1.0"
+description = "Claim-level LLM hallucination detection with NLI, self-consistency, and LLM-as-judge methods."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Your Name", email = "you@example.com" }]
+keywords = ["llm", "hallucination", "nli", "evaluation", "fastapi"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "anthropic~=0.49.0",
+    "datasets~=3.3.0",
+    "diskcache~=5.6.0",
+    "fastapi~=0.115.0",
+    "httpx~=0.28.0",
+    "numpy~=2.2.0",
+    "openai~=1.65.0",
+    "pydantic~=2.10.0",
+    "rich~=13.9.0",
+    "sentence-transformers~=3.4.0",
+    "slowapi~=0.1.9",
+    "typer~=0.15.0",
+    "uvicorn~=0.34.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx~=0.28.0",
+    "pytest~=8.3.0",
+    "pytest-asyncio~=0.25.0",
+    "pytest-cov~=6.0.0",
+    "ruff~=0.9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/chaincheck"
+Repository = "https://github.com/yourusername/chaincheck"
+Issues = "https://github.com/yourusername/chaincheck/issues"
+
+[project.scripts]
+chaincheck = "chaincheck.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC", "C4", "SIM", "T20"]
+ignore = []
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+addopts = "--cov=chaincheck --cov-report=term-missing --cov-report=xml"

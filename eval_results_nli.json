@@ -1,0 +1,3015 @@
+{
+  "method": "nli",
+  "samples": 500,
+  "metrics": {
+    "precision": 0.7311827956989247,
+    "recall": 0.816,
+    "f1": 0.771266540642722,
+    "accuracy": 0.758,
+    "avg_latency_ms": 114.43242425459903,
+    "p50_latency_ms": 96.23722903779708,
+    "p95_latency_ms": 250.9774590143934
+  },
+  "results": [
+    {
+      "question": "Which magazine was started first Arthur's Magazine or First for Women?",
+      "score": 0.8801426187935114,
+      "prediction": true,
+      "latency_ms": 17.0496660284698
+    },
+    {
+      "question": "Which magazine was started first Arthur's Magazine or First for Women?",
+      "score": 0.9452688040962575,
+      "prediction": true,
+      "latency_ms": 4.970166017301381
+    },
+    {
+      "question": "The Oberoi family is part of a hotel company that has a head office in what city?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.2569160317070782
+    },
+    {
+      "question": "The Oberoi family is part of a hotel company that has a head office in what city?",
+      "score": 0.9995936754870872,
+      "prediction": true,
+      "latency_ms": 2.316833008080721
+    },
+    {
+      "question": "Musician and satirist Allie Goertz wrote a song about the \"The Simpsons\" character Milhouse, who Matt Groening named after who?",
+      "score": 0.7002076330068453,
+      "prediction": true,
+      "latency_ms": 2.28824996156618
+    },
+    {
+      "question": "Musician and satirist Allie Goertz wrote a song about the \"The Simpsons\" character Milhouse, who Matt Groening named after who?",
+      "score": 0.321912907676433,
+      "prediction": false,
+      "latency_ms": 5.364874959923327
+    },
+    {
+      "question": " What nationality was James Henry Miller's wife?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 6.963875028304756
+    },
+    {
+      "question": " What nationality was James Henry Miller's wife?",
+      "score": 0.95856731540806,
+      "prediction": true,
+      "latency_ms": 7.205000030808151
+    },
+    {
+      "question": "Cadmium Chloride is slightly soluble in this chemical, it is also called what?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.2557089794427156
+    },
+    {
+      "question": "Cadmium Chloride is slightly soluble in this chemical, it is also called what?",
+      "score": 0.901948911979287,
+      "prediction": true,
+      "latency_ms": 3.5137920058332384
+    },
+    {
+      "question": "Which tennis player won more Grand Slam titles, Henri Leconte or Jonathan Stark?",
+      "score": 0.008185994100606386,
+      "prediction": false,
+      "latency_ms": 6.634292018134147
+    },
+    {
+      "question": "Which tennis player won more Grand Slam titles, Henri Leconte or Jonathan Stark?",
+      "score": 0.9977743885242554,
+      "prediction": true,
+      "latency_ms": 5.304292018990964
+    },
+    {
+      "question": "Which genus of moth in the world's seventh-largest country contains only one species?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.500083006452769
+    },
+    {
+      "question": "Which genus of moth in the world's seventh-largest country contains only one species?",
+      "score": 0.9918628105827314,
+      "prediction": true,
+      "latency_ms": 7.277042022906244
+    },
+    {
+      "question": "Who was once considered the best kick boxer in the world, however he has been involved in a number of controversies relating to his \"unsportsmanlike conducts\" in the sport and crimes of violence outside of the ring.",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.145332982763648
+    },
+    {
+      "question": "Who was once considered the best kick boxer in the world, however he has been involved in a number of controversies relating to his \"unsportsmanlike conducts\" in the sport and crimes of violence outside of the ring.",
+      "score": 0.982571676429597,
+      "prediction": true,
+      "latency_ms": 4.628500028047711
+    },
+    {
+      "question": "The Dutch-Belgian television series that \"House of Anubis\" was based on first aired in what year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.2710419832728803
+    },
+    {
+      "question": "The Dutch-Belgian television series that \"House of Anubis\" was based on first aired in what year?",
+      "score": 0.9983836509143288,
+      "prediction": true,
+      "latency_ms": 2.499875030480325
+    },
+    {
+      "question": "What is the length of the track where the 2013 Liqui Moly Bathurst 12 Hour was staged?",
+      "score": 0.11185415661960874,
+      "prediction": false,
+      "latency_ms": 2.4892500368878245
+    },
+    {
+      "question": "What is the length of the track where the 2013 Liqui Moly Bathurst 12 Hour was staged?",
+      "score": 0.992103263346681,
+      "prediction": true,
+      "latency_ms": 2.303208049852401
+    },
+    {
+      "question": "Fast Cars, Danger, Fire and Knives includes guest appearances from which hip hop record executive?",
+      "score": 0.04145125124143456,
+      "prediction": false,
+      "latency_ms": 2.2477920283563435
+    },
+    {
+      "question": "Fast Cars, Danger, Fire and Knives includes guest appearances from which hip hop record executive?",
+      "score": 0.9996016475228309,
+      "prediction": true,
+      "latency_ms": 11.111167026683688
+    },
+    {
+      "question": "Gunmen from Laredo starred which narrator of \"Frontier\"?",
+      "score": 0.03771379428974564,
+      "prediction": false,
+      "latency_ms": 3.994167025666684
+    },
+    {
+      "question": "Gunmen from Laredo starred which narrator of \"Frontier\"?",
+      "score": 0.9233664404108328,
+      "prediction": true,
+      "latency_ms": 2.229541016276926
+    },
+    {
+      "question": "Where did the form of music played by Die Rh\u00f6ner S\u00e4uw\u00e4ntzt originate?",
+      "score": 0.07572232051474403,
+      "prediction": false,
+      "latency_ms": 2.1596250007860363
+    },
+    {
+      "question": "Where did the form of music played by Die Rh\u00f6ner S\u00e4uw\u00e4ntzt originate?",
+      "score": 0.999522477239313,
+      "prediction": true,
+      "latency_ms": 2.137000032234937
+    },
+    {
+      "question": "In which American football game was Malcolm Smith named Most Valuable player?",
+      "score": 0.9904505041660039,
+      "prediction": true,
+      "latency_ms": 2.1031249780207872
+    },
+    {
+      "question": "In which American football game was Malcolm Smith named Most Valuable player?",
+      "score": 0.9559491010594378,
+      "prediction": true,
+      "latency_ms": 2.2646249854005873
+    },
+    {
+      "question": "What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.0987919522449374
+    },
+    {
+      "question": "What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?",
+      "score": 0.9998883339027516,
+      "prediction": true,
+      "latency_ms": 2.285499998833984
+    },
+    {
+      "question": "The 1988 American comedy film, The Great Outdoors, starred a four-time Academy Award nominee, who received a star on the Hollywood Walk of Fame in what year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.1078750248998404
+    },
+    {
+      "question": "The 1988 American comedy film, The Great Outdoors, starred a four-time Academy Award nominee, who received a star on the Hollywood Walk of Fame in what year?",
+      "score": 0.9838031734764471,
+      "prediction": true,
+      "latency_ms": 2.195957989897579
+    },
+    {
+      "question": "What are the names of the current members of  American heavy metal band who wrote the music for  Hurt Locker The Musical? ",
+      "score": 0.004431337346487818,
+      "prediction": false,
+      "latency_ms": 2.191875013522804
+    },
+    {
+      "question": "What are the names of the current members of  American heavy metal band who wrote the music for  Hurt Locker The Musical? ",
+      "score": 0.9970205759755554,
+      "prediction": true,
+      "latency_ms": 2.1937090205028653
+    },
+    {
+      "question": "Human Error\" is the season finale of the third season of a tv show that aired on what network?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.1254170094616711
+    },
+    {
+      "question": "Human Error\" is the season finale of the third season of a tv show that aired on what network?",
+      "score": 0.9997305405969743,
+      "prediction": true,
+      "latency_ms": 7.6579590095207095
+    },
+    {
+      "question": "Dua Lipa, an English singer, songwriter and model, the album spawned the number-one single \"New Rules\" is a song by English singer Dua Lipa from her eponymous debut studio album, released in what year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.884042020421475
+    },
+    {
+      "question": "Dua Lipa, an English singer, songwriter and model, the album spawned the number-one single \"New Rules\" is a song by English singer Dua Lipa from her eponymous debut studio album, released in what year?",
+      "score": 0.9982949731884471,
+      "prediction": true,
+      "latency_ms": 3.8100419915281236
+    },
+    {
+      "question": "American politician Joe Heck ran unsuccessfully against Democrat Catherine Cortez Masto, a woman who previously served as the 32nd Attorney General of where?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.0617499938234687
+    },
+    {
+      "question": "American politician Joe Heck ran unsuccessfully against Democrat Catherine Cortez Masto, a woman who previously served as the 32nd Attorney General of where?",
+      "score": 0.9947878344426392,
+      "prediction": true,
+      "latency_ms": 2.1888749906793237
+    },
+    {
+      "question": "Which state does the drug stores, of which the CEO is Warren Bryant, are located?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.0749159846454859
+    },
+    {
+      "question": "Which state does the drug stores, of which the CEO is Warren Bryant, are located?",
+      "score": 0.9990994231142741,
+      "prediction": true,
+      "latency_ms": 2.213749976363033
+    },
+    {
+      "question": "Which  American politician did Donahue replaced ",
+      "score": 0.9969390828599535,
+      "prediction": true,
+      "latency_ms": 2.157707989681512
+    },
+    {
+      "question": "Which  American politician did Donahue replaced ",
+      "score": 0.0032743155649136435,
+      "prediction": false,
+      "latency_ms": 2.191042003687471
+    },
+    {
+      "question": "Which band was founded first, Hole, the rock band that Courtney Love was a frontwoman of, or The Wolfhounds?",
+      "score": 0.9995695029304005,
+      "prediction": true,
+      "latency_ms": 2.6727079530246556
+    },
+    {
+      "question": "Which band was founded first, Hole, the rock band that Courtney Love was a frontwoman of, or The Wolfhounds?",
+      "score": 0.9993785654965608,
+      "prediction": true,
+      "latency_ms": 2.4057079572230577
+    },
+    {
+      "question": "How old is the female main protagonist of Catching Fire?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.2125829816795886
+    },
+    {
+      "question": "How old is the female main protagonist of Catching Fire?",
+      "score": 0.9936184348326171,
+      "prediction": true,
+      "latency_ms": 2.2847920190542936
+    },
+    {
+      "question": "Chang Ucchin was born in korea during a time that ended with the conclusion of what? ",
+      "score": 0.9817620386057293,
+      "prediction": true,
+      "latency_ms": 2.2689169854857028
+    },
+    {
+      "question": "Chang Ucchin was born in korea during a time that ended with the conclusion of what? ",
+      "score": 0.05978451745783364,
+      "prediction": false,
+      "latency_ms": 2.5557500193826854
+    },
+    {
+      "question": "Who is the director of the 2003 film which has scenes in it filmed at the Quality Cafe in Los Angeles?",
+      "score": 0.9980026397321639,
+      "prediction": true,
+      "latency_ms": 5942.798874981236
+    },
+    {
+      "question": "Who is the director of the 2003 film which has scenes in it filmed at the Quality Cafe in Los Angeles?",
+      "score": 0.999470461381854,
+      "prediction": true,
+      "latency_ms": 399.5859579881653
+    },
+    {
+      "question": "New Faces of 1952 is a musical revue with songs and comedy skits, it helped jump start the career of which young performer, and American actress?",
+      "score": 0.9990353236371989,
+      "prediction": true,
+      "latency_ms": 147.65399997122586
+    },
+    {
+      "question": "New Faces of 1952 is a musical revue with songs and comedy skits, it helped jump start the career of which young performer, and American actress?",
+      "score": 0.9984835709185392,
+      "prediction": true,
+      "latency_ms": 286.02900000987574
+    },
+    {
+      "question": "Were Pavel Urysohn and Leonid Levin known for the same type of work?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.9992499728687108
+    },
+    {
+      "question": "Were Pavel Urysohn and Leonid Levin known for the same type of work?",
+      "score": 0.9966264783151737,
+      "prediction": true,
+      "latency_ms": 244.69587503699586
+    },
+    {
+      "question": "Are both The New Pornographers and Kings of Leon American rock bands?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.106125011574477
+    },
+    {
+      "question": "Are both The New Pornographers and Kings of Leon American rock bands?",
+      "score": 0.9996930629213513,
+      "prediction": true,
+      "latency_ms": 101.58575000241399
+    },
+    {
+      "question": "750 7th Avenue and 101 Park Avenue, are located in which city?",
+      "score": 0.6206491050259189,
+      "prediction": true,
+      "latency_ms": 97.82287501730025
+    },
+    {
+      "question": "750 7th Avenue and 101 Park Avenue, are located in which city?",
+      "score": 0.9998809536049511,
+      "prediction": true,
+      "latency_ms": 92.06562500912696
+    },
+    {
+      "question": "Which actress played the part of fictitious character Kimberly Ann Hart, in the franchise built around a live action superhero television series taking much of its footage from the Japanese tokusatsu 'Super Sentai'?",
+      "score": 0.9240987594121357,
+      "prediction": true,
+      "latency_ms": 173.9309590193443
+    },
+    {
+      "question": "Which actress played the part of fictitious character Kimberly Ann Hart, in the franchise built around a live action superhero television series taking much of its footage from the Japanese tokusatsu 'Super Sentai'?",
+      "score": 0.002115175534382563,
+      "prediction": false,
+      "latency_ms": 198.509749956429
+    },
+    {
+      "question": "Who was born first, Pablo Trapero or Aleksander Ford?",
+      "score": 0.0139219206812633,
+      "prediction": false,
+      "latency_ms": 90.55208304198459
+    },
+    {
+      "question": "Who was born first, Pablo Trapero or Aleksander Ford?",
+      "score": 0.9981034203617808,
+      "prediction": true,
+      "latency_ms": 223.45854196464643
+    },
+    {
+      "question": "Are Jane and First for Women both women's magazines?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.773415995761752
+    },
+    {
+      "question": "Are Jane and First for Women both women's magazines?",
+      "score": 0.9364938075919671,
+      "prediction": true,
+      "latency_ms": 67.22437497228384
+    },
+    {
+      "question": "What profession does Nicholas Ray and Elia Kazan have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.601332999300212
+    },
+    {
+      "question": "What profession does Nicholas Ray and Elia Kazan have in common?",
+      "score": 0.003467288357754783,
+      "prediction": false,
+      "latency_ms": 197.70316604990512
+    },
+    {
+      "question": "Where is the company that purchased Aixam based in?",
+      "score": 0.03233076159313297,
+      "prediction": false,
+      "latency_ms": 164.52262498205528
+    },
+    {
+      "question": "Where is the company that purchased Aixam based in?",
+      "score": 0.9992888450185561,
+      "prediction": true,
+      "latency_ms": 212.22904202295467
+    },
+    {
+      "question": "Which documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?",
+      "score": 0.9999389049772796,
+      "prediction": true,
+      "latency_ms": 111.60816700430587
+    },
+    {
+      "question": "Which documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?",
+      "score": 0.0038505104190464934,
+      "prediction": false,
+      "latency_ms": 155.20487498724833
+    },
+    {
+      "question": "Who was inducted into the Rock and Roll Hall of Fame, David Lee Roth or Cia Berg?",
+      "score": 0.006005071622634417,
+      "prediction": false,
+      "latency_ms": 168.64795796573162
+    },
+    {
+      "question": "Who was inducted into the Rock and Roll Hall of Fame, David Lee Roth or Cia Berg?",
+      "score": 0.9972629357693501,
+      "prediction": true,
+      "latency_ms": 260.5349580408074
+    },
+    {
+      "question": "Zimbabwe's Guwe Secondary School has a sister school in what New York cunty?",
+      "score": 0.99273092527874,
+      "prediction": true,
+      "latency_ms": 173.78300003474578
+    },
+    {
+      "question": "Zimbabwe's Guwe Secondary School has a sister school in what New York cunty?",
+      "score": 0.9995005611070699,
+      "prediction": true,
+      "latency_ms": 95.88858304778114
+    },
+    {
+      "question": "The Royal Commission into Drug Trafficking (1977\u20131979) or Woodward Royal Commission was a royal commission initiated by the New South Wales Government to investigate drug trafficking in New South Wales, Australia, especially links between the New South Wales Police and Mafia, The Honoured Society, is a Calabrian 'Ndrangheta criminal confederation, started in Melbourne and currently active in all of which country?  ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 7.663166034035385
+    },
+    {
+      "question": "The Royal Commission into Drug Trafficking (1977\u20131979) or Woodward Royal Commission was a royal commission initiated by the New South Wales Government to investigate drug trafficking in New South Wales, Australia, especially links between the New South Wales Police and Mafia, The Honoured Society, is a Calabrian 'Ndrangheta criminal confederation, started in Melbourne and currently active in all of which country?  ",
+      "score": 0.9926885279082036,
+      "prediction": true,
+      "latency_ms": 168.97229198366404
+    },
+    {
+      "question": "The 337th Flight Test Squadron (337 FLTS) was most recently part of the 46th Test Wing and based at McClellan Air Force Base, a former United States Air Force base located in the North Highlands area of Sacramento County, in which US state?",
+      "score": 0.9889770127001496,
+      "prediction": true,
+      "latency_ms": 109.60437502944842
+    },
+    {
+      "question": "The 337th Flight Test Squadron (337 FLTS) was most recently part of the 46th Test Wing and based at McClellan Air Force Base, a former United States Air Force base located in the North Highlands area of Sacramento County, in which US state?",
+      "score": 0.010744039579138942,
+      "prediction": false,
+      "latency_ms": 180.15500000910833
+    },
+    {
+      "question": "The axial turbojet Pirna 014 was designed by engineers from this German aircraft and aircraft engine manufacturer based in which city?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.561457979027182
+    },
+    {
+      "question": "The axial turbojet Pirna 014 was designed by engineers from this German aircraft and aircraft engine manufacturer based in which city?",
+      "score": 0.9938717672179451,
+      "prediction": true,
+      "latency_ms": 170.355667010881
+    },
+    {
+      "question": "Which faith is designated to the University of Providence, private university accredited by the NW association of Schools and Colleges and located in a third largest city in Montana after being passed by Missoula? ",
+      "score": 0.039524456425363064,
+      "prediction": false,
+      "latency_ms": 150.26133396895602
+    },
+    {
+      "question": "Which faith is designated to the University of Providence, private university accredited by the NW association of Schools and Colleges and located in a third largest city in Montana after being passed by Missoula? ",
+      "score": 0.9999537079087618,
+      "prediction": true,
+      "latency_ms": 109.22199999913573
+    },
+    {
+      "question": "Pauline Henry was known as the vocalist of a very popular cover song. Which album was this song from?",
+      "score": 0.41363432968877345,
+      "prediction": false,
+      "latency_ms": 124.4915829738602
+    },
+    {
+      "question": "Pauline Henry was known as the vocalist of a very popular cover song. Which album was this song from?",
+      "score": 0.9924408099385708,
+      "prediction": true,
+      "latency_ms": 133.20208399090916
+    },
+    {
+      "question": "Guitars for Wounded Warriors is an album that was recorded in the village in which New York county?",
+      "score": 0.9510923202538731,
+      "prediction": true,
+      "latency_ms": 143.45729199703783
+    },
+    {
+      "question": "Guitars for Wounded Warriors is an album that was recorded in the village in which New York county?",
+      "score": 0.9996322664327527,
+      "prediction": true,
+      "latency_ms": 173.46441699191928
+    },
+    {
+      "question": "What American country music singer-songwriter, born in May of 1942, sang a duet with her ex-husband the same year that he released the song \"The Battle?\"",
+      "score": 0.007289112571337797,
+      "prediction": false,
+      "latency_ms": 201.2830000021495
+    },
+    {
+      "question": "What American country music singer-songwriter, born in May of 1942, sang a duet with her ex-husband the same year that he released the song \"The Battle?\"",
+      "score": 0.0052819325743741485,
+      "prediction": false,
+      "latency_ms": 129.19262499781325
+    },
+    {
+      "question": "Who was born first, Francis Nethersole or Elizabeth Stuart?",
+      "score": 0.10865471939629989,
+      "prediction": false,
+      "latency_ms": 137.67775002634153
+    },
+    {
+      "question": "Who was born first, Francis Nethersole or Elizabeth Stuart?",
+      "score": 0.9988364244704523,
+      "prediction": true,
+      "latency_ms": 255.1023750565946
+    },
+    {
+      "question": "What does the Hacker-Pschorr Brewery have to limit in order to comply with German regulations?",
+      "score": 0.6822608676710171,
+      "prediction": true,
+      "latency_ms": 121.34012498427182
+    },
+    {
+      "question": "What does the Hacker-Pschorr Brewery have to limit in order to comply with German regulations?",
+      "score": 0.9122250515441148,
+      "prediction": true,
+      "latency_ms": 320.03833301132545
+    },
+    {
+      "question": "Don Barry Mason was the founder of the Psychedelic Shamanistic Institute (PSI), which other member that's Welsh, that died on 10 April 2016?",
+      "score": 0.01769846151567378,
+      "prediction": false,
+      "latency_ms": 232.1946670417674
+    },
+    {
+      "question": "Don Barry Mason was the founder of the Psychedelic Shamanistic Institute (PSI), which other member that's Welsh, that died on 10 April 2016?",
+      "score": 0.9987945383681666,
+      "prediction": true,
+      "latency_ms": 247.8545419871807
+    },
+    {
+      "question": "What male actor starred in The Messenger?",
+      "score": 0.13474145718832864,
+      "prediction": false,
+      "latency_ms": 167.7037079934962
+    },
+    {
+      "question": "What male actor starred in The Messenger?",
+      "score": 0.9996385074710571,
+      "prediction": true,
+      "latency_ms": 103.7495419732295
+    },
+    {
+      "question": "Are Gin and tonic and Paloma both cocktails based on tequila?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.0198750318959355
+    },
+    {
+      "question": "Are Gin and tonic and Paloma both cocktails based on tequila?",
+      "score": 0.013518178531383263,
+      "prediction": false,
+      "latency_ms": 201.98037498630583
+    },
+    {
+      "question": "Who is older Glenn Hughes or Ross Lynch?",
+      "score": 0.003912367822478169,
+      "prediction": false,
+      "latency_ms": 204.02458298485726
+    },
+    {
+      "question": "Who is older Glenn Hughes or Ross Lynch?",
+      "score": 0.997584306538109,
+      "prediction": true,
+      "latency_ms": 64.68249997124076
+    },
+    {
+      "question": "In what year was the creator of the current arrangement of the \"Simpson's Theme\" born?",
+      "score": 0.0700301459282262,
+      "prediction": false,
+      "latency_ms": 183.0317089916207
+    },
+    {
+      "question": "In what year was the creator of the current arrangement of the \"Simpson's Theme\" born?",
+      "score": 0.9990912789688867,
+      "prediction": true,
+      "latency_ms": 233.6714580305852
+    },
+    {
+      "question": "The Southern Railway runs from Vienna to Graz and the border with Slovenia at Spielfeld via the first mountain railway built in Europe to use what kind of track?",
+      "score": 0.9874012148371176,
+      "prediction": true,
+      "latency_ms": 135.9413749887608
+    },
+    {
+      "question": "The Southern Railway runs from Vienna to Graz and the border with Slovenia at Spielfeld via the first mountain railway built in Europe to use what kind of track?",
+      "score": 0.9887934883615622,
+      "prediction": true,
+      "latency_ms": 68.5689999954775
+    },
+    {
+      "question": "In what show did Cynthia Nixon receive the 2004 Primetime Emmy Award for Outstanding Supporting Actress in a Comedy Series and a Screen Actors Guild Award for her performance?",
+      "score": 0.9223077803207138,
+      "prediction": true,
+      "latency_ms": 259.7151250229217
+    },
+    {
+      "question": "In what show did Cynthia Nixon receive the 2004 Primetime Emmy Award for Outstanding Supporting Actress in a Comedy Series and a Screen Actors Guild Award for her performance?",
+      "score": 0.9991265453705517,
+      "prediction": true,
+      "latency_ms": 212.42649998748675
+    },
+    {
+      "question": "Lee Jun-fan played what character in \"The Green Hornet\" television series?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.767208032310009
+    },
+    {
+      "question": "Lee Jun-fan played what character in \"The Green Hornet\" television series?",
+      "score": 0.9993194440959474,
+      "prediction": true,
+      "latency_ms": 357.9767919727601
+    },
+    {
+      "question": "The 1895/96 Football League season was the eighth in Football League history with Everton, their Goodison Park home, is a football stadium located in Walton, Liverpool, in which country?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.3940419885329902
+    },
+    {
+      "question": "The 1895/96 Football League season was the eighth in Football League history with Everton, their Goodison Park home, is a football stadium located in Walton, Liverpool, in which country?",
+      "score": 0.6295563488973771,
+      "prediction": true,
+      "latency_ms": 109.63104199618101
+    },
+    {
+      "question": "A Head Full of Dreams Tour is the seventh tour by Coldplay, and which had it's first show at a stadium that is known as Estadio Unico and is owned by who?",
+      "score": 0.019332473157090524,
+      "prediction": false,
+      "latency_ms": 145.72416699957103
+    },
+    {
+      "question": "A Head Full of Dreams Tour is the seventh tour by Coldplay, and which had it's first show at a stadium that is known as Estadio Unico and is owned by who?",
+      "score": 0.9996902809355435,
+      "prediction": true,
+      "latency_ms": 218.74358295463026
+    },
+    {
+      "question": "Roger Avary (born August 23, 1965) is a Canadian film and television producer, screenwriter and director in the American mass media industry, he wrote the screenplay for Beowulf, a 2007 British-American 3D motion capture epic fantasy film, directed by who?",
+      "score": 0.030628499456062275,
+      "prediction": false,
+      "latency_ms": 192.97779200132936
+    },
+    {
+      "question": "Roger Avary (born August 23, 1965) is a Canadian film and television producer, screenwriter and director in the American mass media industry, he wrote the screenplay for Beowulf, a 2007 British-American 3D motion capture epic fantasy film, directed by who?",
+      "score": 0.9993350651448529,
+      "prediction": true,
+      "latency_ms": 89.3091670004651
+    },
+    {
+      "question": "The American Pre-Code comedy film featuring an American actress, dancer, and singer, widely known for performing in films and RKO's musical films, was released in what year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.0519579886458814
+    },
+    {
+      "question": "The American Pre-Code comedy film featuring an American actress, dancer, and singer, widely known for performing in films and RKO's musical films, was released in what year?",
+      "score": 0.9992191469080289,
+      "prediction": true,
+      "latency_ms": 232.35300002852455
+    },
+    {
+      "question": "An edited version of \"Just the Two of Us\" reached number two on the \"Billboard\" Hot 100 behind a song written and composed by Donna Weiss and Jackie DeShannon which spend how many weeks at No. 1 on the \"Billboard\" hot 100?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.6884999931789935
+    },
+    {
+      "question": "An edited version of \"Just the Two of Us\" reached number two on the \"Billboard\" Hot 100 behind a song written and composed by Donna Weiss and Jackie DeShannon which spend how many weeks at No. 1 on the \"Billboard\" hot 100?",
+      "score": 0.502158349654535,
+      "prediction": true,
+      "latency_ms": 975.2663330291398
+    },
+    {
+      "question": "Which band has more members, Saint Motel or Curve?",
+      "score": 0.02153304038204218,
+      "prediction": false,
+      "latency_ms": 101.54645796865225
+    },
+    {
+      "question": "Which band has more members, Saint Motel or Curve?",
+      "score": 0.9998842326423486,
+      "prediction": true,
+      "latency_ms": 182.29445797624066
+    },
+    {
+      "question": "\"Funnybot\" is the second episode of the fifteenth season of which American animated television series, created by Trey Parker and Matt Stone?  ",
+      "score": 0.8425045330186963,
+      "prediction": true,
+      "latency_ms": 167.7542090183124
+    },
+    {
+      "question": "\"Funnybot\" is the second episode of the fifteenth season of which American animated television series, created by Trey Parker and Matt Stone?  ",
+      "score": 0.9999426368918353,
+      "prediction": true,
+      "latency_ms": 115.8047909848392
+    },
+    {
+      "question": "Which private research university is located in Chestnut Hill, Massachusetts Boston College or Stanford University? ",
+      "score": 0.9992621945462627,
+      "prediction": true,
+      "latency_ms": 65.70708297658712
+    },
+    {
+      "question": "Which private research university is located in Chestnut Hill, Massachusetts Boston College or Stanford University? ",
+      "score": 0.9965887878235736,
+      "prediction": true,
+      "latency_ms": 123.38862498290837
+    },
+    {
+      "question": "What American stage, film, and television actor  who also appeared in a large number of musicals, played Samson in the 1949 film \"Samson and Delilah\".",
+      "score": 0.10496276645265323,
+      "prediction": false,
+      "latency_ms": 135.82079199841246
+    },
+    {
+      "question": "What American stage, film, and television actor  who also appeared in a large number of musicals, played Samson in the 1949 film \"Samson and Delilah\".",
+      "score": 0.9998252986777985,
+      "prediction": true,
+      "latency_ms": 614.3483339692466
+    },
+    {
+      "question": "Iqaluit Airport and Canadian North are based out of what country?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 8.643082983326167
+    },
+    {
+      "question": "Iqaluit Airport and Canadian North are based out of what country?",
+      "score": 0.8255468278779906,
+      "prediction": true,
+      "latency_ms": 116.461125027854
+    },
+    {
+      "question": "In what political party was the man who officially opened he Royal Spa Centre in 1972?",
+      "score": 0.8700056566515065,
+      "prediction": true,
+      "latency_ms": 80.32054203795269
+    },
+    {
+      "question": "In what political party was the man who officially opened he Royal Spa Centre in 1972?",
+      "score": 0.9998177552250629,
+      "prediction": true,
+      "latency_ms": 156.03041695430875
+    },
+    {
+      "question": "Which Oscar-nominated film was written by the screenwriter who wrote a 1991 romantic drama based upon a screenplay by Sooni Taraporevala?",
+      "score": 0.9945546386636955,
+      "prediction": true,
+      "latency_ms": 126.4350829878822
+    },
+    {
+      "question": "Which Oscar-nominated film was written by the screenwriter who wrote a 1991 romantic drama based upon a screenplay by Sooni Taraporevala?",
+      "score": 0.9992724130816942,
+      "prediction": true,
+      "latency_ms": 96.58587502781302
+    },
+    {
+      "question": "Are both Tim McIlrath and Spike Slawson American punk rock musicians?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 7.812707975972444
+    },
+    {
+      "question": "Are both Tim McIlrath and Spike Slawson American punk rock musicians?",
+      "score": 0.9963060794187422,
+      "prediction": true,
+      "latency_ms": 101.44987498642877
+    },
+    {
+      "question": "The Golden Globe Award winner for best actor from \"Roseanne\" starred along what actress in Gigantic?",
+      "score": 0.06342554948664147,
+      "prediction": false,
+      "latency_ms": 348.6691659782082
+    },
+    {
+      "question": "The Golden Globe Award winner for best actor from \"Roseanne\" starred along what actress in Gigantic?",
+      "score": 0.003536346515549238,
+      "prediction": false,
+      "latency_ms": 191.15687505109236
+    },
+    {
+      "question": "The expert mentor to the celebrities that perform on \"Splash!\" won the 2009 FINA World Championionship in the individual event at what age? ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 6.483208970166743
+    },
+    {
+      "question": "The expert mentor to the celebrities that perform on \"Splash!\" won the 2009 FINA World Championionship in the individual event at what age? ",
+      "score": 0.9903256795701527,
+      "prediction": true,
+      "latency_ms": 91.91524999914691
+    },
+    {
+      "question": "Still Da Baddest is the fourth studio album by American rapper Trina, following the poor chart performance, \"I Got a Thang for You\" featuring which American singer/songwriter, record producer, business woman, and television personality, and was born in Oakland, California?",
+      "score": 0.013710994019746625,
+      "prediction": false,
+      "latency_ms": 173.91675000544637
+    },
+    {
+      "question": "Still Da Baddest is the fourth studio album by American rapper Trina, following the poor chart performance, \"I Got a Thang for You\" featuring which American singer/songwriter, record producer, business woman, and television personality, and was born in Oakland, California?",
+      "score": 0.9997296941247572,
+      "prediction": true,
+      "latency_ms": 188.41745797544718
+    },
+    {
+      "question": "What profession does Am Rong and Alexandre Rockwell have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.9971249857917428
+    },
+    {
+      "question": "What profession does Am Rong and Alexandre Rockwell have in common?",
+      "score": 0.8806943831195106,
+      "prediction": true,
+      "latency_ms": 78.53483298094943
+    },
+    {
+      "question": "El Nuevo Cojo and Golf Magazine are both special interest publications but which one is owned by Time Inc?",
+      "score": 0.9898815150152999,
+      "prediction": true,
+      "latency_ms": 68.88408295344561
+    },
+    {
+      "question": "El Nuevo Cojo and Golf Magazine are both special interest publications but which one is owned by Time Inc?",
+      "score": 0.9993258759781006,
+      "prediction": true,
+      "latency_ms": 250.89050002861768
+    },
+    {
+      "question": "Who funds the bowling team that includes the school bus driver for Springfield Elementary School?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.559791028033942
+    },
+    {
+      "question": "Who funds the bowling team that includes the school bus driver for Springfield Elementary School?",
+      "score": 0.9959289822977441,
+      "prediction": true,
+      "latency_ms": 132.9258750192821
+    },
+    {
+      "question": "What city are George Washington University Hospital and MedStar Washington Hospital Center located in?",
+      "score": 0.015328818429716895,
+      "prediction": false,
+      "latency_ms": 108.22445899248123
+    },
+    {
+      "question": "What city are George Washington University Hospital and MedStar Washington Hospital Center located in?",
+      "score": 0.9992591207628302,
+      "prediction": true,
+      "latency_ms": 59.25125000067055
+    },
+    {
+      "question": "what is the connection between Peter O'Meara and Norman Dike?",
+      "score": 0.020685530813694175,
+      "prediction": false,
+      "latency_ms": 68.83754202863201
+    },
+    {
+      "question": "what is the connection between Peter O'Meara and Norman Dike?",
+      "score": 0.9922317608613167,
+      "prediction": true,
+      "latency_ms": 559.85783302458
+    },
+    {
+      "question": "What author has contributed to such works as \"New Statesmen\", \"The Nation\", and \"The Atlantic\", among others, while also being being associated with Dysteleology?",
+      "score": 0.4781867919888795,
+      "prediction": false,
+      "latency_ms": 52.64995800098404
+    },
+    {
+      "question": "What author has contributed to such works as \"New Statesmen\", \"The Nation\", and \"The Atlantic\", among others, while also being being associated with Dysteleology?",
+      "score": 0.005474132879665028,
+      "prediction": false,
+      "latency_ms": 103.9742500288412
+    },
+    {
+      "question": "Who developed the prototype pacemaker used by the 34th President of the USA?",
+      "score": 0.014594377405144798,
+      "prediction": false,
+      "latency_ms": 250.9774590143934
+    },
+    {
+      "question": "Who developed the prototype pacemaker used by the 34th President of the USA?",
+      "score": 0.999732721502555,
+      "prediction": true,
+      "latency_ms": 72.4811659893021
+    },
+    {
+      "question": "Which publishing company has published Bizarre and a sister publication devoted to the anomalous phenomena popularised by Charles Fort?",
+      "score": 0.9997133931318711,
+      "prediction": true,
+      "latency_ms": 116.96558399125934
+    },
+    {
+      "question": "Which publishing company has published Bizarre and a sister publication devoted to the anomalous phenomena popularised by Charles Fort?",
+      "score": 0.9995811429469948,
+      "prediction": true,
+      "latency_ms": 57.91249999310821
+    },
+    {
+      "question": "Who performed the lead single on the album Friends in Low Places, No Fences, that reached #1 on Billboard?",
+      "score": 0.00367737857458339,
+      "prediction": false,
+      "latency_ms": 58.00920905312523
+    },
+    {
+      "question": "Who performed the lead single on the album Friends in Low Places, No Fences, that reached #1 on Billboard?",
+      "score": 0.0026158541168673777,
+      "prediction": false,
+      "latency_ms": 102.56858298089355
+    },
+    {
+      "question": "Hate to Feel is the tenth track on what Alice in Chains' album that peaked as number six on the Billboard 200?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 13.244915986433625
+    },
+    {
+      "question": "Hate to Feel is the tenth track on what Alice in Chains' album that peaked as number six on the Billboard 200?",
+      "score": 0.9989123214387022,
+      "prediction": true,
+      "latency_ms": 93.54283299762756
+    },
+    {
+      "question": "The lead singer and guitarist in the Portland, Oregon rock band consisting of John Gourley, Zach Carothers, Kyle O'Quin, Jason Sechrist and Eric Howk, goes by what alias?",
+      "score": 0.9435106409433784,
+      "prediction": true,
+      "latency_ms": 64.4422079785727
+    },
+    {
+      "question": "The lead singer and guitarist in the Portland, Oregon rock band consisting of John Gourley, Zach Carothers, Kyle O'Quin, Jason Sechrist and Eric Howk, goes by what alias?",
+      "score": 0.9995710606943152,
+      "prediction": true,
+      "latency_ms": 185.02395797986537
+    },
+    {
+      "question": "What year was the winner of the 2016 Marrakesh ePrix born?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.031541953328997
+    },
+    {
+      "question": "What year was the winner of the 2016 Marrakesh ePrix born?",
+      "score": 0.0021403805864163017,
+      "prediction": false,
+      "latency_ms": 291.3885419839062
+    },
+    {
+      "question": "South Korean actor Kim Yool-ho starred in what 2016 movie directed by Yeon Sang-ho Yeon Sang-ho and starring actors Gong Yoo, Jung Yu-mi, and Ma Dong-seok?",
+      "score": 0.9660214109367149,
+      "prediction": true,
+      "latency_ms": 186.85566599015146
+    },
+    {
+      "question": "South Korean actor Kim Yool-ho starred in what 2016 movie directed by Yeon Sang-ho Yeon Sang-ho and starring actors Gong Yoo, Jung Yu-mi, and Ma Dong-seok?",
+      "score": 0.9988417657566488,
+      "prediction": true,
+      "latency_ms": 167.40849998313934
+    },
+    {
+      "question": "According to the 2006 census what is the population of the city in which James Iroha Uchechukwu was born ?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.1314999903552234
+    },
+    {
+      "question": "According to the 2006 census what is the population of the city in which James Iroha Uchechukwu was born ?",
+      "score": 0.9989440114761994,
+      "prediction": true,
+      "latency_ms": 122.86391702946275
+    },
+    {
+      "question": "What actor in the film D.C. Cab also had a role in the TV series Barney Miller?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.5455000470392406
+    },
+    {
+      "question": "What actor in the film D.C. Cab also had a role in the TV series Barney Miller?",
+      "score": 0.9988733068425953,
+      "prediction": true,
+      "latency_ms": 72.26033305050805
+    },
+    {
+      "question": "Which industry do Richard Hawley and Chicago's Catherine belong to? ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.767999995034188
+    },
+    {
+      "question": "Which industry do Richard Hawley and Chicago's Catherine belong to? ",
+      "score": 0.9998728811309295,
+      "prediction": true,
+      "latency_ms": 193.79816600121558
+    },
+    {
+      "question": "Are Pam Veasey and Jon Jost both American?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.704499987885356
+    },
+    {
+      "question": "Are Pam Veasey and Jon Jost both American?",
+      "score": 0.9731493992500584,
+      "prediction": true,
+      "latency_ms": 101.11137497005984
+    },
+    {
+      "question": "Maurice Hines and his brother were famous for what?",
+      "score": 0.005125551563826436,
+      "prediction": false,
+      "latency_ms": 711.4343750290573
+    },
+    {
+      "question": "Maurice Hines and his brother were famous for what?",
+      "score": 0.9997572815788047,
+      "prediction": true,
+      "latency_ms": 45.218291983474046
+    },
+    {
+      "question": "Are the New Orleans Outfall Canals the same length as the Augusta Canal?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.2673750170506537
+    },
+    {
+      "question": "Are the New Orleans Outfall Canals the same length as the Augusta Canal?",
+      "score": 0.9947176021693926,
+      "prediction": true,
+      "latency_ms": 45.847458008211106
+    },
+    {
+      "question": "In which stadium do the teams owned by Myra Kraft's husband play?",
+      "score": 0.03353227922799529,
+      "prediction": false,
+      "latency_ms": 41.21124994708225
+    },
+    {
+      "question": "In which stadium do the teams owned by Myra Kraft's husband play?",
+      "score": 0.9990102466705647,
+      "prediction": true,
+      "latency_ms": 106.87287501059473
+    },
+    {
+      "question": "What southern California based band covered Blue \u00d6yster Cult's Godzilla?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 6.724708015099168
+    },
+    {
+      "question": "What southern California based band covered Blue \u00d6yster Cult's Godzilla?",
+      "score": 0.9979474337554052,
+      "prediction": true,
+      "latency_ms": 48.13587502576411
+    },
+    {
+      "question": "The Swedish-British entertainment studio executive and film executive producer, who was the Executive producer for a 2016 American action thriller film directed by Babak Najafi, currently serve?",
+      "score": 0.00827524088332432,
+      "prediction": false,
+      "latency_ms": 106.9297079811804
+    },
+    {
+      "question": "The Swedish-British entertainment studio executive and film executive producer, who was the Executive producer for a 2016 American action thriller film directed by Babak Najafi, currently serve?",
+      "score": 0.998135371829491,
+      "prediction": true,
+      "latency_ms": 111.17708298843354
+    },
+    {
+      "question": "an Emmy Award winner and two-time Tony Award winner, was on the episode 15 of the third season of \"Chuck\". what is her name ?",
+      "score": 0.3824394345516642,
+      "prediction": false,
+      "latency_ms": 100.3715840051882
+    },
+    {
+      "question": "an Emmy Award winner and two-time Tony Award winner, was on the episode 15 of the third season of \"Chuck\". what is her name ?",
+      "score": 0.9992373624553642,
+      "prediction": true,
+      "latency_ms": 87.73191599175334
+    },
+    {
+      "question": "What is the current name of the Atlanta Mansion built for the daughter of the 41st Mayor of Atlanta, Georgia?",
+      "score": 0.6598400687383285,
+      "prediction": true,
+      "latency_ms": 169.20045897131786
+    },
+    {
+      "question": "What is the current name of the Atlanta Mansion built for the daughter of the 41st Mayor of Atlanta, Georgia?",
+      "score": 0.9997060992181334,
+      "prediction": true,
+      "latency_ms": 124.2271660012193
+    },
+    {
+      "question": "Who invented the type of script used in autographs?",
+      "score": 0.9973723219550527,
+      "prediction": true,
+      "latency_ms": 69.01929102605209
+    },
+    {
+      "question": "Who invented the type of script used in autographs?",
+      "score": 0.9997118380428544,
+      "prediction": true,
+      "latency_ms": 106.10608395654708
+    },
+    {
+      "question": "Approximately what percentage of the global population is made up of the ethnic group Princess Fragrant was produced to improve relations with?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.477415990550071
+    },
+    {
+      "question": "Approximately what percentage of the global population is made up of the ethnic group Princess Fragrant was produced to improve relations with?",
+      "score": 0.9983843508625324,
+      "prediction": true,
+      "latency_ms": 171.1934999912046
+    },
+    {
+      "question": "The Boren-McCurdy proposals were partially brought about by which Oklahoma politician in 1992?",
+      "score": 0.987963133252913,
+      "prediction": true,
+      "latency_ms": 108.77024999354035
+    },
+    {
+      "question": "The Boren-McCurdy proposals were partially brought about by which Oklahoma politician in 1992?",
+      "score": 0.9966336817630506,
+      "prediction": true,
+      "latency_ms": 60.812124982476234
+    },
+    {
+      "question": "The Thoen Stone is on display at a museum in what county?",
+      "score": 0.9830562931230051,
+      "prediction": true,
+      "latency_ms": 47.838374972343445
+    },
+    {
+      "question": "The Thoen Stone is on display at a museum in what county?",
+      "score": 0.9985370818982899,
+      "prediction": true,
+      "latency_ms": 63.81770799634978
+    },
+    {
+      "question": "Is Children's National Medical Center or MedStar Washington Hospital Center the largest private hospital in Washington, D.C.?",
+      "score": 0.13405581421258728,
+      "prediction": false,
+      "latency_ms": 88.58345897169784
+    },
+    {
+      "question": "Is Children's National Medical Center or MedStar Washington Hospital Center the largest private hospital in Washington, D.C.?",
+      "score": 0.10121952209253593,
+      "prediction": false,
+      "latency_ms": 149.97545804362744
+    },
+    {
+      "question": "Prince William, Duke of Gloucester and Prince George of Denmark, were eventually monarchs of which Kingdom?",
+      "score": 0.9989157432081575,
+      "prediction": true,
+      "latency_ms": 212.87587500410154
+    },
+    {
+      "question": "Prince William, Duke of Gloucester and Prince George of Denmark, were eventually monarchs of which Kingdom?",
+      "score": 0.9999258741649067,
+      "prediction": true,
+      "latency_ms": 116.4932920364663
+    },
+    {
+      "question": "The airline operating in Whitehorse, Yukon handled how many passengers in 2012?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.8560420400463045
+    },
+    {
+      "question": "The airline operating in Whitehorse, Yukon handled how many passengers in 2012?",
+      "score": 0.11506932293180827,
+      "prediction": false,
+      "latency_ms": 146.19941596174613
+    },
+    {
+      "question": "What State has a Disney Resort & Spa that is a beachside hotel, resort and vacation destination offering complimentary children's activities and programs and that Djuan Rivers was a General Manager at?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.52533399220556
+    },
+    {
+      "question": "What State has a Disney Resort & Spa that is a beachside hotel, resort and vacation destination offering complimentary children's activities and programs and that Djuan Rivers was a General Manager at?",
+      "score": 0.9917713706897332,
+      "prediction": true,
+      "latency_ms": 105.08712503360584
+    },
+    {
+      "question": "Are Wenling and Xinzheng both in China?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.2829580013640225
+    },
+    {
+      "question": "Are Wenling and Xinzheng both in China?",
+      "score": 0.5024837462868199,
+      "prediction": true,
+      "latency_ms": 363.4477499872446
+    },
+    {
+      "question": "What is the birth date of the coach of the 2014-15 Michigan Wolverines men's basketball team?",
+      "score": 0.016596756652485722,
+      "prediction": false,
+      "latency_ms": 101.46249999525025
+    },
+    {
+      "question": "What is the birth date of the coach of the 2014-15 Michigan Wolverines men's basketball team?",
+      "score": 0.01894394063056004,
+      "prediction": false,
+      "latency_ms": 168.62791700987145
+    },
+    {
+      "question": "Which organization presents the award in which Chris Noonan was nominated for his work in \"Babe?\"",
+      "score": 0.03010732109020131,
+      "prediction": false,
+      "latency_ms": 107.45291697094217
+    },
+    {
+      "question": "Which organization presents the award in which Chris Noonan was nominated for his work in \"Babe?\"",
+      "score": 0.907585520565794,
+      "prediction": true,
+      "latency_ms": 102.3803330026567
+    },
+    {
+      "question": "Where is the base of one of the three main British intelligence agencies?",
+      "score": 0.9869476595856909,
+      "prediction": true,
+      "latency_ms": 84.84783302992582
+    },
+    {
+      "question": "Where is the base of one of the three main British intelligence agencies?",
+      "score": 0.9991013131675663,
+      "prediction": true,
+      "latency_ms": 84.37229203991592
+    },
+    {
+      "question": "When a Man Falls in Love, is a 2013 South Korean television series, starring Song Seung-heon, Shin Se-kyung, Chae Jung-an, and which South Korean actor, born on ? ",
+      "score": 0.042854465972757994,
+      "prediction": false,
+      "latency_ms": 114.32066600536928
+    },
+    {
+      "question": "When a Man Falls in Love, is a 2013 South Korean television series, starring Song Seung-heon, Shin Se-kyung, Chae Jung-an, and which South Korean actor, born on ? ",
+      "score": 0.006547006952267842,
+      "prediction": false,
+      "latency_ms": 86.7062920005992
+    },
+    {
+      "question": "What retailer is the second-largest in the United States and has a commercial featuring the American artist who was 1st runner-up in the 2005 USA Weekend Magazine's songwriting competition?",
+      "score": 0.2540463332823907,
+      "prediction": false,
+      "latency_ms": 84.20029195258394
+    },
+    {
+      "question": "What retailer is the second-largest in the United States and has a commercial featuring the American artist who was 1st runner-up in the 2005 USA Weekend Magazine's songwriting competition?",
+      "score": 0.9993854295967521,
+      "prediction": true,
+      "latency_ms": 98.91112498007715
+    },
+    {
+      "question": "Which English actor of stage, film and television from the 1978 BBC drama \"Pennies From Heaven\" appeared in the 2006 BBC Four television play \"Kenneth Williams: Fantabulosa!?\"",
+      "score": 0.8894645087579477,
+      "prediction": true,
+      "latency_ms": 91.09954198356718
+    },
+    {
+      "question": "Which English actor of stage, film and television from the 1978 BBC drama \"Pennies From Heaven\" appeared in the 2006 BBC Four television play \"Kenneth Williams: Fantabulosa!?\"",
+      "score": 0.9999501210832433,
+      "prediction": true,
+      "latency_ms": 88.82345899473876
+    },
+    {
+      "question": "Who hosted both Miss USA 1968 and The Price Is Right?",
+      "score": 0.011739848928723373,
+      "prediction": false,
+      "latency_ms": 63.29824996646494
+    },
+    {
+      "question": "Who hosted both Miss USA 1968 and The Price Is Right?",
+      "score": 0.9986312950553958,
+      "prediction": true,
+      "latency_ms": 93.86616700794548
+    },
+    {
+      "question": "What video game published by Sierra Entertainment includes an antagonist figure who's mystery is the core of the series? ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.5529579618014395
+    },
+    {
+      "question": "What video game published by Sierra Entertainment includes an antagonist figure who's mystery is the core of the series? ",
+      "score": 0.9579183777282264,
+      "prediction": true,
+      "latency_ms": 157.59941702708602
+    },
+    {
+      "question": "Close to the Enemy starred the English actor known as Ash Morgan in what BBC series?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.1094589503481984
+    },
+    {
+      "question": "Close to the Enemy starred the English actor known as Ash Morgan in what BBC series?",
+      "score": 0.9567901559855969,
+      "prediction": true,
+      "latency_ms": 160.05987499374896
+    },
+    {
+      "question": "The Bass Rock Lighthouse was next to what Castle?",
+      "score": 0.0313921660797305,
+      "prediction": false,
+      "latency_ms": 48.54108300060034
+    },
+    {
+      "question": "The Bass Rock Lighthouse was next to what Castle?",
+      "score": 0.9886505463074848,
+      "prediction": true,
+      "latency_ms": 111.90341599285603
+    },
+    {
+      "question": "G\u00fclhane Park and Zografeion Lyceum, are located in which country?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 11.095916968770325
+    },
+    {
+      "question": "G\u00fclhane Park and Zografeion Lyceum, are located in which country?",
+      "score": 0.999106138234392,
+      "prediction": true,
+      "latency_ms": 173.42912504682317
+    },
+    {
+      "question": "What is the name of the movie in which Edwin Brown plays a man that executed at least 400 people, including William Joyce and John Amery?",
+      "score": 0.9753570112152895,
+      "prediction": true,
+      "latency_ms": 76.48612500634044
+    },
+    {
+      "question": "What is the name of the movie in which Edwin Brown plays a man that executed at least 400 people, including William Joyce and John Amery?",
+      "score": 0.9869630810378008,
+      "prediction": true,
+      "latency_ms": 88.30145798856393
+    },
+    {
+      "question": "What genre of music is the solo artist that contributed to Real Damage a variant of?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.8902500052936375
+    },
+    {
+      "question": "What genre of music is the solo artist that contributed to Real Damage a variant of?",
+      "score": 0.012527646520022584,
+      "prediction": false,
+      "latency_ms": 88.08887499617413
+    },
+    {
+      "question": "Jake David Shapiro was best know for being the screenwriter of a film directed by who?",
+      "score": 0.0027304195807582587,
+      "prediction": false,
+      "latency_ms": 99.34616700047627
+    },
+    {
+      "question": "Jake David Shapiro was best know for being the screenwriter of a film directed by who?",
+      "score": 0.999440611412895,
+      "prediction": true,
+      "latency_ms": 163.16683404147625
+    },
+    {
+      "question": "What book contains a poem which, along with \"Beowulf\" and the \"Anglo-Saxon Chronicle\", preserves a legendary list of the kings of the Angles?",
+      "score": 0.6407322953453701,
+      "prediction": true,
+      "latency_ms": 55.13170798076317
+    },
+    {
+      "question": "What book contains a poem which, along with \"Beowulf\" and the \"Anglo-Saxon Chronicle\", preserves a legendary list of the kings of the Angles?",
+      "score": 0.9993430450599871,
+      "prediction": true,
+      "latency_ms": 33.562333963345736
+    },
+    {
+      "question": "Norbert Holm was arrested and later demoted because of his Chief of Operations association with a military theorist popularly known as what?",
+      "score": 0.0029715659730594757,
+      "prediction": false,
+      "latency_ms": 69.63495799573138
+    },
+    {
+      "question": "Norbert Holm was arrested and later demoted because of his Chief of Operations association with a military theorist popularly known as what?",
+      "score": 0.005021947398813009,
+      "prediction": false,
+      "latency_ms": 103.96283300360665
+    },
+    {
+      "question": "What state does Sang-Wook Cheong work as a materials scientist?",
+      "score": 0.9993043949136236,
+      "prediction": true,
+      "latency_ms": 123.245875001885
+    },
+    {
+      "question": "What state does Sang-Wook Cheong work as a materials scientist?",
+      "score": 0.9998510075860285,
+      "prediction": true,
+      "latency_ms": 102.59154200321063
+    },
+    {
+      "question": "What type of vegetation does Kniphofia and Baptisia have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.722499950323254
+    },
+    {
+      "question": "What type of vegetation does Kniphofia and Baptisia have in common?",
+      "score": 0.9988170569350464,
+      "prediction": true,
+      "latency_ms": 111.2036660197191
+    },
+    {
+      "question": "Californian rock band Lit recorded A Place in the Sun in 1995, but what's their best known song?",
+      "score": 0.0406136402689935,
+      "prediction": false,
+      "latency_ms": 237.2941659996286
+    },
+    {
+      "question": "Californian rock band Lit recorded A Place in the Sun in 1995, but what's their best known song?",
+      "score": 0.9992926708044609,
+      "prediction": true,
+      "latency_ms": 60.04349997965619
+    },
+    {
+      "question": "Gary Harrison, began his career in the 1970s and has written over how many major-label recorded songs including several number-one hits, another artist who have recorded his work include Bryan White, an American country music artist?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.649125013500452
+    },
+    {
+      "question": "Gary Harrison, began his career in the 1970s and has written over how many major-label recorded songs including several number-one hits, another artist who have recorded his work include Bryan White, an American country music artist?",
+      "score": 0.021575026927302843,
+      "prediction": false,
+      "latency_ms": 71.3253750000149
+    },
+    {
+      "question": "The 1976 German Grand Prix was won by a driver who retired in what year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 7.59829196613282
+    },
+    {
+      "question": "The 1976 German Grand Prix was won by a driver who retired in what year?",
+      "score": 0.9994123841173079,
+      "prediction": true,
+      "latency_ms": 65.16883301082999
+    },
+    {
+      "question": "What event at the Asian Junior Athletics Championships has men and women competing at the same time?",
+      "score": 0.9786318127180944,
+      "prediction": true,
+      "latency_ms": 73.12612503301352
+    },
+    {
+      "question": "What event at the Asian Junior Athletics Championships has men and women competing at the same time?",
+      "score": 0.008278487271133228,
+      "prediction": false,
+      "latency_ms": 173.1028749491088
+    },
+    {
+      "question": "Which 1999 French Open - Women's Doubles runner-up was born in Russia on 7 June 1981?",
+      "score": 0.5,
+      "prediction": true,
+      "latency_ms": 143.1203749962151
+    },
+    {
+      "question": "Which 1999 French Open - Women's Doubles runner-up was born in Russia on 7 June 1981?",
+      "score": 0.9939087454193098,
+      "prediction": true,
+      "latency_ms": 91.72158397268504
+    },
+    {
+      "question": "What is the length of the River which has Wild Horse Creek as a tributary ?",
+      "score": 0.9796837178510324,
+      "prediction": true,
+      "latency_ms": 132.96658400213346
+    },
+    {
+      "question": "What is the length of the River which has Wild Horse Creek as a tributary ?",
+      "score": 0.8721374767645972,
+      "prediction": true,
+      "latency_ms": 56.278167001437396
+    },
+    {
+      "question": "Are Manhattan West and Singer Building both projects in New York?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.70641699898988
+    },
+    {
+      "question": "Are Manhattan West and Singer Building both projects in New York?",
+      "score": 0.016836892177430673,
+      "prediction": false,
+      "latency_ms": 92.56858297158033
+    },
+    {
+      "question": "Who is the American internet entrepreneur who founded the company featured on 24 Hours on Craigslist?",
+      "score": 0.90639134863944,
+      "prediction": true,
+      "latency_ms": 180.18108297837898
+    },
+    {
+      "question": "Who is the American internet entrepreneur who founded the company featured on 24 Hours on Craigslist?",
+      "score": 0.9996036167060383,
+      "prediction": true,
+      "latency_ms": 83.88133300468326
+    },
+    {
+      "question": "Between two tennis players Kim Clijsters and Mary Pierce, who is older?",
+      "score": 0.9980978506472901,
+      "prediction": true,
+      "latency_ms": 97.78179199201986
+    },
+    {
+      "question": "Between two tennis players Kim Clijsters and Mary Pierce, who is older?",
+      "score": 0.0910263755633185,
+      "prediction": false,
+      "latency_ms": 117.90870904223993
+    },
+    {
+      "question": "Which American college that has sent students to Centre for Medieval and Renaissance Studies was founded in 1874?",
+      "score": 0.015186304870239975,
+      "prediction": false,
+      "latency_ms": 89.441666030325
+    },
+    {
+      "question": "Which American college that has sent students to Centre for Medieval and Renaissance Studies was founded in 1874?",
+      "score": 0.9945515927363953,
+      "prediction": true,
+      "latency_ms": 74.5689159957692
+    },
+    {
+      "question": "Hot Coffee, Mississippi sometimes shares a zipcode with a nearby city with what population at the 2010 census?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.2542080259881914
+    },
+    {
+      "question": "Hot Coffee, Mississippi sometimes shares a zipcode with a nearby city with what population at the 2010 census?",
+      "score": 0.9996761428020582,
+      "prediction": true,
+      "latency_ms": 167.28137497557327
+    },
+    {
+      "question": "Jo Ann Terry won the 80m hurdles event at what Sao Paulo-based event from 1963?",
+      "score": 0.9909554358512562,
+      "prediction": true,
+      "latency_ms": 57.85266699967906
+    },
+    {
+      "question": "Jo Ann Terry won the 80m hurdles event at what Sao Paulo-based event from 1963?",
+      "score": 0.9921608107630132,
+      "prediction": true,
+      "latency_ms": 92.70133299287409
+    },
+    {
+      "question": "Pearl Lowe and Alison Goldfrapp, is of which nationality?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.837457985151559
+    },
+    {
+      "question": "Pearl Lowe and Alison Goldfrapp, is of which nationality?",
+      "score": 0.005549912421226377,
+      "prediction": false,
+      "latency_ms": 173.18887502187863
+    },
+    {
+      "question": "Which British company whose majority of its business interests are in Asia was related to the London Based Trading house Matheson & Company?",
+      "score": 0.9998503760511708,
+      "prediction": true,
+      "latency_ms": 157.61279198341072
+    },
+    {
+      "question": "Which British company whose majority of its business interests are in Asia was related to the London Based Trading house Matheson & Company?",
+      "score": 0.9946792528381192,
+      "prediction": true,
+      "latency_ms": 107.536707946565
+    },
+    {
+      "question": "What man, also known as mi Sde-Or, created a military self-defense system developed for the Israel Defense Forces?",
+      "score": 0.12348325719242581,
+      "prediction": false,
+      "latency_ms": 164.28416699636728
+    },
+    {
+      "question": "What man, also known as mi Sde-Or, created a military self-defense system developed for the Israel Defense Forces?",
+      "score": 0.05652108831072178,
+      "prediction": false,
+      "latency_ms": 176.1427500168793
+    },
+    {
+      "question": "Do musicians Robert Fleischman and Jimmy Barnes have the same nationality?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 8.198333962354809
+    },
+    {
+      "question": "Do musicians Robert Fleischman and Jimmy Barnes have the same nationality?",
+      "score": 0.0032121976802396146,
+      "prediction": false,
+      "latency_ms": 114.52079197624698
+    },
+    {
+      "question": "What is the name of this American multinational corporation that provides IT services, headquartered in New Jersey, that acquired Mirabeau?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.2998750102706254
+    },
+    {
+      "question": "What is the name of this American multinational corporation that provides IT services, headquartered in New Jersey, that acquired Mirabeau?",
+      "score": 0.9998948228354276,
+      "prediction": true,
+      "latency_ms": 97.82054100651294
+    },
+    {
+      "question": "When was Fannie Lee Chaney's son born?",
+      "score": 0.9345126707048055,
+      "prediction": true,
+      "latency_ms": 96.79712500656024
+    },
+    {
+      "question": "When was Fannie Lee Chaney's son born?",
+      "score": 0.9985628410688318,
+      "prediction": true,
+      "latency_ms": 100.10995803168043
+    },
+    {
+      "question": "The Canada Memorial in Green Park, London, United Kingdom, commemorates members of the Canadian Forces killed during the First and Second World Wars, the memorial was the result of lobbying and fund raising, much of it in Canada, by the former Canadian media tycoon Conrad Moffat Black, his title is what, of this British former newspaper publisher and author?",
+      "score": 0.9630932763835802,
+      "prediction": true,
+      "latency_ms": 107.67108300933614
+    },
+    {
+      "question": "The Canada Memorial in Green Park, London, United Kingdom, commemorates members of the Canadian Forces killed during the First and Second World Wars, the memorial was the result of lobbying and fund raising, much of it in Canada, by the former Canadian media tycoon Conrad Moffat Black, his title is what, of this British former newspaper publisher and author?",
+      "score": 0.5,
+      "prediction": true,
+      "latency_ms": 105.08270800346509
+    },
+    {
+      "question": "WNP-3 and WNP-5 were constructed by the agency formed in which year?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.209542017430067
+    },
+    {
+      "question": "WNP-3 and WNP-5 were constructed by the agency formed in which year?",
+      "score": 0.9970542396796732,
+      "prediction": true,
+      "latency_ms": 241.97654199087992
+    },
+    {
+      "question": "he Central Harbourfront is a waterfront site it is the result of Central and Wan Chai Reclamation, and it sits to the east of the International Finance Centre (IFC), a skyscraper and an integrated commercial development on the waterfront of the Central District, of which territory?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.8187920106574893
+    },
+    {
+      "question": "he Central Harbourfront is a waterfront site it is the result of Central and Wan Chai Reclamation, and it sits to the east of the International Finance Centre (IFC), a skyscraper and an integrated commercial development on the waterfront of the Central District, of which territory?",
+      "score": 0.9999503194525844,
+      "prediction": true,
+      "latency_ms": 167.19820798607543
+    },
+    {
+      "question": "What city does Bundestag and Reichstag building have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.276375005953014
+    },
+    {
+      "question": "What city does Bundestag and Reichstag building have in common?",
+      "score": 0.9997322272619229,
+      "prediction": true,
+      "latency_ms": 94.74441700149328
+    },
+    {
+      "question": "Which musician, Edwyn Collins or Jimmie Ross, played the bass guitar?",
+      "score": 0.998833880521184,
+      "prediction": true,
+      "latency_ms": 89.14262504549697
+    },
+    {
+      "question": "Which musician, Edwyn Collins or Jimmie Ross, played the bass guitar?",
+      "score": 0.013240285833183707,
+      "prediction": false,
+      "latency_ms": 62.746165960561484
+    },
+    {
+      "question": "what is the 3112 acre Pennsylvania state park that took over 11,000 to make due to the wave action of lake Erie called?",
+      "score": 0.9992447282158617,
+      "prediction": true,
+      "latency_ms": 119.33812499046326
+    },
+    {
+      "question": "what is the 3112 acre Pennsylvania state park that took over 11,000 to make due to the wave action of lake Erie called?",
+      "score": 0.019507405450079673,
+      "prediction": false,
+      "latency_ms": 174.28204097086564
+    },
+    {
+      "question": " Teri W. Odom is a member of a scientific journal first published in 2007 by who?",
+      "score": 0.5363841815474096,
+      "prediction": true,
+      "latency_ms": 73.39775003492832
+    },
+    {
+      "question": " Teri W. Odom is a member of a scientific journal first published in 2007 by who?",
+      "score": 0.9795872261237446,
+      "prediction": true,
+      "latency_ms": 159.8127499455586
+    },
+    {
+      "question": "What forensic psychiatrist consulted on numbers cases including one for a contract killer associated with the DeCavalcante crime family?",
+      "score": 0.0049689952581302155,
+      "prediction": false,
+      "latency_ms": 68.99674999294803
+    },
+    {
+      "question": "What forensic psychiatrist consulted on numbers cases including one for a contract killer associated with the DeCavalcante crime family?",
+      "score": 0.9998706491730591,
+      "prediction": true,
+      "latency_ms": 91.49283304577693
+    },
+    {
+      "question": "Which American singer-songwriter known as \"the Caruso of Rock\", recorded on the Monument Records label and had hits such as \"Pretty One,\" and \"Uptown\"?",
+      "score": 0.0069282988743342155,
+      "prediction": false,
+      "latency_ms": 115.9404159989208
+    },
+    {
+      "question": "Which American singer-songwriter known as \"the Caruso of Rock\", recorded on the Monument Records label and had hits such as \"Pretty One,\" and \"Uptown\"?",
+      "score": 0.9989557354854286,
+      "prediction": true,
+      "latency_ms": 73.17591697210446
+    },
+    {
+      "question": "The central character of \"The Adventures of Brer Rabbit\" was later adapted into which 1946 Walt Disney Company motion picture film?",
+      "score": 0.017410863808861254,
+      "prediction": false,
+      "latency_ms": 59.75454195868224
+    },
+    {
+      "question": "The central character of \"The Adventures of Brer Rabbit\" was later adapted into which 1946 Walt Disney Company motion picture film?",
+      "score": 0.9996195104238201,
+      "prediction": true,
+      "latency_ms": 53.45433397451416
+    },
+    {
+      "question": "Abraham Weinberg was a suspect in the killing of which Irish-American hitman?",
+      "score": 0.022181743197383752,
+      "prediction": false,
+      "latency_ms": 79.65866703307256
+    },
+    {
+      "question": "Abraham Weinberg was a suspect in the killing of which Irish-American hitman?",
+      "score": 0.06671062595847432,
+      "prediction": false,
+      "latency_ms": 93.75054202973843
+    },
+    {
+      "question": " Benjamin Halfpenny was a footballer for a club that plays its home matches where?",
+      "score": 0.0774335637097594,
+      "prediction": false,
+      "latency_ms": 193.55558301322162
+    },
+    {
+      "question": " Benjamin Halfpenny was a footballer for a club that plays its home matches where?",
+      "score": 0.9993512793252513,
+      "prediction": true,
+      "latency_ms": 80.74754202971235
+    },
+    {
+      "question": "The 2000\u201301 NBA season was the Jazz's 27th season in the National Basketball Association, and 22nd season in Salt Lake City, Utah, after the retirement of Jeff Hornacek, the Jazz signed free agents John Starks, and who?",
+      "score": 0.9987418343859251,
+      "prediction": true,
+      "latency_ms": 99.69679097412154
+    },
+    {
+      "question": "The 2000\u201301 NBA season was the Jazz's 27th season in the National Basketball Association, and 22nd season in Salt Lake City, Utah, after the retirement of Jeff Hornacek, the Jazz signed free agents John Starks, and who?",
+      "score": 0.9997354720696061,
+      "prediction": true,
+      "latency_ms": 103.97733299760148
+    },
+    {
+      "question": "What was population of the city where the Dutch retired footballer Foeke Booy born?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 12.550874962471426
+    },
+    {
+      "question": "What was population of the city where the Dutch retired footballer Foeke Booy born?",
+      "score": 0.9756655911618416,
+      "prediction": true,
+      "latency_ms": 75.11579198762774
+    },
+    {
+      "question": "In what year was the company that co-developed and distributed the BlackBerry DTEK60 founded?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.584500005468726
+    },
+    {
+      "question": "In what year was the company that co-developed and distributed the BlackBerry DTEK60 founded?",
+      "score": 0.9993543819442688,
+      "prediction": true,
+      "latency_ms": 86.07308304635808
+    },
+    {
+      "question": "Who chaired the ceremony in which the film written by Canet and Philippe Lefebvre won the award for Best Film?",
+      "score": 0.026553669825689297,
+      "prediction": false,
+      "latency_ms": 260.76716696843505
+    },
+    {
+      "question": "Who chaired the ceremony in which the film written by Canet and Philippe Lefebvre won the award for Best Film?",
+      "score": 0.9995220672130872,
+      "prediction": true,
+      "latency_ms": 124.3930000346154
+    },
+    {
+      "question": "Mookychick is an independent daily online magazine and community with more than 100,000 readers a month and over 5,000 forum members, content includes analysis of current sociopolitical events, social and cultural trends, alternative fashion, movies, books, music and arts and crafts from a feminist perspective, in contrast with feminist publications and communities such as which women's lifestyle magazine that is published six times a year, and is published by Debbie Stoller and Laurie Henzel? ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.3681250275112689
+    },
+    {
+      "question": "Mookychick is an independent daily online magazine and community with more than 100,000 readers a month and over 5,000 forum members, content includes analysis of current sociopolitical events, social and cultural trends, alternative fashion, movies, books, music and arts and crafts from a feminist perspective, in contrast with feminist publications and communities such as which women's lifestyle magazine that is published six times a year, and is published by Debbie Stoller and Laurie Henzel? ",
+      "score": 0.015952692243090483,
+      "prediction": false,
+      "latency_ms": 81.47945901146159
+    },
+    {
+      "question": "Der Mond was composed by the man who was best known for what cantata?",
+      "score": 0.7310381630302981,
+      "prediction": true,
+      "latency_ms": 88.94070802489296
+    },
+    {
+      "question": "Der Mond was composed by the man who was best known for what cantata?",
+      "score": 0.0019746831290857747,
+      "prediction": false,
+      "latency_ms": 128.9779170183465
+    },
+    {
+      "question": "Mackenzie Davis appeared in the 2013 Canadian romantic comedy film directed by whom?",
+      "score": 0.002821581980820387,
+      "prediction": false,
+      "latency_ms": 143.06724997004494
+    },
+    {
+      "question": "Mackenzie Davis appeared in the 2013 Canadian romantic comedy film directed by whom?",
+      "score": 0.9992236519690332,
+      "prediction": true,
+      "latency_ms": 78.44058400951326
+    },
+    {
+      "question": "The Developing Communities Project's first executive director was which former President?",
+      "score": 0.04256284911075303,
+      "prediction": false,
+      "latency_ms": 150.07808298105374
+    },
+    {
+      "question": "The Developing Communities Project's first executive director was which former President?",
+      "score": 0.9965323678875496,
+      "prediction": true,
+      "latency_ms": 95.51291598472744
+    },
+    {
+      "question": "Jane's Addiction and Weeping Willows, play which genre of music?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 7.287749962415546
+    },
+    {
+      "question": "Jane's Addiction and Weeping Willows, play which genre of music?",
+      "score": 0.03558966887566284,
+      "prediction": false,
+      "latency_ms": 88.20258296327665
+    },
+    {
+      "question": "Throne of Glass is a young adult high fantasy novel series, by which bestselling American fantasy author?",
+      "score": 0.010565289694840607,
+      "prediction": false,
+      "latency_ms": 70.18633402185515
+    },
+    {
+      "question": "Throne of Glass is a young adult high fantasy novel series, by which bestselling American fantasy author?",
+      "score": 0.9912258009922961,
+      "prediction": true,
+      "latency_ms": 112.53191699506715
+    },
+    {
+      "question": "The largest ship in the \"Imperator\" class ocean liners had how many gross register tons?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.8829589718952775
+    },
+    {
+      "question": "The largest ship in the \"Imperator\" class ocean liners had how many gross register tons?",
+      "score": 0.998703403744027,
+      "prediction": true,
+      "latency_ms": 61.39533402165398
+    },
+    {
+      "question": "Axle Whitehead was a part of an American comedy-drama television series that is a remake of the British series with the same name set in what city?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 4.980417026672512
+    },
+    {
+      "question": "Axle Whitehead was a part of an American comedy-drama television series that is a remake of the British series with the same name set in what city?",
+      "score": 0.999352778685721,
+      "prediction": true,
+      "latency_ms": 110.37045798730105
+    },
+    {
+      "question": "Were both Joseph Roth and Cid Corman authors?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 7.494582969229668
+    },
+    {
+      "question": "Were both Joseph Roth and Cid Corman authors?",
+      "score": 0.00225909099466437,
+      "prediction": false,
+      "latency_ms": 465.9587499918416
+    },
+    {
+      "question": "What was the event that Afghanistan competed in for the first time in 2017 officially known as?",
+      "score": 0.01742345156795555,
+      "prediction": false,
+      "latency_ms": 134.30941698607057
+    },
+    {
+      "question": "What was the event that Afghanistan competed in for the first time in 2017 officially known as?",
+      "score": 0.8354366383808134,
+      "prediction": true,
+      "latency_ms": 91.41608397476375
+    },
+    {
+      "question": "Who was the director of the 2001 American romantic comedy film written by Marc Klein in which Lucy Gordon had a small role?",
+      "score": 0.9924449075285722,
+      "prediction": true,
+      "latency_ms": 117.0567920198664
+    },
+    {
+      "question": "Who was the director of the 2001 American romantic comedy film written by Marc Klein in which Lucy Gordon had a small role?",
+      "score": 0.9999420726714464,
+      "prediction": true,
+      "latency_ms": 178.26783302007243
+    },
+    {
+      "question": "What hamlet and census designated place was the location of the only pay-per-view Bunkhouse Stampede?",
+      "score": 0.007792156470175504,
+      "prediction": false,
+      "latency_ms": 105.64820800209418
+    },
+    {
+      "question": "What hamlet and census designated place was the location of the only pay-per-view Bunkhouse Stampede?",
+      "score": 0.9996314573170293,
+      "prediction": true,
+      "latency_ms": 79.6387079753913
+    },
+    {
+      "question": "La Barredora was a gang that declared war on the leader of the cartel based where?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.356083994731307
+    },
+    {
+      "question": "La Barredora was a gang that declared war on the leader of the cartel based where?",
+      "score": 0.9922489126377103,
+      "prediction": true,
+      "latency_ms": 119.31429203832522
+    },
+    {
+      "question": "What year did the chairman of the Jenkins Commission die?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.8343339799903333
+    },
+    {
+      "question": "What year did the chairman of the Jenkins Commission die?",
+      "score": 0.9979121508989103,
+      "prediction": true,
+      "latency_ms": 185.7754170196131
+    },
+    {
+      "question": "Who was born first, Odysseas Elytis or Cornel West?",
+      "score": 0.04244005582261168,
+      "prediction": false,
+      "latency_ms": 97.7587919915095
+    },
+    {
+      "question": "Who was born first, Odysseas Elytis or Cornel West?",
+      "score": 0.08349344497823707,
+      "prediction": false,
+      "latency_ms": 232.63270902680233
+    },
+    {
+      "question": " \"Let Me Out\" is a song released as the fifth single from what band's fifth studio album \"Humanz\" which was recorded in London, Paris, New York City, Chicago, and Jamaica ?",
+      "score": 0.0030301163235431083,
+      "prediction": false,
+      "latency_ms": 107.52999997930601
+    },
+    {
+      "question": " \"Let Me Out\" is a song released as the fifth single from what band's fifth studio album \"Humanz\" which was recorded in London, Paris, New York City, Chicago, and Jamaica ?",
+      "score": 0.9999628749404674,
+      "prediction": true,
+      "latency_ms": 124.47545799659565
+    },
+    {
+      "question": "Up to how far off can the Deal Timeball be from Coordinated Universal Time?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.770500024780631
+    },
+    {
+      "question": "Up to how far off can the Deal Timeball be from Coordinated Universal Time?",
+      "score": 0.7928458984883959,
+      "prediction": true,
+      "latency_ms": 109.58937497343868
+    },
+    {
+      "question": "Superheaven and Oceansize, are bands of which shared genre?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.9062919891439378
+    },
+    {
+      "question": "Superheaven and Oceansize, are bands of which shared genre?",
+      "score": 0.9916405775729012,
+      "prediction": true,
+      "latency_ms": 189.1540839569643
+    },
+    {
+      "question": "What nationality was a  historical drama film directed by?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.2555419709533453
+    },
+    {
+      "question": "What nationality was a  historical drama film directed by?",
+      "score": 0.9998083140576954,
+      "prediction": true,
+      "latency_ms": 107.93395800283179
+    },
+    {
+      "question": "Who has more scope of profession, Richard Ford or Robert E. Howard?",
+      "score": 0.011894323001705454,
+      "prediction": false,
+      "latency_ms": 87.08612498594448
+    },
+    {
+      "question": "Who has more scope of profession, Richard Ford or Robert E. Howard?",
+      "score": 0.9958071284427658,
+      "prediction": true,
+      "latency_ms": 109.26674999063835
+    },
+    {
+      "question": "The American Aircraft Penetrator was modified from a helicopter produced by what nation's military?",
+      "score": 0.9818559578485976,
+      "prediction": true,
+      "latency_ms": 98.53170899441466
+    },
+    {
+      "question": "The American Aircraft Penetrator was modified from a helicopter produced by what nation's military?",
+      "score": 0.9996313239762205,
+      "prediction": true,
+      "latency_ms": 107.188124966342
+    },
+    {
+      "question": "Canton Road Station was a planned railway station on the Kowloon Southern Link of West Rail Line, that was to run beneath a large shopping mall located where?",
+      "score": 0.20225484444648723,
+      "prediction": false,
+      "latency_ms": 106.69104102998972
+    },
+    {
+      "question": "Canton Road Station was a planned railway station on the Kowloon Southern Link of West Rail Line, that was to run beneath a large shopping mall located where?",
+      "score": 0.9895031015274405,
+      "prediction": true,
+      "latency_ms": 93.20641699014232
+    },
+    {
+      "question": "What South Korean sitcom starred a South Korean singer and actress who began her music career at the age of 15?",
+      "score": 0.028284801246744706,
+      "prediction": false,
+      "latency_ms": 640.8643340109847
+    },
+    {
+      "question": "What South Korean sitcom starred a South Korean singer and actress who began her music career at the age of 15?",
+      "score": 0.11364124955748012,
+      "prediction": false,
+      "latency_ms": 158.55783404549584
+    },
+    {
+      "question": "Ghostbusters is a song written and recorded by Ray Parker Jr. as the theme song for a movie starring a Canadian-American actor who was an original member of the Not Ready for Prime Time Players on what show?",
+      "score": 0.011267974997317909,
+      "prediction": false,
+      "latency_ms": 78.10099999187514
+    },
+    {
+      "question": "Ghostbusters is a song written and recorded by Ray Parker Jr. as the theme song for a movie starring a Canadian-American actor who was an original member of the Not Ready for Prime Time Players on what show?",
+      "score": 0.4843717116834748,
+      "prediction": false,
+      "latency_ms": 447.36266700783744
+    },
+    {
+      "question": "Gelatine was an airship piloted on September 19, 1905 by a pioneer American aviator and what?",
+      "score": 0.8996391088410283,
+      "prediction": true,
+      "latency_ms": 229.1384999989532
+    },
+    {
+      "question": "Gelatine was an airship piloted on September 19, 1905 by a pioneer American aviator and what?",
+      "score": 0.9991728744384428,
+      "prediction": true,
+      "latency_ms": 85.72991704568267
+    },
+    {
+      "question": "Which movie was released first, The Hunchback of Notre Dame or Saludos Amigos?",
+      "score": 0.9999565296396036,
+      "prediction": true,
+      "latency_ms": 89.6581249544397
+    },
+    {
+      "question": "Which movie was released first, The Hunchback of Notre Dame or Saludos Amigos?",
+      "score": 0.9899321250722267,
+      "prediction": true,
+      "latency_ms": 105.12075002770871
+    },
+    {
+      "question": "In what country did the repression of citizens by a dictator during the period of 1973 to 1990 occur?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.7464999477379024
+    },
+    {
+      "question": "In what country did the repression of citizens by a dictator during the period of 1973 to 1990 occur?",
+      "score": 0.9898968460287239,
+      "prediction": true,
+      "latency_ms": 114.4237500266172
+    },
+    {
+      "question": "The mother of the vice chair of Hillary Clinton's 2016 campaign for President is the director of what institue?",
+      "score": 0.017718612813274914,
+      "prediction": false,
+      "latency_ms": 72.12075003189966
+    },
+    {
+      "question": "The mother of the vice chair of Hillary Clinton's 2016 campaign for President is the director of what institue?",
+      "score": 0.9993590966287841,
+      "prediction": true,
+      "latency_ms": 97.63354097958654
+    },
+    {
+      "question": "Michael Ralph DeVito (born June 10, 1984) is a former American football defensive end, he  the National Football League (NFL), DeVito attended high school at Nauset Regional High School an NEASC accredited high school located in North Eastham, in which state?",
+      "score": 0.9994410950557837,
+      "prediction": true,
+      "latency_ms": 82.16516696847975
+    },
+    {
+      "question": "Michael Ralph DeVito (born June 10, 1984) is a former American football defensive end, he  the National Football League (NFL), DeVito attended high school at Nauset Regional High School an NEASC accredited high school located in North Eastham, in which state?",
+      "score": 0.998989250768573,
+      "prediction": true,
+      "latency_ms": 117.68433300312608
+    },
+    {
+      "question": "\"Apocalypic\" is a song sung by Lizzy Hale from which group? ",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.9309169622138143
+    },
+    {
+      "question": "\"Apocalypic\" is a song sung by Lizzy Hale from which group? ",
+      "score": 0.999931741823877,
+      "prediction": true,
+      "latency_ms": 124.09212498459965
+    },
+    {
+      "question": "Ted Sutton plays Sergeant Cunningham in a2002 film that stars Mel Gibson as what character?",
+      "score": 0.01076387493028197,
+      "prediction": false,
+      "latency_ms": 178.53091697907075
+    },
+    {
+      "question": "Ted Sutton plays Sergeant Cunningham in a2002 film that stars Mel Gibson as what character?",
+      "score": 0.9982738279510083,
+      "prediction": true,
+      "latency_ms": 99.88920798059553
+    },
+    {
+      "question": "Who is the former professional tennis player from Italy, Chris Evert or Mara Santangelo?",
+      "score": 0.9896723763672387,
+      "prediction": true,
+      "latency_ms": 70.36137499380857
+    },
+    {
+      "question": "Who is the former professional tennis player from Italy, Chris Evert or Mara Santangelo?",
+      "score": 0.9834929957286352,
+      "prediction": true,
+      "latency_ms": 110.20362505223602
+    },
+    {
+      "question": "Who directed a film that included Sarah Manninen?",
+      "score": 0.9956894929869801,
+      "prediction": true,
+      "latency_ms": 97.19437500461936
+    },
+    {
+      "question": "Who directed a film that included Sarah Manninen?",
+      "score": 0.003048478705557356,
+      "prediction": false,
+      "latency_ms": 105.69900000700727
+    },
+    {
+      "question": "The republic with the smallest population of all the members of the Council of Europe is one of few places in Europe where a species of beetle cannot be found, that wew originally described in 1809 by whom?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.738208044320345
+    },
+    {
+      "question": "The republic with the smallest population of all the members of the Council of Europe is one of few places in Europe where a species of beetle cannot be found, that wew originally described in 1809 by whom?",
+      "score": 0.902077244672123,
+      "prediction": true,
+      "latency_ms": 95.34850000636652
+    },
+    {
+      "question": "At the 2011 census, what was he population of the city where Kerry Saxby-Junna was born?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 13.187792035751045
+    },
+    {
+      "question": "At the 2011 census, what was he population of the city where Kerry Saxby-Junna was born?",
+      "score": 0.9925894421776236,
+      "prediction": true,
+      "latency_ms": 112.98825003905222
+    },
+    {
+      "question": "How many German scientists, engineers, and technicians, were recruited in post-Nazi Germany as a result of the clandestine operation where Arthur Rudolph became one of the main developers of the U.S. ?space program",
+      "score": 0.0045747028528067,
+      "prediction": false,
+      "latency_ms": 201.15916599752381
+    },
+    {
+      "question": "How many German scientists, engineers, and technicians, were recruited in post-Nazi Germany as a result of the clandestine operation where Arthur Rudolph became one of the main developers of the U.S. ?space program",
+      "score": 0.9978246863338951,
+      "prediction": true,
+      "latency_ms": 88.61204201821238
+    },
+    {
+      "question": " Marion is approximately 50 mi north of a city that is the third-most populous what in the U.S.?",
+      "score": 0.0041344374241137904,
+      "prediction": false,
+      "latency_ms": 81.39445900451392
+    },
+    {
+      "question": " Marion is approximately 50 mi north of a city that is the third-most populous what in the U.S.?",
+      "score": 0.998635695087776,
+      "prediction": true,
+      "latency_ms": 123.88770800316706
+    },
+    {
+      "question": "Jayantabhai Ki Luv Story includes a lead role for the film actress and model who is a native of what city?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 5.760957952588797
+    },
+    {
+      "question": "Jayantabhai Ki Luv Story includes a lead role for the film actress and model who is a native of what city?",
+      "score": 0.9993834122788732,
+      "prediction": true,
+      "latency_ms": 122.57087498437613
+    },
+    {
+      "question": "Which is currently more valuable, Temagami-Lorrain Mine or Meadowbank Gold Mine?",
+      "score": 0.999961731423682,
+      "prediction": true,
+      "latency_ms": 148.06804194813594
+    },
+    {
+      "question": "Which is currently more valuable, Temagami-Lorrain Mine or Meadowbank Gold Mine?",
+      "score": 0.999897485543917,
+      "prediction": true,
+      "latency_ms": 209.1596660320647
+    },
+    {
+      "question": "St James Street appears as a segment of Whitecross Street on the 1610 map of the Monmouth by an English historian best known as a mapmaker of what perior?",
+      "score": 0.9936002985625905,
+      "prediction": true,
+      "latency_ms": 98.1050839764066
+    },
+    {
+      "question": "St James Street appears as a segment of Whitecross Street on the 1610 map of the Monmouth by an English historian best known as a mapmaker of what perior?",
+      "score": 0.9986969011584518,
+      "prediction": true,
+      "latency_ms": 92.51083299750462
+    },
+    {
+      "question": "The Pineground Bridge formerly carried Depot Road over the Suncook River into a town with a population of what?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.053917025681585
+    },
+    {
+      "question": "The Pineground Bridge formerly carried Depot Road over the Suncook River into a town with a population of what?",
+      "score": 0.9998317450237718,
+      "prediction": true,
+      "latency_ms": 130.9169580345042
+    },
+    {
+      "question": "Which city is the American rock band, that released their album on March 19, 2012, from?",
+      "score": 0.42470738699518673,
+      "prediction": false,
+      "latency_ms": 59.15008299052715
+    },
+    {
+      "question": "Which city is the American rock band, that released their album on March 19, 2012, from?",
+      "score": 0.9708728037860608,
+      "prediction": true,
+      "latency_ms": 94.41075002541766
+    },
+    {
+      "question": "The Rossendale Free Press serves the town how far north of Manchester?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.665625012014061
+    },
+    {
+      "question": "The Rossendale Free Press serves the town how far north of Manchester?",
+      "score": 0.9987057963549608,
+      "prediction": true,
+      "latency_ms": 130.6776250130497
+    },
+    {
+      "question": "Which american president's father was a farmer and he was a former US representative from NY?",
+      "score": 0.693343019866362,
+      "prediction": true,
+      "latency_ms": 194.01124998694286
+    },
+    {
+      "question": "Which american president's father was a farmer and he was a former US representative from NY?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.277666993904859
+    },
+    {
+      "question": "The End of the Innocence was a single by which former member of the Eagles?",
+      "score": 0.8807262214841065,
+      "prediction": true,
+      "latency_ms": 137.12508301250637
+    },
+    {
+      "question": "The End of the Innocence was a single by which former member of the Eagles?",
+      "score": 0.9999254592030986,
+      "prediction": true,
+      "latency_ms": 65.30012504663318
+    },
+    {
+      "question": "What suburban county on Long Island and the easternmost county in the U.S. state of New York is the location of a village called Lindenhurst?",
+      "score": 0.9995318585390103,
+      "prediction": true,
+      "latency_ms": 91.74699999857694
+    },
+    {
+      "question": "What suburban county on Long Island and the easternmost county in the U.S. state of New York is the location of a village called Lindenhurst?",
+      "score": 0.5029444608971925,
+      "prediction": true,
+      "latency_ms": 326.6442090389319
+    },
+    {
+      "question": "Which Lightweight division mixed martial artist founded the American Combat Association?",
+      "score": 0.9351060308320643,
+      "prediction": true,
+      "latency_ms": 139.6044580033049
+    },
+    {
+      "question": "Which Lightweight division mixed martial artist founded the American Combat Association?",
+      "score": 0.0024152331732686383,
+      "prediction": false,
+      "latency_ms": 277.89708302589133
+    },
+    {
+      "question": "Which video game producers worked with an English film director to produce a film about sports?",
+      "score": 0.07751462921681018,
+      "prediction": false,
+      "latency_ms": 138.94937501754612
+    },
+    {
+      "question": "Which video game producers worked with an English film director to produce a film about sports?",
+      "score": 0.9937246794643095,
+      "prediction": true,
+      "latency_ms": 82.7356250374578
+    },
+    {
+      "question": "Who won a Nobel Prize in 1943 and is associated with Max Volmer?",
+      "score": 0.9067630065387441,
+      "prediction": true,
+      "latency_ms": 99.95612502098083
+    },
+    {
+      "question": "Who won a Nobel Prize in 1943 and is associated with Max Volmer?",
+      "score": 0.9972077429290657,
+      "prediction": true,
+      "latency_ms": 86.39191702241078
+    },
+    {
+      "question": "Who was born first Neil LaBute or H. Bruce Humberstone?",
+      "score": 0.01231267439706163,
+      "prediction": false,
+      "latency_ms": 184.80116699356586
+    },
+    {
+      "question": "Who was born first Neil LaBute or H. Bruce Humberstone?",
+      "score": 0.5,
+      "prediction": true,
+      "latency_ms": 112.90499998722225
+    },
+    {
+      "question": "Were Eatza Pizza and Your Pie founded in the same state?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 6.166708015371114
+    },
+    {
+      "question": "Were Eatza Pizza and Your Pie founded in the same state?",
+      "score": 0.00268029862787289,
+      "prediction": false,
+      "latency_ms": 88.0475000012666
+    },
+    {
+      "question": "Who is younger Mary Ramsey or Lee Ranaldo ?",
+      "score": 0.9812985358494852,
+      "prediction": true,
+      "latency_ms": 103.17125002620742
+    },
+    {
+      "question": "Who is younger Mary Ramsey or Lee Ranaldo ?",
+      "score": 0.01255464841472731,
+      "prediction": false,
+      "latency_ms": 218.90904096653685
+    },
+    {
+      "question": "What type of species is a Boreo-arctic Montane species found in the most northerly of the abstract five major circles of latitude as shown on maps of the Earth?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.4975830456241965
+    },
+    {
+      "question": "What type of species is a Boreo-arctic Montane species found in the most northerly of the abstract five major circles of latitude as shown on maps of the Earth?",
+      "score": 0.9271501178035356,
+      "prediction": true,
+      "latency_ms": 143.9750000135973
+    },
+    {
+      "question": "What year was the thesis supervisor of Jocelyn Bell Burnell awarded the Eddington Medal?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 5.980542046017945
+    },
+    {
+      "question": "What year was the thesis supervisor of Jocelyn Bell Burnell awarded the Eddington Medal?",
+      "score": 0.9371971382604775,
+      "prediction": true,
+      "latency_ms": 131.64612505352125
+    },
+    {
+      "question": "What musical genre was the song that, according to Annet Artani, inspired the Britney Spears song \"Everytime\"?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 12.069958029314876
+    },
+    {
+      "question": "What musical genre was the song that, according to Annet Artani, inspired the Britney Spears song \"Everytime\"?",
+      "score": 0.992049512174346,
+      "prediction": true,
+      "latency_ms": 118.74045804142952
+    },
+    {
+      "question": "British band The Wanted's third album includes a song with a title about which Barbadian superstar?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 5.152083991561085
+    },
+    {
+      "question": "British band The Wanted's third album includes a song with a title about which Barbadian superstar?",
+      "score": 0.9986966296368707,
+      "prediction": true,
+      "latency_ms": 156.38141700765118
+    },
+    {
+      "question": "Jonas Hummels is the younger brother of a German professional footballer who plays for the German national team, and who else?",
+      "score": 0.9970611370646622,
+      "prediction": true,
+      "latency_ms": 92.99958299379796
+    },
+    {
+      "question": "Jonas Hummels is the younger brother of a German professional footballer who plays for the German national team, and who else?",
+      "score": 0.9962780644029701,
+      "prediction": true,
+      "latency_ms": 104.52533303759992
+    },
+    {
+      "question": "How many test centuries did the grandfather of Fabian Cowdrey make for England ?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.7495420072227716
+    },
+    {
+      "question": "How many test centuries did the grandfather of Fabian Cowdrey make for England ?",
+      "score": 0.9312210534517111,
+      "prediction": true,
+      "latency_ms": 132.758375024423
+    },
+    {
+      "question": "Anti-Semetism in the 21st Century: The Resurgence was hosted by a journalist and writer who is an anchor of what show?",
+      "score": 0.10301604907834194,
+      "prediction": false,
+      "latency_ms": 109.393207996618
+    },
+    {
+      "question": "Anti-Semetism in the 21st Century: The Resurgence was hosted by a journalist and writer who is an anchor of what show?",
+      "score": 0.6417258363176825,
+      "prediction": true,
+      "latency_ms": 163.21387502830476
+    },
+    {
+      "question": "Which of the following is best known for publicly championing a terminal patient's right to die via physician-assisted suicide: Christy Canyon or Jack Kevorkian?",
+      "score": 0.8760344039000602,
+      "prediction": true,
+      "latency_ms": 82.39679195685312
+    },
+    {
+      "question": "Which of the following is best known for publicly championing a terminal patient's right to die via physician-assisted suicide: Christy Canyon or Jack Kevorkian?",
+      "score": 0.9912909949723426,
+      "prediction": true,
+      "latency_ms": 78.52149999234825
+    },
+    {
+      "question": "The plaintiff in the civil suit Paul v. Clinton was born in which year ?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.8232079930603504
+    },
+    {
+      "question": "The plaintiff in the civil suit Paul v. Clinton was born in which year ?",
+      "score": 0.998511309395872,
+      "prediction": true,
+      "latency_ms": 107.73816698929295
+    },
+    {
+      "question": "How long was the rule of the dynasty that was active when the Rosetta Stone was inscribed?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 9.187999996356666
+    },
+    {
+      "question": "How long was the rule of the dynasty that was active when the Rosetta Stone was inscribed?",
+      "score": 0.9996906677258716,
+      "prediction": true,
+      "latency_ms": 199.87025001319125
+    },
+    {
+      "question": "Sojourners and KO Magazine share what publication format?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.998292038682848
+    },
+    {
+      "question": "Sojourners and KO Magazine share what publication format?",
+      "score": 0.9570639392440261,
+      "prediction": true,
+      "latency_ms": 95.40529199875891
+    },
+    {
+      "question": "At which stadium does the team, for which Baltimore's Marching Ravens is the official marching band, play its home games?",
+      "score": 0.009804552969936431,
+      "prediction": false,
+      "latency_ms": 94.85620801569894
+    },
+    {
+      "question": "At which stadium does the team, for which Baltimore's Marching Ravens is the official marching band, play its home games?",
+      "score": 0.9993206950018273,
+      "prediction": true,
+      "latency_ms": 172.5853750249371
+    },
+    {
+      "question": "The John Messer Barn is a historic structure within the Great Smoky Mountains National Park in Sevier County, Tennessee, this barn is a different Messer Barn in which valley, in the Great Smoky Mountains of North Carolina, located in the Southeastern United States?",
+      "score": 0.9986274890032086,
+      "prediction": true,
+      "latency_ms": 106.43395798979327
+    },
+    {
+      "question": "The John Messer Barn is a historic structure within the Great Smoky Mountains National Park in Sevier County, Tennessee, this barn is a different Messer Barn in which valley, in the Great Smoky Mountains of North Carolina, located in the Southeastern United States?",
+      "score": 0.008014575611847374,
+      "prediction": false,
+      "latency_ms": 85.01924999291077
+    },
+    {
+      "question": "The NBC-affiliated television station, owned by an American telecommunications company whose founder is Julian Sinclair Smith, called WJAR is more commonly known as what?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.8307080026715994
+    },
+    {
+      "question": "The NBC-affiliated television station, owned by an American telecommunications company whose founder is Julian Sinclair Smith, called WJAR is more commonly known as what?",
+      "score": 0.7561630114434887,
+      "prediction": true,
+      "latency_ms": 75.16137498896569
+    },
+    {
+      "question": "What nationality is the actress who played the role of Sam Sloan's wife Trudy in the sitcom The Single Guy ?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 1.5841249842196703
+    },
+    {
+      "question": "What nationality is the actress who played the role of Sam Sloan's wife Trudy in the sitcom The Single Guy ?",
+      "score": 0.9966112541441838,
+      "prediction": true,
+      "latency_ms": 79.69491701805964
+    },
+    {
+      "question": "What shopping mall is the largest in south Texas, Malle del Norte or La Plaza Mall?",
+      "score": 0.038553104875825084,
+      "prediction": false,
+      "latency_ms": 114.16820902377367
+    },
+    {
+      "question": "What shopping mall is the largest in south Texas, Malle del Norte or La Plaza Mall?",
+      "score": 0.999361553224223,
+      "prediction": true,
+      "latency_ms": 118.87679202482104
+    },
+    {
+      "question": "Who is the mother of the prince that had allegations made against him related to the lawsuit \"Two Jane Does v US\"?",
+      "score": 0.9981565111057613,
+      "prediction": true,
+      "latency_ms": 150.10304102906957
+    },
+    {
+      "question": "Who is the mother of the prince that had allegations made against him related to the lawsuit \"Two Jane Does v US\"?",
+      "score": 0.30734916198670037,
+      "prediction": false,
+      "latency_ms": 226.06641601305455
+    },
+    {
+      "question": "In between Memphis International Airport and Southwest Georgia Regional Airport which one is in Tennessee?",
+      "score": 0.9932413508163087,
+      "prediction": true,
+      "latency_ms": 107.79462498612702
+    },
+    {
+      "question": "In between Memphis International Airport and Southwest Georgia Regional Airport which one is in Tennessee?",
+      "score": 0.957893722394601,
+      "prediction": true,
+      "latency_ms": 111.3832090049982
+    },
+    {
+      "question": "Which airport is closer to Cleaveland, Ohio, Luis Mu\u00f1oz Mar\u00edn International Airport or Rickenbacker International Airport?",
+      "score": 0.9908399023739264,
+      "prediction": true,
+      "latency_ms": 351.2932090088725
+    },
+    {
+      "question": "Which airport is closer to Cleaveland, Ohio, Luis Mu\u00f1oz Mar\u00edn International Airport or Rickenbacker International Airport?",
+      "score": 0.9978554907488426,
+      "prediction": true,
+      "latency_ms": 217.63783297501504
+    },
+    {
+      "question": "What profession do K\u014db\u014d Abe and Agatha Christie share?",
+      "score": 0.9999369505311646,
+      "prediction": true,
+      "latency_ms": 137.8964590257965
+    },
+    {
+      "question": "What profession do K\u014db\u014d Abe and Agatha Christie share?",
+      "score": 0.06231571597719898,
+      "prediction": false,
+      "latency_ms": 235.05158396437764
+    },
+    {
+      "question": "What all female high school is located in a town in Sunyani West District  in the Brong-Ahafo Region of Ghana?",
+      "score": 0.007072397578540945,
+      "prediction": false,
+      "latency_ms": 114.13108301348984
+    },
+    {
+      "question": "What all female high school is located in a town in Sunyani West District  in the Brong-Ahafo Region of Ghana?",
+      "score": 0.997874168124852,
+      "prediction": true,
+      "latency_ms": 106.5264159697108
+    },
+    {
+      "question": "Jinchang and Liling, are located in which country?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.4897910188883543
+    },
+    {
+      "question": "Jinchang and Liling, are located in which country?",
+      "score": 0.2108563570276577,
+      "prediction": false,
+      "latency_ms": 97.24187501706183
+    },
+    {
+      "question": "What type of vegetation does Fothergilla and Clerodendrum have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 16.176500008441508
+    },
+    {
+      "question": "What type of vegetation does Fothergilla and Clerodendrum have in common?",
+      "score": 0.9865578171937612,
+      "prediction": true,
+      "latency_ms": 122.112917015329
+    },
+    {
+      "question": "What are the plants in the same genus as the Dendranthema boreale sometimes called?",
+      "score": 0.0257088372147678,
+      "prediction": false,
+      "latency_ms": 95.77179100597277
+    },
+    {
+      "question": "What are the plants in the same genus as the Dendranthema boreale sometimes called?",
+      "score": 0.9374225908079926,
+      "prediction": true,
+      "latency_ms": 100.00029200455174
+    },
+    {
+      "question": "Who is the composer Howard Ashman worked with on his musical released in 1982? ",
+      "score": 0.9841698066481048,
+      "prediction": true,
+      "latency_ms": 227.6174160069786
+    },
+    {
+      "question": "Who is the composer Howard Ashman worked with on his musical released in 1982? ",
+      "score": 0.9992601461315896,
+      "prediction": true,
+      "latency_ms": 133.20516602834687
+    },
+    {
+      "question": "What actor portrayed a character in a television series about a fictional race of superhumans appearing in American comic books published by Marvel Comics?",
+      "score": 0.00504576844076754,
+      "prediction": false,
+      "latency_ms": 79.88774997647852
+    },
+    {
+      "question": "What actor portrayed a character in a television series about a fictional race of superhumans appearing in American comic books published by Marvel Comics?",
+      "score": 0.9999072404802974,
+      "prediction": true,
+      "latency_ms": 82.00724999187514
+    },
+    {
+      "question": "What comic book published the female superhero created by J. H. Williams III?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.1197919850237668
+    },
+    {
+      "question": "What comic book published the female superhero created by J. H. Williams III?",
+      "score": 0.5071955370623237,
+      "prediction": true,
+      "latency_ms": 133.0005829804577
+    },
+    {
+      "question": "What country of origin does Nick Kroll and Get Him to the Greek have in common?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.3540830006822944
+    },
+    {
+      "question": "What country of origin does Nick Kroll and Get Him to the Greek have in common?",
+      "score": 0.9740040614898838,
+      "prediction": true,
+      "latency_ms": 89.3410419812426
+    },
+    {
+      "question": "The character portrayed in \"Giuliani Time\" is a real-life informal adviser to the White House in which area?",
+      "score": 0.9814493774630338,
+      "prediction": true,
+      "latency_ms": 256.5107080154121
+    },
+    {
+      "question": "The character portrayed in \"Giuliani Time\" is a real-life informal adviser to the White House in which area?",
+      "score": 0.9818548868138919,
+      "prediction": true,
+      "latency_ms": 147.2942079999484
+    },
+    {
+      "question": "Thomas Harris is a novelist who is famous for creating which character?",
+      "score": 0.006412167580348571,
+      "prediction": false,
+      "latency_ms": 105.46808299841359
+    },
+    {
+      "question": "Thomas Harris is a novelist who is famous for creating which character?",
+      "score": 0.9980535174641729,
+      "prediction": true,
+      "latency_ms": 102.02816699165851
+    },
+    {
+      "question": "Who founded the college attended by Thomas Balston, member of the Whatman paper-making family?",
+      "score": 0.006244503722122929,
+      "prediction": false,
+      "latency_ms": 88.6395419947803
+    },
+    {
+      "question": "Who founded the college attended by Thomas Balston, member of the Whatman paper-making family?",
+      "score": 0.9867163545343695,
+      "prediction": true,
+      "latency_ms": 119.87337499158457
+    },
+    {
+      "question": "Joh Bruce Yeh founded a chamber ensemble who won a Grammy in 1985 for their recording of this work based on what Rusian folk tale?",
+      "score": 0.16008505770412917,
+      "prediction": false,
+      "latency_ms": 99.92391598643735
+    },
+    {
+      "question": "Joh Bruce Yeh founded a chamber ensemble who won a Grammy in 1985 for their recording of this work based on what Rusian folk tale?",
+      "score": 0.9951285672452052,
+      "prediction": true,
+      "latency_ms": 203.845290991012
+    },
+    {
+      "question": "Which director is American, Mark L. Lester or Ken Loach?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 10.772500012535602
+    },
+    {
+      "question": "Which director is American, Mark L. Lester or Ken Loach?",
+      "score": 0.008624734417451596,
+      "prediction": false,
+      "latency_ms": 125.90108398580924
+    },
+    {
+      "question": "Kerrygold Irish Cream Liqueur is owned by a company that mainly sells what type or product?",
+      "score": 0.022430792727459514,
+      "prediction": false,
+      "latency_ms": 99.38795800553635
+    },
+    {
+      "question": "Kerrygold Irish Cream Liqueur is owned by a company that mainly sells what type or product?",
+      "score": 0.8180298684480085,
+      "prediction": true,
+      "latency_ms": 110.87454197695479
+    },
+    {
+      "question": "The USS LST-510 is a ferry between New London and Orient but what is the population of Orient?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.356416021939367
+    },
+    {
+      "question": "The USS LST-510 is a ferry between New London and Orient but what is the population of Orient?",
+      "score": 0.9953827556459286,
+      "prediction": true,
+      "latency_ms": 81.03533298708498
+    },
+    {
+      "question": "Which band has more members, Muse or The Raconteurs?",
+      "score": 0.04945148384035025,
+      "prediction": false,
+      "latency_ms": 170.7600829540752
+    },
+    {
+      "question": "Which band has more members, Muse or The Raconteurs?",
+      "score": 0.9988376650746874,
+      "prediction": true,
+      "latency_ms": 268.56699999189004
+    },
+    {
+      "question": "Titus is the soundtrack to the film that starred which actors?",
+      "score": 0.0035503711926782033,
+      "prediction": false,
+      "latency_ms": 76.57695899251848
+    },
+    {
+      "question": "Titus is the soundtrack to the film that starred which actors?",
+      "score": 0.9261054763579292,
+      "prediction": true,
+      "latency_ms": 44.19204202713445
+    },
+    {
+      "question": "The producer of The Wreckage of Stars also produced albums for Texas in July, Everclear, and what other American metalcore band from Lancaster, Pennsylvania?",
+      "score": 0.8616061966674683,
+      "prediction": true,
+      "latency_ms": 94.07629101769999
+    },
+    {
+      "question": "The producer of The Wreckage of Stars also produced albums for Texas in July, Everclear, and what other American metalcore band from Lancaster, Pennsylvania?",
+      "score": 0.9986919027568095,
+      "prediction": true,
+      "latency_ms": 110.60662503587082
+    },
+    {
+      "question": "What magazine an American monthly food and lifestyle magazine founded in 1987, Cooking Light or Hot Rod?",
+      "score": 0.9995669688117444,
+      "prediction": true,
+      "latency_ms": 107.52387496177107
+    },
+    {
+      "question": "What magazine an American monthly food and lifestyle magazine founded in 1987, Cooking Light or Hot Rod?",
+      "score": 0.9910238511925458,
+      "prediction": true,
+      "latency_ms": 87.73395896423608
+    },
+    {
+      "question": "Which tennis player has received a higher World singles ranking, Xavier Malisse or Virginia Wade?",
+      "score": 0.01312903498379725,
+      "prediction": false,
+      "latency_ms": 97.47766697546467
+    },
+    {
+      "question": "Which tennis player has received a higher World singles ranking, Xavier Malisse or Virginia Wade?",
+      "score": 0.9907145120265909,
+      "prediction": true,
+      "latency_ms": 131.80954102426767
+    },
+    {
+      "question": "Atoms for Peace are an English-American experimental rock supergroup comprising Radiohead singer Thom Yorke, is an English musician and composer, best known as the singer and principal songwriter of which band?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 2.834332990460098
+    },
+    {
+      "question": "Atoms for Peace are an English-American experimental rock supergroup comprising Radiohead singer Thom Yorke, is an English musician and composer, best known as the singer and principal songwriter of which band?",
+      "score": 0.9994600467938358,
+      "prediction": true,
+      "latency_ms": 139.6866660215892
+    },
+    {
+      "question": "What was the year founded of the football team that Aaron Galindo is currently a part of?",
+      "score": 0.0,
+      "prediction": false,
+      "latency_ms": 3.323459008242935
+    },
+    {
+      "question": "What was the year founded of the football team that Aaron Galindo is currently a part of?",
+      "score": 0.9774012550352194,
+      "prediction": true,
+      "latency_ms": 117.83816700335592
+    }
+  ]
+}
