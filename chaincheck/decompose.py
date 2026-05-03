@@ -50,12 +50,13 @@ async def decompose(
 
     Args:
         response: The LLM output to decompose.
-        model: Claude model ID to use for decomposition.
+        model: Model identifier passed to llm.complete() — supports Anthropic,
+               OpenAI (gpt-*), and Ollama (ollama:<name>).
 
     Returns:
         Deduplicated list of atomic claim strings, each at least 10 chars.
     """
-    import anthropic
+    from chaincheck.llm import LLMError, complete
 
     cache = _get_cache()
     key = _response_hash(response)
@@ -63,16 +64,11 @@ async def decompose(
     if cached is not None:
         return cached  # type: ignore[return-value]
 
-    client = anthropic.AsyncAnthropic()
     prompt = _build_decompose_prompt(response)
 
     try:
-        msg = await client.messages.create(
-            model=model,
-            max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        text = msg.content[0].text.strip()
+        text = await complete(prompt, model, max_tokens=1024)
+        text = text.strip()
         # Strip markdown code fences if the model wraps output
         if text.startswith("```"):
             text = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`").strip()
@@ -80,7 +76,7 @@ async def decompose(
         if not isinstance(raw, list):
             raise ValueError("Expected JSON array")
         claims = _postprocess_claims([str(c) for c in raw])
-    except (json.JSONDecodeError, ValueError, IndexError, AttributeError):
+    except (json.JSONDecodeError, ValueError, IndexError, AttributeError, LLMError):
         claims = _sentence_split_fallback(response)
 
     cache.set(key, claims, expire=_CACHE_TTL)

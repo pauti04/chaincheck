@@ -14,16 +14,16 @@ from chaincheck.eval.report import print_report, save_report
 
 
 def _metrics(**kwargs) -> EvalMetrics:
-    defaults = dict(
-        precision=0.8,
-        recall=0.75,
-        f1=0.77,
-        accuracy=0.82,
-        avg_latency_ms=200.0,
-        p50_latency_ms=190.0,
-        p95_latency_ms=450.0,
-        n_samples=100,
-    )
+    defaults = {
+        "precision": 0.8,
+        "recall": 0.75,
+        "f1": 0.77,
+        "accuracy": 0.82,
+        "avg_latency_ms": 200.0,
+        "p50_latency_ms": 190.0,
+        "p95_latency_ms": 450.0,
+        "n_samples": 100,
+    }
     defaults.update(kwargs)
     return EvalMetrics(**defaults)
 

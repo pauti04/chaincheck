@@ -97,7 +97,7 @@ async def check_nli(
     raw_preds = _batch_predict(pairs)
 
     claim_results = []
-    for claim, pred in zip(claims, raw_preds):
+    for claim, pred in zip(claims, raw_preds, strict=True):
         label_idx = int(np.argmax(pred["scores"]))
         label = (_label_map or {})[label_idx]
         confidence = float(pred["scores"][label_idx])

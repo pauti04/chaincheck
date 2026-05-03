@@ -70,7 +70,7 @@ async def detect(
     consistency_result = None
     latency_ms: dict[str, float] = {}
 
-    for method_name, result in zip(tasks.keys(), raw_results):
+    for method_name, result in zip(tasks.keys(), raw_results, strict=True):
         if isinstance(result, Exception):
             method_results[method_name] = MethodResult(
                 method=method_name,

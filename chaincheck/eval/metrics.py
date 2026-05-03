@@ -40,10 +40,12 @@ def compute_metrics(
         EvalMetrics dataclass with all computed statistics.
     """
     n = len(y_true)
-    tp = sum(1 for t, p in zip(y_true, y_pred) if t == positive_label and p == positive_label)
-    fp = sum(1 for t, p in zip(y_true, y_pred) if t != positive_label and p == positive_label)
-    fn = sum(1 for t, p in zip(y_true, y_pred) if t == positive_label and p != positive_label)
-    tn = sum(1 for t, p in zip(y_true, y_pred) if t != positive_label and p != positive_label)
+    pairs = list(zip(y_true, y_pred, strict=True))
+    pos = positive_label
+    tp = sum(1 for t, p in pairs if t == pos and p == pos)
+    fp = sum(1 for t, p in pairs if t != pos and p == pos)
+    fn = sum(1 for t, p in pairs if t == pos and p != pos)
+    tn = sum(1 for t, p in pairs if t != pos and p != pos)
 
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
