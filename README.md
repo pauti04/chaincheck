@@ -63,9 +63,10 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 
 | Method      | Precision | Recall | F1    | Avg Latency | P95 Latency |
 |-------------|-----------|--------|-------|-------------|-------------|
-| NLI         | 0.731     | 0.816  | 0.771 | 114 ms      | 251 ms      |
-| Judge       | 0.615     | 0.996  | 0.760 | 1139 ms     | 2381 ms     |
-| Consistency | 0.172     | 0.184  | 0.178 | 55 ms       | 129 ms      |
+| NLI         | 0.810     | 0.444  | 0.574 | 51 ms       | 93 ms       |
+| Judge       | 0.965     | 0.656  | 0.781 | 1755 ms     | 2098 ms     |
+| Consistency | 0.182     | 0.156  | 0.168 | 1951 ms     | 4150 ms     |
+| Logprobs    | 0.263     | 0.084  | 0.127 | 1401 ms     | 2859 ms     |
 
 > Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json).
 > Run `bash scripts/run_eval.sh` to reproduce. Results are committed weekly by the [eval workflow](.github/workflows/eval.yml).
@@ -208,9 +209,9 @@ All settings via environment variables:
 
 ## What we learned
 
-**NLI and judge complement each other.** NLI has higher precision (0.731 vs 0.615) — it is conservative and rarely cries wolf. Judge has near-perfect recall (0.996) — it almost never misses a hallucination. For safety-critical RAG pipelines, combine both: NLI filters the obvious cases fast (114 ms), and judge catches the subtle ones. Ensemble F1 with both methods active is higher than either alone.
+**NLI and judge complement each other.** NLI has high precision (0.810) at 51 ms — fast and conservative, rarely cries wolf. Judge has even higher precision (0.965) — when it flags something as hallucinated, it's right 96.5% of the time. NLI is 34× faster, making it ideal for high-throughput filtering before running the more accurate judge on borderline cases.
 
-**Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.178 on HaluEval — barely above random. This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (questions the model doesn't know), not for catching facts that contradict a provided context.
+**Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.168 on HaluEval — below random (accuracy 0.228). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
 
 **Latency is the real cost, not the accuracy.** NLI is 10× faster than judge (114 ms vs 1.1 s) for similar F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~8× with negligible accuracy loss.
 
