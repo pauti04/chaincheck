@@ -22,7 +22,7 @@ from chaincheck.models import ConsistencyResult
 if TYPE_CHECKING:
     import diskcache
 
-_CONSISTENCY_MODEL = os.getenv("CONSISTENCY_MODEL", "claude-haiku-4-5-20251001")
+_CONSISTENCY_MODEL = os.getenv("CONSISTENCY_MODEL", "gpt-4o-mini")
 _CONSISTENCY_SAMPLES = int(os.getenv("CONSISTENCY_SAMPLES", "5"))
 _CONSISTENCY_THRESHOLD = float(os.getenv("CONSISTENCY_THRESHOLD", "0.82"))
 _EMBED_MODEL_NAME = "all-MiniLM-L6-v2"

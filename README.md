@@ -76,7 +76,7 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 
 ```bash
 pip install chaincheck
-export ANTHROPIC_API_KEY=sk-...
+export OPENAI_API_KEY=sk-...
 ```
 
 **Single check (CLI):**
@@ -184,12 +184,12 @@ All settings via environment variables:
 
 | Variable                | Default                    | Description                              |
 |-------------------------|----------------------------|------------------------------------------|
-| `ANTHROPIC_API_KEY`     | —                          | Required for decompose, judge, consistency |
-| `OPENAI_API_KEY`        | —                          | Required for logprobs; optional for judge/consistency with gpt-* models |
-| `OLLAMA_BASE_URL`       | `http://localhost:11434`   | Optional: route judge/consistency to a local Ollama model (prefix model ID with `ollama:`) |
-| `JUDGE_MODEL`           | `claude-haiku-4-5-20251001`| Judge LLM model ID                       |
-| `CONSISTENCY_MODEL`     | `claude-haiku-4-5-20251001`| Model for self-consistency sampling      |
-| `DECOMPOSE_MODEL`       | `claude-haiku-4-5-20251001`| Model for claim decomposition            |
+| `OPENAI_API_KEY`        | —                          | Required — used for all LLM calls by default |
+| `ANTHROPIC_API_KEY`     | —                          | Optional — set to use Claude models instead |
+| `OLLAMA_BASE_URL`       | `http://localhost:11434`   | Optional — prefix model IDs with `ollama:` to use local models |
+| `JUDGE_MODEL`           | `gpt-4o-mini`              | Judge LLM model ID                       |
+| `CONSISTENCY_MODEL`     | `gpt-4o-mini`              | Model for self-consistency sampling      |
+| `DECOMPOSE_MODEL`       | `gpt-4o-mini`              | Model for claim decomposition            |
 | `CONSISTENCY_SAMPLES`   | `5`                        | LLM samples per consistency check        |
 | `NLI_BATCH_SIZE`        | `16`                       | Claims per NLI inference batch           |
 | `CACHE_PATH`            | `.chaincheck_cache`        | diskcache directory                      |

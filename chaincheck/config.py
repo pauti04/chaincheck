@@ -16,9 +16,9 @@ import os
 CACHE_PATH: str = os.getenv("CACHE_PATH", ".chaincheck_cache")
 
 # ── Models ────────────────────────────────────────────────────────────────────
-DECOMPOSE_MODEL: str = os.getenv("DECOMPOSE_MODEL", "claude-haiku-4-5-20251001")
-JUDGE_MODEL: str = os.getenv("JUDGE_MODEL", "claude-haiku-4-5-20251001")
-CONSISTENCY_MODEL: str = os.getenv("CONSISTENCY_MODEL", "claude-haiku-4-5-20251001")
+DECOMPOSE_MODEL: str = os.getenv("DECOMPOSE_MODEL", "gpt-4o-mini")
+JUDGE_MODEL: str = os.getenv("JUDGE_MODEL", "gpt-4o-mini")
+CONSISTENCY_MODEL: str = os.getenv("CONSISTENCY_MODEL", "gpt-4o-mini")
 LOGPROB_MODEL: str = os.getenv("LOGPROB_MODEL", "gpt-4o-mini")
 
 # ── NLI ───────────────────────────────────────────────────────────────────────
