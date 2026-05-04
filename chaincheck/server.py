@@ -15,8 +15,12 @@ import time
 import uuid
 from contextlib import asynccontextmanager
 
+from pathlib import Path
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -38,6 +42,7 @@ class CheckRequest(BaseModel):
     context: str = ""
     prompt: str = ""
     methods: list[str] = Field(default_factory=lambda: ["nli", "consistency", "judge"])
+    cascade: bool = False
 
 
 class BatchRequest(BaseModel):
@@ -104,6 +109,7 @@ async def check_endpoint(request: Request, body: CheckRequest) -> DetectionResul
         context=body.context,
         prompt=body.prompt,
         methods=body.methods or None,  # type: ignore[arg-type]
+        cascade=body.cascade,
     )
 
 
@@ -130,3 +136,12 @@ async def batch_endpoint(request: Request, body: BatchRequest) -> list[Detection
 async def health_endpoint() -> HealthResponse:
     """Return service liveness status and loaded model info."""
     return HealthResponse(status="ok", version=__version__, models_loaded=_models_loaded)
+
+
+_STATIC_DIR = Path(__file__).parent / "static"
+
+
+@app.get("/", include_in_schema=False)
+async def ui() -> FileResponse:
+    """Serve the ChainCheck web UI."""
+    return FileResponse(_STATIC_DIR / "index.html")
