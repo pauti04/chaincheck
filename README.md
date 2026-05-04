@@ -122,11 +122,40 @@ for claim_result in result.method_results["nli"].claims:
 chaincheck batch --input inputs.jsonl --output results.jsonl --methods nli,judge
 ```
 
+Each line of `inputs.jsonl` is a JSON object with `response` and optionally `context`:
+```json
+{"response": "The Eiffel Tower was built in 1887.", "context": "It was completed in 1889."}
+{"response": "Water boils at 90°C at sea level.", "context": ""}
+```
+
+**Debug claim decomposition:**
+```bash
+chaincheck check --response "..." --context "..." --debug-claims
+# prints extracted atomic claims before the scoring table
+# useful for diagnosing why a known hallucination was missed
+```
+
 **Start the API server:**
 ```bash
 chaincheck serve --port 8000
 # → http://localhost:8000/docs
 ```
+
+---
+
+## Which method should I use?
+
+| Situation | Recommended |
+|-----------|-------------|
+| You have a context/reference document (RAG) | `--methods nli,judge` (default) |
+| High throughput, latency < 100 ms per check | `--methods nli` |
+| You want to flag borderline cases for human review | Run NLI first; escalate scores 0.3–0.7 to judge |
+| Checking open-ended generation with no ground truth | `--methods consistency` |
+| Need the highest-precision signal (96.5%) | `--methods judge` |
+
+**Consistency** detects when a model gives *inconsistent* answers to the same question — it scores near-random on factual benchmarks because a confidently wrong model is consistently wrong. Do not use it as a substitute for NLI or judge on context-grounded tasks.
+
+**Logprobs** requires a prompt and is most useful as a cheap pre-filter: high token uncertainty correlates with hallucination risk but does not catch confident errors.
 
 ---
 
@@ -193,15 +222,15 @@ All settings via environment variables:
 | `DECOMPOSE_MODEL`       | `gpt-4o-mini`              | Model for claim decomposition            |
 | `CONSISTENCY_SAMPLES`   | `5`                        | LLM samples per consistency check        |
 | `NLI_BATCH_SIZE`        | `16`                       | Claims per NLI inference batch           |
-| `CACHE_PATH`            | `.chaincheck_cache`        | diskcache directory                      |
+| `CACHE_PATH`            | `.chaincheck_cache`        | diskcache directory (24h TTL; key = SHA-256 of the full response string) |
 | `NLI_THRESHOLD`         | `0.5`                      | Min confidence to label a claim          |
 | `CONSISTENCY_THRESHOLD` | `0.82`                     | Min similarity to consider consistent    |
 | `RISK_LOW_THRESHOLD`    | `0.3`                      | Aggregate score below this → "low"       |
 | `RISK_HIGH_THRESHOLD`   | `0.7`                      | Aggregate score at or above this → "high"|
-| `NLI_WEIGHT`            | `0.35`                     | NLI weight in aggregate                  |
-| `CONSISTENCY_WEIGHT`    | `0.25`                     | Consistency weight in aggregate          |
-| `JUDGE_WEIGHT`          | `0.25`                     | Judge weight in aggregate                |
-| `LOGPROB_WEIGHT`        | `0.15`                     | Logprobs weight in aggregate             |
+| `NLI_WEIGHT`            | `0.35`                     | NLI weight in aggregate (tuned on HaluEval QA) |
+| `CONSISTENCY_WEIGHT`    | `0.25`                     | Consistency weight in aggregate (set low; F1=0.168 on factual tasks) |
+| `JUDGE_WEIGHT`          | `0.25`                     | Judge weight in aggregate (tuned on HaluEval QA) |
+| `LOGPROB_WEIGHT`        | `0.15`                     | Logprobs weight in aggregate (tuned on HaluEval QA) |
 | `LOGPROB_MODEL`         | `gpt-4o-mini`              | OpenAI model for logprobs method         |
 | `LOGPROB_THRESHOLD`     | `-1.5`                     | Token log-prob below this → uncertain    |
 
