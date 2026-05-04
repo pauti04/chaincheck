@@ -3,777 +3,787 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ChainCheck — LLM Hallucination Detection</title>
+<title>ChainCheck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lora:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --ink:#0f0f0f; --ink2:#3f3f46; --ink3:#71717a; --ink4:#a1a1aa;
-  --paper:#fafaf8; --paper2:#f4f3f0; --paper3:#eceae5;
-  --line:#e4e2dd;
-  --red:#dc2626;    --red-bg:rgba(220,38,38,.08);   --red-line:rgba(220,38,38,.5);
-  --green:#16a34a;  --green-bg:rgba(22,163,74,.09);  --green-line:rgba(22,163,74,.5);
-  --amber:#d97706;  --amber-bg:rgba(217,119,6,.09);  --amber-line:rgba(217,119,6,.5);
-  --slate:#4b5563;  --slate-bg:rgba(75,85,99,.07);   --slate-line:rgba(75,85,99,.4);
-  --indigo:#4f46e5; --indigo-bg:rgba(79,70,229,.1);
-  --hdr:#18181b;
-  --r:10px; --r-sm:6px;
-}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-thumb{background:var(--paper3);border-radius:99px}
 
-/* ── HEADER ─────────────────────────────── */
+:root{
+  --bg:#ffffff;
+  --s1:#f8fafc;
+  --s2:#f1f5f9;
+  --b1:#e2e8f0;
+  --b2:#cbd5e1;
+  --t1:#0f172a;
+  --t2:#475569;
+  --t3:#94a3b8;
+  --ac:#2563eb;
+  --ac-d:rgba(37,99,235,.09);
+  --ac-t:#1d4ed8;
+  --low:#16a34a; --low-d:rgba(22,163,74,.09); --low-b:rgba(22,163,74,.28);
+  --med:#d97706; --med-d:rgba(217,119,6,.09);  --med-b:rgba(217,119,6,.28);
+  --hi:#dc2626;  --hi-d:rgba(220,38,38,.09);   --hi-b:rgba(220,38,38,.28);
+  --r:8px; --r2:5px;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+}
+
+body{background:var(--bg);color:var(--t1);font-family:'Inter',-apple-system,sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── Header ─────────────────────────────────────────────────── */
 header{
   position:sticky;top:0;z-index:100;
-  background:var(--hdr);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--b1);
+  height:52px;padding:0 24px;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:56px;
-  border-bottom:1px solid rgba(255,255,255,.06);
 }
-.logo{display:flex;align-items:center;gap:10px}
+.logo{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;letter-spacing:-.01em}
 .logo-mark{
-  width:28px;height:28px;border-radius:7px;
-  background:linear-gradient(135deg,#6366f1,#8b5cf6);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 16px rgba(99,102,241,.5);
+  width:26px;height:26px;border-radius:6px;
+  background:var(--t1);display:flex;align-items:center;justify-content:center;font-size:13px;
 }
-.logo-name{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.2px}
-.logo-v{font-size:10px;color:rgba(255,255,255,.35);font-family:'JetBrains Mono',monospace;margin-left:2px}
-.hdr-right{display:flex;align-items:center;gap:24px}
-.hdr-link{font-size:12px;color:rgba(255,255,255,.45);text-decoration:none;transition:color .2s;display:flex;align-items:center;gap:4px}
-.hdr-link:hover{color:rgba(255,255,255,.9)}
-.kbd{font-size:10px;font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:1px 5px;border-radius:4px;color:rgba(255,255,255,.4)}
+.v-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);
+  background:var(--s2);border:1px solid var(--b1);padding:1px 6px;border-radius:4px;
+}
+nav a{color:var(--t2);text-decoration:none;font-size:13px;font-weight:500;transition:color .12s}
+nav a:hover{color:var(--t1)}
 
-/* ── SCORE BANNER ───────────────────────── */
-#score-banner{
-  display:none;
-  background:var(--hdr);
-  padding:14px 28px;
-  align-items:center;gap:24px;
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-#score-banner.show{display:flex;animation:slideDown .35s ease}
-.banner-score{
-  font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;
-  line-height:1;letter-spacing:-1px;
-}
-.banner-meta{display:flex;flex-direction:column;gap:4px}
-.banner-risk{
-  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  display:flex;align-items:center;gap:6px;
-}
-.risk-pip{width:6px;height:6px;border-radius:50%}
-.risk-low  .risk-pip{background:#22c55e;box-shadow:0 0 6px #22c55e}
-.risk-med  .risk-pip{background:#f59e0b;box-shadow:0 0 6px #f59e0b;animation:pip-pulse 1.8s infinite}
-.risk-high .risk-pip{background:#ef4444;box-shadow:0 0 8px #ef4444;animation:pip-pulse 1s infinite}
-.risk-low {color:#4ade80}
-.risk-med {color:#fcd34d}
-.risk-high{color:#f87171}
-@keyframes pip-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.banner-lats{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
-.lat-chip{
-  font-family:'JetBrains Mono',monospace;font-size:10px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  padding:2px 8px;border-radius:99px;color:rgba(255,255,255,.5);
-}
-.lat-chip em{font-style:normal;color:rgba(255,255,255,.8)}
-.banner-bar-wrap{flex:1;max-width:320px}
-.banner-bar-track{height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
-.banner-bar-fill{height:100%;border-radius:99px;width:0;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
-.banner-recalc{
-  margin-left:auto;
-  font-size:12px;color:rgba(255,255,255,.4);background:none;border:1px solid rgba(255,255,255,.12);
-  padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;font-family:inherit;
-  transition:all .2s;
-}
-.banner-recalc:hover{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.3)}
+/* ── Layout ─────────────────────────────────────────────────── */
+main{max-width:960px;margin:0 auto;padding:56px 24px 96px}
 
-/* ── MAIN ───────────────────────────────── */
-.main{max-width:1280px;margin:0 auto;padding:28px 28px 80px}
-
-/* ── EXAMPLES ───────────────────────────── */
-.ex-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
-.ex-label{font-size:11px;font-weight:600;color:var(--ink4);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
-.ex-chip{
-  font-size:12px;font-weight:500;color:var(--ink2);
-  background:#fff;border:1px solid var(--line);padding:5px 14px;border-radius:99px;
-  cursor:pointer;transition:all .18s;white-space:nowrap;
+/* ── INPUT SECTION ──────────────────────────────────────────── */
+.hero{margin-bottom:36px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ac);margin-bottom:14px;
 }
-.ex-chip:hover{background:var(--indigo-bg);border-color:#818cf8;color:var(--indigo)}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:pulse-ac 2s infinite}
+@keyframes pulse-ac{0%,100%{opacity:1}50%{opacity:.35}}
 
-/* ── TWO COLUMN ─────────────────────────── */
-.cols{display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:start}
-@media(max-width:960px){.cols{grid-template-columns:1fr}}
+h1{font-size:38px;font-weight:700;letter-spacing:-.04em;line-height:1.12;margin-bottom:12px}
+.hero-sub{font-size:15px;color:var(--t2);max-width:520px;line-height:1.65}
 
-/* ── INPUT FORM (left in input state) ───── */
-#input-panel{}
-.form-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.form-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.form-title{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
-.form-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.input-card{border:1px solid var(--b1);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
 
-.field-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
-.req{color:var(--red)}
-.opt-tag{font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink4);font-style:italic}
-
-textarea,input[type=text]{
-  width:100%;background:var(--paper2);border:1px solid var(--line);
-  border-radius:var(--r-sm);color:var(--ink);
-  font-family:'Inter',sans-serif;font-size:13px;padding:10px 13px;
-  outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical;
+textarea.response-ta{
+  width:100%;min-height:130px;border:none;outline:none;resize:vertical;
+  padding:18px 20px;font-family:inherit;font-size:14px;line-height:1.75;
+  color:var(--t1);background:transparent;
 }
-textarea::placeholder,input::placeholder{color:var(--ink4)}
-textarea:focus,input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-bg);background:#fff}
+textarea.response-ta::placeholder{color:var(--t3)}
 
-/* Method pills */
-.method-pills{display:flex;flex-wrap:wrap;gap:7px}
-.mpill{
-  display:flex;align-items:center;gap:7px;padding:7px 13px;
-  border:1px solid var(--line);border-radius:var(--r-sm);background:var(--paper2);
-  cursor:pointer;transition:all .18s;user-select:none;
-}
-.mpill:hover{border-color:#a5b4fc;background:#fff}
-.mpill.on{border-color:var(--indigo);background:var(--indigo-bg);box-shadow:0 0 0 3px rgba(99,102,241,.08)}
-.mpill input{display:none}
-.mpill-dot{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s}
-.mpill.on .mpill-dot{background:var(--indigo);box-shadow:0 0 6px rgba(99,102,241,.6)}
-.mpill-label{font-size:12px;font-weight:600;color:var(--ink2)}
-.mpill.on .mpill-label{color:var(--indigo)}
-.mpill-sub{font-size:10px;color:var(--ink4)}
+.divider{height:1px;background:var(--b1)}
 
-/* Cascade */
-.cascade-row{
-  display:flex;align-items:center;gap:12px;padding:11px 13px;
-  border:1px solid var(--line);border-radius:var(--r-sm);background:var(--paper2);
-  cursor:pointer;user-select:none;transition:border-color .18s;
-}
-.cascade-row:hover{border-color:#a5b4fc}
-.toggle-sw{position:relative;width:34px;height:18px;flex-shrink:0}
-.toggle-sw input{display:none}
-.t-track{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:background .25s}
-.t-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.toggle-sw input:checked~.t-track{background:var(--indigo)}
-.toggle-sw input:checked~.t-thumb{transform:translateX(16px)}
-.cascade-text{flex:1}
-.cascade-title{font-size:12px;font-weight:600;color:var(--ink2)}
-.cascade-sub{font-size:10px;color:var(--ink4);margin-top:1px}
+.optional-section{background:var(--s1)}
 
-/* Submit */
-.submit{
-  width:100%;padding:12px;
-  background:linear-gradient(135deg,#4f46e5,#7c3aed);
-  border:none;border-radius:var(--r-sm);
-  color:#fff;font-family:inherit;font-size:14px;font-weight:700;
-  cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 4px 20px rgba(79,70,229,.3);letter-spacing:-.1px;
+.opt-toggle{
+  padding:10px 20px;display:flex;align-items:center;gap:5px;
+  cursor:pointer;color:var(--t2);font-size:12px;font-weight:500;
+  user-select:none;transition:color .12s;
 }
-.submit:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(79,70,229,.45)}
-.submit:active{transform:translateY(0)}
-.submit:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.opt-toggle:hover{color:var(--t1)}
+.opt-arrow{font-size:10px;display:inline-block;transition:transform .18s}
+.opt-arrow.open{transform:rotate(90deg)}
+
+.opt-body{display:none;padding:0 20px 16px;flex-direction:column;gap:12px}
+.opt-body.open{display:flex}
+
+.field{display:flex;flex-direction:column;gap:4px}
+.field-lbl{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--t3)}
+.field-ta{
+  background:var(--bg);border:1px solid var(--b1);border-radius:var(--r2);
+  padding:8px 12px;color:var(--t1);font-family:inherit;font-size:13px;
+  width:100%;outline:none;resize:vertical;min-height:64px;line-height:1.6;
+  transition:border-color .15s;
+}
+.field-ta:focus{border-color:var(--ac)}
+
+.card-foot{
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;background:var(--s1);border-top:1px solid var(--b1);
+}
+
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{
+  font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;
+  border:1px solid var(--b1);background:var(--bg);color:var(--t2);
+  cursor:pointer;user-select:none;transition:all .12s;
+}
+.pill.on{background:var(--ac-d);border-color:#93c5fd;color:var(--ac-t)}
+
+.foot-right{display:flex;align-items:center;gap:12px}
+
+.cascade-lbl{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.cascade-lbl input{display:none}
+.track{
+  width:30px;height:17px;background:var(--b2);border-radius:9px;
+  position:relative;transition:background .18s;
+}
+.cascade-lbl input:checked+.track{background:var(--ac)}
+.thumb{
+  position:absolute;top:2px;left:2px;width:13px;height:13px;
+  background:#fff;border-radius:7px;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  transition:left .18s;
+}
+.cascade-lbl input:checked+.track .thumb{left:15px}
+.cascade-txt{font-size:12px;color:var(--t2)}
+
+.btn-run{
+  background:var(--t1);color:#fff;border:none;border-radius:var(--r2);
+  padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:opacity .15s,transform .1s;
+}
+.btn-run:hover{opacity:.83}
+.btn-run:active{transform:scale(.98)}
+.btn-run:disabled{opacity:.38;cursor:not-allowed}
+
+.examples{margin-top:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ex-lbl{font-size:12px;color:var(--t3)}
+.ex-btn{
+  font-size:12px;color:var(--t2);background:none;border:1px solid var(--b1);
+  border-radius:4px;padding:3px 10px;cursor:pointer;font-family:inherit;transition:all .12s;
+}
+.ex-btn:hover{color:var(--t1);border-color:var(--b2);background:var(--s1)}
+
+.err-banner{
+  background:var(--hi-d);border:1px solid var(--hi-b);color:var(--hi);
+  border-radius:var(--r2);padding:10px 14px;font-size:13px;margin-bottom:16px;display:none;
+}
+
+/* ── ANALYSIS SECTION ───────────────────────────────────────── */
+#analysis-section{display:none}
+
+.analysis-wrap{max-width:660px;margin:0 auto}
+
+.phase-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.phase-steps{display:flex;gap:6px}
+.ps{width:40px;height:3px;border-radius:2px;background:var(--b1);transition:background .3s}
+.ps.active{background:var(--ac)}
+.ps.done{background:var(--low)}
+.phase-lbl{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ac)}
+
+.a-card{
+  border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;
+  margin-bottom:14px;box-shadow:var(--sh);
+}
+.a-card-head{
+  padding:11px 16px;background:var(--s1);border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;gap:8px;
+}
+.a-card-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2)}
+.a-card-body{padding:16px}
+
+.reveal-list{display:flex;flex-direction:column;gap:8px}
+.reveal-item{
+  display:flex;gap:10px;align-items:flex-start;
+  opacity:0;transform:translateY(5px);animation:ri .22s ease forwards;
+}
+@keyframes ri{to{opacity:1;transform:none}}
+
+.rn{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  width:20px;height:20px;border-radius:4px;
+  background:var(--s2);border:1px solid var(--b1);color:var(--t2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.rt{font-size:13px;color:var(--t2);line-height:1.5}
+
+.run-list{display:flex;flex-direction:column;gap:16px}
+.run-row{display:grid;grid-template-columns:96px 1fr 46px 54px;align-items:center;gap:12px}
+.run-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t2)}
+.run-track{height:5px;background:var(--s2);border-radius:3px;overflow:hidden}
+.run-fill{height:100%;border-radius:3px;width:0%;transition:width .55s cubic-bezier(.4,0,.2,1)}
+.run-fill.nli{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+.run-fill.consistency{background:linear-gradient(90deg,#0ea5e9,#38bdf8)}
+.run-fill.judge{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.run-fill.logprobs{background:linear-gradient(90deg,#10b981,#34d399)}
+.run-fill.qa{background:linear-gradient(90deg,#ec4899,#f472b6)}
+.run-score{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t3);text-align:right}
+.run-stat{font-size:11px;font-weight:500;text-align:right}
+.run-stat.running{color:var(--ac)}
+.run-stat.done{color:var(--low)}
+.run-stat.error{color:var(--hi)}
+
+.spinner{
+  display:inline-block;width:13px;height:13px;
+  border:2px solid var(--b1);border-top-color:var(--ac);
+  border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
-.spinner{animation:spin .7s linear infinite}
 
-.err{margin-top:10px;padding:10px 13px;border-radius:var(--r-sm);background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);font-size:12px;color:var(--red);display:none}
-.err.show{display:block;animation:slideDown .2s ease}
+/* ── RESULTS SECTION ────────────────────────────────────────── */
+#results-section{display:none}
 
-/* ── ANNOTATED DOC (replaces textarea after check) ── */
-#doc-panel{display:none}
-.doc-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-.doc-head{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.doc-label{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
-.doc-edit-btn{font-size:11px;color:var(--indigo);background:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:var(--r-sm);transition:background .2s}
-.doc-edit-btn:hover{background:var(--indigo-bg)}
-.doc-body{padding:20px 22px;font-family:'Lora',Georgia,serif;font-size:15px;line-height:1.75;color:var(--ink);word-break:break-word}
-.doc-context{padding:14px 18px;border-top:1px solid var(--line);background:var(--paper2)}
-.doc-ctx-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);margin-bottom:5px}
-.doc-ctx-text{font-size:12px;color:var(--ink3);line-height:1.5;font-style:italic}
-
-/* ── INLINE ANNOTATIONS ─────────────────── */
-.ann{
-  border-radius:2px;cursor:pointer;position:relative;
-  transition:background .2s,box-shadow .2s;
-  padding:1px 1px 2px;
+.res-topbar{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;
 }
-.ann::after{
-  content:attr(data-n);
-  font-family:'JetBrains Mono',monospace;font-size:9px;font-style:normal;font-weight:700;
-  vertical-align:super;margin-left:1px;opacity:.7;
+.res-lbl{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.btn-back{
+  font-size:12px;font-weight:500;color:var(--t2);background:none;
+  border:1px solid var(--b1);border-radius:4px;padding:5px 12px;
+  cursor:pointer;font-family:inherit;transition:all .12s;
 }
-.ann-supported   {background:var(--green-bg); border-bottom:2px solid var(--green-line);   color:inherit}
-.ann-contradicted{background:var(--red-bg);   border-bottom:2px solid var(--red-line);     color:inherit}
-.ann-unsupported {background:var(--amber-bg); border-bottom:2px solid var(--amber-line);   color:inherit}
-.ann-unknown     {background:var(--slate-bg); border-bottom:2px solid var(--slate-line);   color:inherit}
-.ann.focused,.ann:hover{box-shadow:0 0 0 3px rgba(79,70,229,.15);background-color:rgba(79,70,229,.1)!important;border-bottom-color:var(--indigo)!important}
+.btn-back:hover{color:var(--t1);border-color:var(--b2)}
 
-/* Legend inside doc */
-.ann-legend{padding:12px 18px;border-top:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink4);font-weight:500}
-.leg-swatch{width:20px;height:3px;border-radius:99px}
-
-/* ── CLAIMS PANEL (right column) ─────────── */
-#claims-panel{}
-.cp-empty{
-  background:#fff;border:1px solid var(--line);border-radius:var(--r);
-  padding:52px 20px;text-align:center;
+/* Score card */
+.score-card{
+  border:1px solid var(--b1);border-radius:var(--r);padding:22px 24px;
+  margin-bottom:18px;display:flex;align-items:center;gap:24px;
+  flex-wrap:wrap;box-shadow:var(--sh);
 }
-.cp-empty-icon{width:44px;height:44px;margin:0 auto 12px;border-radius:50%;background:var(--paper2);display:flex;align-items:center;justify-content:center}
-.cp-empty-title{font-size:13px;font-weight:600;color:var(--ink3)}
-.cp-empty-sub{font-size:12px;color:var(--ink4);margin-top:4px}
 
-/* Claims card */
-.claims-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:none}
-.claims-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.claims-title{font-size:12px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em}
-.method-tabs{display:flex;gap:0;overflow-x:auto}
-.mtab{
-  padding:8px 14px;font-size:11px;font-weight:600;color:var(--ink4);background:none;
-  border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;
-  transition:all .2s;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;
+.gauge-wrap{position:relative;width:108px;height:108px;flex-shrink:0}
+.gauge-wrap svg{width:108px;height:108px;transform:rotate(-90deg)}
+.g-bg{fill:none;stroke:var(--s2);stroke-width:9}
+.g-fill{
+  fill:none;stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:301.6;stroke-dashoffset:301.6;
+  transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1),stroke .4s ease;
 }
-.mtab:hover{color:var(--ink2)}
-.mtab.active{color:var(--indigo);border-bottom-color:var(--indigo)}
-
-.claims-list{padding:10px;display:flex;flex-direction:column;gap:6px}
-
-/* Claim card */
-.cc{
-  padding:13px 15px;border-radius:var(--r-sm);border:1px solid var(--line);
-  cursor:pointer;transition:all .2s;
-  animation:ccIn .3s ease both;
+.gauge-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
 }
-@keyframes ccIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.cc:hover,.cc.focused{border-color:#818cf8;background:var(--indigo-bg);transform:translateX(2px)}
-.cc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:9px}
-.cc-num{
-  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-  width:20px;height:20px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;margin-top:1px;
+.gauge-n{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;line-height:1;letter-spacing:-.02em}
+.gauge-u{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3)}
+
+.score-right{flex:1;min-width:200px}
+
+.risk-badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  padding:3px 10px;border-radius:20px;margin-bottom:13px;text-transform:capitalize;letter-spacing:.01em;
 }
-.cc-body{flex:1}
-.cc-text{font-size:12px;color:var(--ink2);line-height:1.5;font-style:italic}
-.cc-badge{
-  display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;
-  font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0;
+.rdot{width:6px;height:6px;border-radius:50%}
+.risk-badge.low{background:var(--low-d);color:var(--low);border:1px solid var(--low-b)}
+.risk-badge.low .rdot{background:var(--low)}
+.risk-badge.medium{background:var(--med-d);color:var(--med);border:1px solid var(--med-b)}
+.risk-badge.medium .rdot{background:var(--med)}
+.risk-badge.high{background:var(--hi-d);color:var(--hi);border:1px solid var(--hi-b)}
+.risk-badge.high .rdot{background:var(--hi);animation:pr 1.5s infinite}
+@keyframes pr{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.3)}50%{box-shadow:0 0 0 3px rgba(220,38,38,0)}}
+
+.m-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:13px}
+.chip{
+  display:flex;align-items:center;gap:5px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:3px 8px;border-radius:4px;background:var(--s1);border:1px solid var(--b1);
 }
-.cc-badge .bdot{width:5px;height:5px;border-radius:50%}
+.chip-n{color:var(--t3)}
+.chip-s{font-weight:500}
+.chip-l{color:var(--t3);font-size:10px}
 
-/* per-label colours */
-.lbl-S{background:var(--green-bg); color:var(--green)}  .lbl-S .bdot{background:var(--green)} .lbl-S .cc-num{background:rgba(22,163,74,.12);color:var(--green)}
-.lbl-C{background:var(--red-bg);   color:var(--red)}    .lbl-C .bdot{background:var(--red)}   .lbl-C .cc-num{background:rgba(220,38,38,.12);color:var(--red)}
-.lbl-U{background:var(--amber-bg); color:var(--amber)}  .lbl-U .bdot{background:var(--amber)} .lbl-U .cc-num{background:rgba(217,119,6,.12);color:var(--amber)}
-.lbl-X{background:var(--slate-bg); color:var(--slate)}  .lbl-X .bdot{background:var(--slate)} .lbl-X .cc-num{background:rgba(75,85,99,.1);color:var(--slate)}
+.meta-row{display:flex;gap:20px;flex-wrap:wrap}
+.meta{display:flex;flex-direction:column;gap:1px}
+.m-lbl{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--t3)}
+.m-val{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--t1)}
 
-.cc-conf{margin-top:8px}
-.cc-conf-row{display:flex;justify-content:space-between;font-size:10px;color:var(--ink4);margin-bottom:4px}
-.cc-conf-row span{font-family:'JetBrains Mono',monospace}
-.conf-track{height:2px;background:var(--paper3);border-radius:99px;overflow:hidden}
-.conf-fill{height:100%;border-radius:99px;width:0;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.lbl-S .conf-fill{background:var(--green)} .lbl-C .conf-fill{background:var(--red)}
-.lbl-U .conf-fill{background:var(--amber)} .lbl-X .conf-fill{background:var(--slate)}
+/* Two-column results */
+.res-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start}
+@media(max-width:720px){.res-grid{grid-template-columns:1fr}}
 
-.cc-evidence{margin-top:9px;padding:7px 10px;border-left:2px solid var(--line);font-size:11px;color:var(--ink3);font-style:italic;line-height:1.5;display:none}
-.cc-evidence.show{display:block}
+.panel{border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.panel-head{
+  padding:11px 16px;background:var(--s1);border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.panel-title{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--t2)}
+.panel-meta{font-size:11px;color:var(--t3)}
+.panel-body{padding:16px}
 
-/* no-claims */
-.no-claims{padding:28px;text-align:center;font-size:12px;color:var(--ink4);display:none}
+/* Annotated document */
+.doc-text{font-size:14px;line-height:1.9;color:var(--t1)}
 
-/* ── MISC ───────────────────────────────── */
-@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.fade-in{animation:fadeIn .35s ease}
+mark.ann{background:none;cursor:pointer;border-radius:2px;transition:background .12s}
+mark.ann::after{
+  content:attr(data-n);font-family:'JetBrains Mono',monospace;
+  font-size:8px;vertical-align:super;margin-left:1px;
+}
+.ann-supported{border-bottom:2px solid var(--low)}
+.ann-supported::after{color:var(--low)}
+.ann-supported:hover,.ann-supported.hi{background:var(--low-d)}
+.ann-contradicted{border-bottom:2px solid var(--hi)}
+.ann-contradicted::after{color:var(--hi)}
+.ann-contradicted:hover,.ann-contradicted.hi{background:var(--hi-d)}
+.ann-unsupported{border-bottom:2px solid var(--med)}
+.ann-unsupported::after{color:var(--med)}
+.ann-unsupported:hover,.ann-unsupported.hi{background:var(--med-d)}
+.ann-unknown{border-bottom:2px solid var(--t3)}
+.ann-unknown::after{color:var(--t3)}
+.ann-unknown:hover,.ann-unknown.hi{background:rgba(148,163,184,.1)}
+
+.doc-legend{
+  display:flex;gap:14px;flex-wrap:wrap;
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--b1);
+}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.leg-line{width:16px;height:2px;border-radius:1px}
+.leg-line.supported{background:var(--low)}
+.leg-line.contradicted{background:var(--hi)}
+.leg-line.unsupported{background:var(--med)}
+.leg-line.unknown{background:var(--t3)}
+
+/* Claim cards */
+.cc{padding:10px 12px;border-radius:6px;border:1px solid transparent;cursor:pointer;transition:all .12s}
+.cc:hover,.cc.hi{background:var(--s1);border-color:var(--b1)}
+.cc-top{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px}
+.cc-n{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;
+  width:18px;height:18px;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.cc-n.supported{background:var(--low-d);color:var(--low)}
+.cc-n.contradicted{background:var(--hi-d);color:var(--hi)}
+.cc-n.unsupported{background:var(--med-d);color:var(--med)}
+.cc-n.unknown{background:var(--s2);color:var(--t3)}
+.cc-text{font-size:12px;line-height:1.5;color:var(--t2);flex:1}
+.cc-foot{display:flex;align-items:center;gap:8px}
+.conf-track{flex:1;height:3px;background:var(--s2);border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;border-radius:2px}
+.conf-fill.supported{background:var(--low)}
+.conf-fill.contradicted{background:var(--hi)}
+.conf-fill.unsupported{background:var(--med)}
+.conf-fill.unknown{background:var(--t3)}
+.conf-pct{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t3);width:30px;text-align:right}
+.cc-lbl{font-size:10px;font-weight:600;text-transform:capitalize;width:74px;text-align:right}
+.cc-lbl.supported{color:var(--low)}
+.cc-lbl.contradicted{color:var(--hi)}
+.cc-lbl.unsupported{color:var(--med)}
+.cc-lbl.unknown{color:var(--t3)}
+.cc-ev{
+  margin-top:6px;font-size:11px;color:var(--t3);font-style:italic;
+  line-height:1.45;padding-left:8px;border-left:2px solid var(--b1);
+}
+.no-claims{text-align:center;padding:20px;color:var(--t3);font-size:13px}
+
+.fade-in{animation:fi .3s ease both}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
-    <div class="logo-mark">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-    </div>
-    <span class="logo-name">ChainCheck</span>
-    <span class="logo-v">v0.3.0</span>
+    <div class="logo-mark">⛓</div>
+    ChainCheck
+    <span class="v-badge">v0.3.0</span>
   </div>
-  <div class="hdr-right">
-    <span style="font-size:11px;color:rgba(255,255,255,.3)">Run with <kbd class="kbd">⌘↵</kbd></span>
-    <a href="/docs" target="_blank" class="hdr-link">API docs <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>
-  </div>
+  <nav><a href="/docs" target="_blank">API Docs →</a></nav>
 </header>
 
-<!-- SCORE BANNER -->
-<div id="score-banner">
-  <div class="banner-score" id="banner-score">—</div>
-  <div class="banner-meta">
-    <div class="banner-risk" id="banner-risk"><span class="risk-pip"></span><span id="risk-label">—</span></div>
-    <div class="banner-lats" id="banner-lats"></div>
-  </div>
-  <div class="banner-bar-wrap">
-    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase">Hallucination score</div>
-    <div class="banner-bar-track"><div class="banner-bar-fill" id="banner-bar"></div></div>
-  </div>
-  <button class="banner-recalc" onclick="resetToInput()">↺ New check</button>
-</div>
+<main>
 
-<!-- MAIN -->
-<div class="main">
-
-  <!-- Examples -->
-  <div class="ex-row">
-    <span class="ex-label">Examples</span>
-    <button class="ex-chip" onclick="loadEx(0)">🗼 Eiffel Tower</button>
-    <button class="ex-chip" onclick="loadEx(1)">🚀 Apollo 11</button>
-    <button class="ex-chip" onclick="loadEx(2)">💊 Aspirin (correct)</button>
+<!-- ── INPUT ─────────────────────────────────────────────────── -->
+<section id="input-section">
+  <div class="hero">
+    <div class="eyebrow"><div class="eyebrow-dot"></div>LLM Hallucination Detection</div>
+    <h1>Does your model's response<br>actually check out?</h1>
+    <p class="hero-sub">Multi-method verification — NLI entailment, self-consistency sampling, and LLM-as-judge — fused into a single risk score with per-claim evidence.</p>
   </div>
 
-  <!-- Columns -->
-  <div class="cols">
+  <div id="err-banner" class="err-banner"></div>
 
-    <!-- ── LEFT ───────────────────────── -->
-    <div>
+  <div class="input-card">
+    <textarea id="resp-in" class="response-ta"
+      placeholder="Paste the LLM response you want to verify…"></textarea>
 
-      <!-- INPUT PANEL -->
-      <div id="input-panel">
-        <div class="form-card">
-          <div class="form-head">
-            <span class="form-title">Input</span>
-          </div>
-          <div class="form-body">
+    <div class="divider"></div>
 
-            <div>
-              <div class="field-label">Response <span class="req">*</span></div>
-              <textarea id="ta-response" rows="6" placeholder="Paste the LLM response to fact-check…"></textarea>
-            </div>
-
-            <div>
-              <div class="field-label">Context <span class="opt-tag">— reference document (RAG)</span></div>
-              <textarea id="ta-context" rows="4" placeholder="Paste the source document the response should be grounded in…"></textarea>
-            </div>
-
-            <div>
-              <div class="field-label">Prompt <span class="opt-tag">— original question</span></div>
-              <input id="ta-prompt" type="text" placeholder="e.g. When was the Eiffel Tower built?" />
-            </div>
-
-            <div>
-              <div class="field-label">Methods</div>
-              <div class="method-pills" id="method-pills"></div>
-            </div>
-
-            <label class="cascade-row" onclick="document.getElementById('cb-cascade').click();return false">
-              <div class="toggle-sw">
-                <input type="checkbox" id="cb-cascade"/>
-                <div class="t-track"></div>
-                <div class="t-thumb"></div>
-              </div>
-              <div class="cascade-text">
-                <div class="cascade-title">Cascade mode</div>
-                <div class="cascade-sub">Run NLI first · escalate to judge only on ambiguous scores 0.2–0.8</div>
-              </div>
-            </label>
-
-            <button class="submit" id="submit-btn" onclick="runCheck()">
-              <svg id="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-              <span id="btn-text">Check for Hallucinations</span>
-            </button>
-
-            <div class="err" id="err-box"></div>
-          </div>
+    <div class="optional-section">
+      <div class="opt-toggle" onclick="toggleOpt()">
+        <span class="opt-arrow" id="opt-arr">›</span>&nbsp;Add context &amp; prompt (optional)
+      </div>
+      <div class="opt-body" id="opt-body">
+        <div class="field">
+          <div class="field-lbl">Source context</div>
+          <textarea id="ctx-in" class="field-ta" rows="3"
+            placeholder="The document or retrieval context the model used…"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-lbl">Prompt</div>
+          <textarea id="prompt-in" class="field-ta" rows="2"
+            placeholder="The original user question…"></textarea>
         </div>
       </div>
-
-      <!-- DOC ANNOTATION PANEL (appears after check) -->
-      <div id="doc-panel" class="fade-in">
-        <div class="doc-card">
-          <div class="doc-head">
-            <span class="doc-label">Annotated Response</span>
-            <button class="doc-edit-btn" onclick="resetToInput()">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Edit
-            </button>
-          </div>
-          <div class="doc-body" id="doc-body"></div>
-          <div class="ann-legend" id="ann-legend"></div>
-          <div class="doc-context" id="doc-context" style="display:none">
-            <div class="doc-ctx-label">Context document</div>
-            <div class="doc-ctx-text" id="doc-ctx-text"></div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /left -->
-
-    <!-- ── RIGHT ──────────────────────── -->
-    <div id="claims-panel">
-
-      <!-- Empty -->
-      <div id="cp-empty" class="cp-empty">
-        <div class="cp-empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink4)" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        <div class="cp-empty-title">Claim analysis</div>
-        <div class="cp-empty-sub">Results appear here after you run a check</div>
-      </div>
-
-      <!-- Claims card -->
-      <div id="claims-card" class="claims-card fade-in">
-        <div class="claims-head">
-          <span class="claims-title">Claims</span>
-          <div class="method-tabs" id="method-tabs"></div>
-        </div>
-        <div class="claims-list" id="claims-list"></div>
-        <div class="no-claims" id="no-claims">No atomic claims extracted — try a longer response.</div>
-      </div>
-
     </div>
 
-  </div><!-- /cols -->
-</div><!-- /main -->
+    <div class="card-foot">
+      <div class="pills" id="pills">
+        <div class="pill on" data-m="nli"         onclick="togglePill(this)">NLI</div>
+        <div class="pill on" data-m="consistency" onclick="togglePill(this)">Consistency</div>
+        <div class="pill on" data-m="judge"       onclick="togglePill(this)">Judge</div>
+        <div class="pill"    data-m="logprobs"    onclick="togglePill(this)">Logprobs</div>
+        <div class="pill"    data-m="qa"          onclick="togglePill(this)">QA</div>
+      </div>
+      <div class="foot-right">
+        <label class="cascade-lbl" title="Skip expensive methods when fast methods are confident">
+          <input type="checkbox" id="cascade-in">
+          <div class="track"><div class="thumb"></div></div>
+          <span class="cascade-txt">Cascade</span>
+        </label>
+        <button class="btn-run" onclick="runAnalysis()">
+          Analyze&nbsp;<kbd style="font-size:10px;opacity:.55;font-family:inherit">⌘↵</kbd>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="examples">
+    <span class="ex-lbl">Try an example:</span>
+    <button class="ex-btn" onclick="loadEx(0)">Eiffel Tower</button>
+    <button class="ex-btn" onclick="loadEx(1)">Apollo 11</button>
+    <button class="ex-btn" onclick="loadEx(2)">Aspirin</button>
+  </div>
+</section>
+
+<!-- ── ANALYSIS ───────────────────────────────────────────────── -->
+<section id="analysis-section">
+  <div class="analysis-wrap">
+    <div class="phase-bar">
+      <div class="phase-steps">
+        <div class="ps active" id="ps0"></div>
+        <div class="ps" id="ps1"></div>
+        <div class="ps" id="ps2"></div>
+      </div>
+      <span class="phase-lbl" id="phase-lbl">Decomposing</span>
+    </div>
+
+    <div class="a-card" id="claims-card">
+      <div class="a-card-head">
+        <span class="spinner"></span>
+        <span class="a-card-title" id="claims-title">Extracting claims…</span>
+      </div>
+      <div class="a-card-body"><div class="reveal-list" id="reveal-list"></div></div>
+    </div>
+
+    <div class="a-card" id="methods-card" style="display:none">
+      <div class="a-card-head">
+        <span class="a-card-title">Method execution</span>
+      </div>
+      <div class="a-card-body"><div class="run-list" id="run-list"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESULTS ────────────────────────────────────────────────── -->
+<section id="results-section">
+  <div class="res-topbar">
+    <span class="res-lbl">Analysis complete</span>
+    <button class="btn-back" onclick="resetUI()">← New analysis</button>
+  </div>
+
+  <div class="score-card fade-in">
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 110 110">
+        <circle class="g-bg" cx="55" cy="55" r="48"/>
+        <circle class="g-fill" id="g-fill" cx="55" cy="55" r="48"/>
+      </svg>
+      <div class="gauge-center">
+        <div class="gauge-n" id="gauge-n">0</div>
+        <div class="gauge-u">/ 100</div>
+      </div>
+    </div>
+    <div class="score-right">
+      <div class="risk-badge" id="risk-badge"><div class="rdot"></div><span id="risk-lbl">–</span></div>
+      <div class="m-chips" id="m-chips"></div>
+      <div class="meta-row">
+        <div class="meta"><div class="m-lbl">Latency</div><div class="m-val" id="meta-lat">–</div></div>
+        <div class="meta"><div class="m-lbl">Claims</div><div class="m-val" id="meta-claims">–</div></div>
+        <div class="meta"><div class="m-lbl">Request ID</div><div class="m-val" id="meta-rid" style="font-size:10px">–</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-grid">
+    <div class="panel fade-in">
+      <div class="panel-head"><span class="panel-title">Annotated response</span></div>
+      <div class="panel-body">
+        <div class="doc-text" id="doc-text"></div>
+        <div class="doc-legend" id="doc-legend"></div>
+      </div>
+    </div>
+    <div class="panel fade-in">
+      <div class="panel-head">
+        <span class="panel-title">Claim verification</span>
+        <span class="panel-meta" id="claim-count"></span>
+      </div>
+      <div class="panel-body" style="padding:6px 8px">
+        <div id="claim-cards"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
 
 <script>
-// ── DATA ─────────────────────────────────────────────────────────────────────
-const EXAMPLES = [
+/* ── Examples ──────────────────────────────────────────────── */
+const EX = [
   {
-    response: "The Eiffel Tower, built in 1887 by Gustave Eiffel, stands 300 metres tall and is located in Lyon, France.",
-    context:  "The Eiffel Tower was completed in 1889 by engineer Gustave Eiffel. It stands 330 metres tall and is located in Paris, France, on the Champ de Mars.",
-    prompt:   "Tell me about the Eiffel Tower.",
-    methods:  ["nli","judge"],
+    response:"The Eiffel Tower is located in Paris, France, and was completed in 1889. It stands 324 meters tall and was built by Gustave Eiffel as the entrance arch for the 1900 World's Fair. The tower attracts around 7 million visitors each year.",
+    context:"The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. It was constructed from 1887 to 1889 as the centerpiece of the 1889 World's Fair. Named after engineer Gustave Eiffel, whose company designed and built the tower, it stands 330 metres tall and receives about 7 million visitors per year.",
+    prompt:"Tell me about the Eiffel Tower."
   },
   {
-    response: "Neil Armstrong became the first human to walk on the Moon during the Apollo 11 mission in July 1969. He was joined on the lunar surface by Buzz Aldrin and Michael Collins.",
-    context:  "Apollo 11 landed on the Moon on July 20, 1969. Neil Armstrong and Buzz Aldrin descended to the surface while Michael Collins remained in the Command Module orbiting above. Collins did not walk on the Moon.",
-    prompt:   "Who walked on the Moon during Apollo 11?",
-    methods:  ["nli","judge"],
+    response:"Apollo 11 landed on the Moon on July 20, 1969. Neil Armstrong was the first human to walk on the Moon, followed by Buzz Aldrin. Michael Collins remained in lunar orbit aboard the Command Module. Armstrong's famous words were 'That's one small step for man, one giant leap for mankind.'",
+    context:"Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed on July 20, 1969. Armstrong became the first person to step onto the lunar surface. His actual words were 'That's one small step for man, one giant leap for mankind.' Command module pilot Michael Collins flew the command spacecraft alone in lunar orbit.",
+    prompt:"What happened during Apollo 11?"
   },
   {
-    response: "Aspirin, chemically known as acetylsalicylic acid, was first synthesized by Felix Hoffmann, a chemist at Bayer, in 1897.",
-    context:  "Aspirin (acetylsalicylic acid) was first synthesized by Felix Hoffmann, a chemist working at Bayer AG, in August 1897. It became one of the most widely used medications globally.",
-    prompt:   "Who invented Aspirin?",
-    methods:  ["nli","judge"],
-  },
-];
-
-const METHODS = [
-  {id:"nli",        name:"NLI",         sub:"DeBERTa · offline · 50ms"},
-  {id:"judge",      name:"Judge LLM",   sub:"Highest precision · API"},
-  {id:"qa",         name:"QA",          sub:"Yes/no · fast · API"},
-  {id:"consistency",name:"Consistency", sub:"No context needed"},
-];
-const DEFAULT_ON = new Set(["nli","judge"]);
-
-// ── INIT METHODS ─────────────────────────────────────────────────────────────
-const pillsEl = document.getElementById("method-pills");
-METHODS.forEach(m => {
-  const isOn = DEFAULT_ON.has(m.id);
-  const el = document.createElement("label");
-  el.className = "mpill" + (isOn ? " on" : "");
-  el.id = "mpill-" + m.id;
-  el.innerHTML = `<input type="checkbox" id="mcb-${m.id}" ${isOn?"checked":""}/><div class="mpill-dot"></div><div><div class="mpill-label">${m.name}</div><div class="mpill-sub">${m.sub}</div></div>`;
-  el.addEventListener("click", e => {
-    e.preventDefault();
-    const cb = document.getElementById("mcb-" + m.id);
-    cb.checked = !cb.checked;
-    el.classList.toggle("on", cb.checked);
-  });
-  pillsEl.appendChild(el);
-});
-
-function selectedMethods(){
-  return METHODS.map(m=>m.id).filter(id=>document.getElementById("mcb-"+id).checked);
-}
-
-// ── LABEL SYSTEM ─────────────────────────────────────────────────────────────
-const LBL = {
-  supported:    {cls:"lbl-S", text:"Supported",    annCls:"ann-supported"},
-  contradicted: {cls:"lbl-C", text:"Contradicted", annCls:"ann-contradicted"},
-  unsupported:  {cls:"lbl-U", text:"Unsupported",  annCls:"ann-unsupported"},
-  unknown:      {cls:"lbl-X", text:"Unknown",      annCls:"ann-unknown"},
-};
-const lbl = l => LBL[l] || LBL.unknown;
-
-const RISK = {
-  low:    {cls:"risk-low",  text:"Low Risk"},
-  medium: {cls:"risk-med",  text:"Medium Risk"},
-  high:   {cls:"risk-high", text:"High Risk"},
-};
-
-const SCORE_COLOR = s => s < .3 ? "#16a34a" : s < .7 ? "#d97706" : "#dc2626";
-
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-
-function counter(el, to, ms=900){
-  const from = parseFloat(el.textContent)||0, t0=performance.now();
-  const tick = now => {
-    const p = Math.min((now-t0)/ms,1), e = p<.5?2*p*p:-1+(4-2*p)*p;
-    el.textContent = (from+(to-from)*e).toFixed(3);
-    if(p<1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
-
-function setLoading(on){
-  const btn=document.getElementById("submit-btn"), icon=document.getElementById("btn-icon"), txt=document.getElementById("btn-text");
-  btn.disabled=on;
-  if(on){
-    icon.outerHTML=`<svg id="btn-icon" class="spinner" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8"><path d="M12 2a10 10 0 0 1 0 20" stroke-linecap="round"/></svg>`;
-    txt.textContent="Analysing…";
-  } else {
-    document.getElementById("btn-icon").outerHTML=`<svg id="btn-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>`;
-    txt.textContent="Check for Hallucinations";
+    response:"Aspirin was first synthesized in 1897 by Felix Hoffmann at Bayer. It works by inhibiting cyclooxygenase enzymes, reducing prostaglandin synthesis. Aspirin is used to relieve pain, reduce fever, and prevent blood clots. Low-dose aspirin is commonly recommended for cardiovascular protection.",
+    context:"Aspirin (acetylsalicylic acid) was first synthesized in 1897 by Felix Hoffmann, a chemist at Bayer. It acts by irreversibly inhibiting cyclooxygenase (COX) enzymes, preventing the formation of prostaglandins and thromboxane. It is widely used as an analgesic, antipyretic, and anti-inflammatory drug. Low-dose aspirin is used as a long-term antiplatelet medication to prevent heart attacks and strokes.",
+    prompt:"How does aspirin work?"
   }
+];
+
+function loadEx(i) {
+  g('resp-in').value   = EX[i].response;
+  g('ctx-in').value    = EX[i].context;
+  g('prompt-in').value = EX[i].prompt;
+  if (!g('opt-body').classList.contains('open')) toggleOpt();
 }
 
-function showErr(msg){ const b=document.getElementById("err-box"); b.textContent="⚠ "+msg; b.classList.add("show"); }
-function hideErr(){ document.getElementById("err-box").classList.remove("show"); }
+function toggleOpt() {
+  g('opt-body').classList.toggle('open');
+  g('opt-arr').classList.toggle('open');
+}
 
-// ── TEXT ANNOTATION ───────────────────────────────────────────────────────────
-function findMatch(claim, text){
-  const c=claim.toLowerCase(), t=text.toLowerCase();
-  let idx=t.indexOf(c);
-  if(idx!==-1) return {s:idx, e:idx+c.length};
-  // sliding window of 5-3 words
-  const words=c.split(/\s+/);
-  for(let len=Math.min(words.length,5); len>=3; len--){
-    for(let i=0; i<=words.length-len; i++){
-      const phrase=words.slice(i,i+len).join(" ");
-      const pi=t.indexOf(phrase);
-      if(pi!==-1) return {s:pi, e:pi+phrase.length};
-    }
+function togglePill(el) { el.classList.toggle('on'); }
+
+function activeMethods() {
+  return [...document.querySelectorAll('.pill.on')].map(p => p.dataset.m);
+}
+
+/* ── Annotation ────────────────────────────────────────────── */
+function findMatch(claim, text) {
+  const lc = claim.toLowerCase(), lt = text.toLowerCase();
+  let i = lt.indexOf(lc);
+  if (i !== -1) return { s: i, e: i + claim.length };
+  const ws = lc.split(/\s+/).filter(Boolean);
+  for (let n = Math.min(6, ws.length); n >= 3; n--) {
+    const ch = ws.slice(0, n).join(' ');
+    i = lt.indexOf(ch);
+    if (i !== -1) return { s: i, e: Math.min(text.length, i + claim.length) };
   }
   return null;
 }
 
-function buildAnnotatedHTML(text, claims){
-  // Gather all matches, resolve overlaps
-  const spans=[];
-  claims.forEach((c,i)=>{
-    const m=findMatch(c.claim,text);
-    if(m) spans.push({...m, idx:i, label:c.label});
-  });
-  spans.sort((a,b)=>a.s-b.s);
-  const clean=[];
-  let last=0;
-  for(const sp of spans){
-    if(sp.s>=last){ clean.push(sp); last=sp.e; }
-  }
-  // Build HTML
-  let html="", pos=0;
-  for(const sp of clean){
-    const cfg=lbl(sp.label);
-    html += esc(text.slice(pos,sp.s));
-    html += `<mark class="ann ${cfg.annCls}" data-idx="${sp.idx}" data-n="[${sp.idx+1}]">${esc(text.slice(sp.s,sp.e))}</mark>`;
-    pos=sp.e;
-  }
-  html+=esc(text.slice(pos));
-  return {html, annotated: clean};
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── RENDER RESULTS ────────────────────────────────────────────────────────────
-let _lastData=null, _claimsForMethod={};
+function buildAnnotated(text, cds) {
+  const ms = [];
+  cds.forEach((cd, i) => {
+    const m = findMatch(cd.claim, text);
+    if (m) ms.push({ ...m, i, label: cd.label });
+  });
+  ms.sort((a,b) => a.s - b.s);
+  const kept = []; let end = -1;
+  for (const m of ms) { if (m.s >= end) { kept.push(m); end = m.e; } }
+  let html = '', pos = 0;
+  for (const m of kept) {
+    html += esc(text.slice(pos, m.s));
+    html += `<mark class="ann ann-${m.label}" data-n="${m.i+1}" data-idx="${m.i}"` +
+            ` onmouseenter="focus(${m.i})" onmouseleave="focus(-1)">` +
+            esc(text.slice(m.s, m.e)) + '</mark>';
+    pos = m.e;
+  }
+  return html + esc(text.slice(pos)).replace(/\n/g,'<br>');
+}
 
-function renderResults(data){
-  _lastData=data;
-  const {aggregate_score:score, risk_level, method_results, latency_ms} = data;
-  const response = document.getElementById("ta-response").value;
-  const context  = document.getElementById("ta-context").value.trim();
+function focus(idx) {
+  document.querySelectorAll('.ann').forEach(el => el.classList.toggle('hi', +el.dataset.idx === idx));
+  document.querySelectorAll('.cc').forEach(el => el.classList.toggle('hi', +el.dataset.idx === idx));
+}
 
-  // --- Score banner
-  const banner = document.getElementById("score-banner");
-  banner.classList.add("show");
-  const scoreEl = document.getElementById("banner-score");
-  scoreEl.style.color = SCORE_COLOR(score);
-  counter(scoreEl, score);
+/* ── Main flow ─────────────────────────────────────────────── */
+let _data = null, _rt = '';
 
-  const riskCfg = RISK[risk_level]||RISK.low;
-  const riskEl = document.getElementById("banner-risk");
-  riskEl.className = "banner-risk " + riskCfg.cls;
-  document.getElementById("risk-label").textContent = riskCfg.text;
+async function runAnalysis() {
+  const resp = g('resp-in').value.trim();
+  if (!resp) return;
+  const methods = activeMethods();
+  if (!methods.length) { showErr('Select at least one method.'); return; }
+  clearErr(); _rt = resp;
 
-  const bar = document.getElementById("banner-bar");
-  bar.style.background = SCORE_COLOR(score);
-  setTimeout(()=>{ bar.style.width=(score*100).toFixed(1)+"%"; },60);
+  show('analysis'); hide('input'); hide('results');
+  g('reveal-list').innerHTML = '';
+  g('methods-card').style.display = 'none';
+  g('claims-title').textContent = 'Extracting claims…';
+  setPhase(0);
 
-  const lats = document.getElementById("banner-lats");
-  lats.innerHTML="";
-  if(latency_ms && typeof latency_ms==="object"){
-    Object.entries(latency_ms).forEach(([m,ms])=>{
-      const c=document.createElement("div"); c.className="lat-chip";
-      c.innerHTML=`${m} <em>${Math.round(ms)}ms</em>`; lats.appendChild(c);
+  let data;
+  try {
+    const res = await fetch('/check', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        response: resp,
+        context:  g('ctx-in').value.trim(),
+        prompt:   g('prompt-in').value.trim(),
+        methods,
+        cascade:  g('cascade-in').checked
+      })
     });
+    if (!res.ok) { const e = await res.json().catch(()=>({detail:res.statusText})); throw new Error(e.detail||res.statusText); }
+    data = await res.json();
+  } catch(e) {
+    hide('analysis'); show('input'); showErr('Error: ' + e.message); return;
   }
 
-  // --- Swap input → doc panel
-  document.getElementById("input-panel").style.display="none";
-  const docPanel = document.getElementById("doc-panel");
-  docPanel.style.display="block";
+  _data = data;
+  await animate(data, methods);
+}
 
-  // Choose which method's claims to annotate (prefer nli, else first)
-  const mkeys = Object.keys(method_results||{});
-  const withClaims = mkeys.filter(k=>(method_results[k]?.claims?.length||0)>0);
-  const activeMethod = withClaims.includes("nli") ? "nli" : withClaims[0];
+async function animate(data, methods) {
+  // Phase 1: reveal claims
+  const claims = data.claims || [];
+  g('claims-title').textContent = `${claims.length} claim${claims.length!==1?'s':''} found`;
+  setPhase(0, true);
+  const list = g('reveal-list');
+  for (let i = 0; i < claims.length; i++) {
+    await wait(110);
+    const d = document.createElement('div');
+    d.className = 'reveal-item';
+    d.innerHTML = `<div class="rn">${i+1}</div><div class="rt">${esc(claims[i])}</div>`;
+    list.appendChild(d);
+  }
+  await wait(320);
 
-  // Build annotation
-  const allClaims = activeMethod ? (method_results[activeMethod]?.claims||[]) : [];
-  const {html, annotated} = buildAnnotatedHTML(response, allClaims);
-  document.getElementById("doc-body").innerHTML = html;
-
-  // Wire hover on annotations
-  document.querySelectorAll(".ann").forEach(el=>{
-    el.addEventListener("mouseenter",()=>focusIdx(parseInt(el.dataset.idx)));
-    el.addEventListener("mouseleave", clearFocus);
+  // Phase 2: method bars
+  setPhase(1);
+  g('methods-card').style.display = 'block';
+  const rl = g('run-list');
+  rl.innerHTML = '';
+  const mr = data.method_results || {};
+  const active = methods.filter(m => mr[m]);
+  active.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'run-row';
+    row.innerHTML = `<div class="run-name">${m}</div>
+      <div class="run-track"><div class="run-fill ${m}" id="rf-${m}"></div></div>
+      <div class="run-score" id="rs-${m}">–</div>
+      <div class="run-stat running" id="rst-${m}">running</div>`;
+    rl.appendChild(row);
   });
+  await wait(240);
+  for (let i = 0; i < active.length; i++) {
+    const m = active[i];
+    const r = mr[m];
+    await wait(i * 210);
+    const pct = r.error ? 0 : Math.round((r.raw_score||0)*100);
+    g(`rf-${m}`).style.width = pct + '%';
+    await wait(580);
+    g(`rs-${m}`).textContent = pct + '%';
+    const st = g(`rst-${m}`);
+    st.textContent = r.error ? 'error' : 'done';
+    st.className = 'run-stat ' + (r.error ? 'error' : 'done');
+  }
+  setPhase(2, true);
+  await wait(380);
+
+  hide('analysis');
+  renderResults(data, _rt);
+  show('results');
+}
+
+/* ── Render ────────────────────────────────────────────────── */
+function renderResults(data, text) {
+  const score = Math.round((data.aggregate_score||0)*100);
+  const risk  = data.risk_level || 'unknown';
+  const cds   = data.claim_details || [];
+  const mr    = data.method_results || {};
+
+  // Gauge
+  const fill = g('g-fill');
+  fill.style.stroke = risk==='high' ? 'var(--hi)' : risk==='medium' ? 'var(--med)' : 'var(--low)';
+  setTimeout(() => { fill.style.strokeDashoffset = 301.6 * (1 - score/100); }, 60);
+
+  // Counter
+  let cur = 0; const inc = score / 50;
+  const t = setInterval(() => {
+    cur = Math.min(cur+inc, score);
+    g('gauge-n').textContent = Math.round(cur);
+    if (cur >= score) { clearInterval(t); g('gauge-n').textContent = score; }
+  }, 16);
+
+  // Risk
+  const rb = g('risk-badge');
+  rb.className = 'risk-badge ' + risk;
+  g('risk-lbl').textContent = risk + ' risk';
+
+  // Chips
+  g('m-chips').innerHTML = Object.entries(mr).map(([n,r]) => {
+    const s = r.error ? '–' : Math.round((r.raw_score||0)*100) + '%';
+    const l = r.latency_ms ? Math.round(r.latency_ms)+'ms' : '';
+    const col = r.error ? 'var(--t3)' : r.raw_score < .3 ? 'var(--low)' : r.raw_score < .7 ? 'var(--med)' : 'var(--hi)';
+    return `<div class="chip"><span class="chip-n">${n}</span><span class="chip-s" style="color:${col}">${s}</span>${l?`<span class="chip-l">${l}</span>`:''}</div>`;
+  }).join('');
+
+  // Meta
+  g('meta-lat').textContent   = data.latency_ms ? Math.round(data.latency_ms)+' ms' : '–';
+  g('meta-claims').textContent= (data.claims||[]).length;
+  g('meta-rid').textContent   = (data.request_id||'–').slice(0,8)+'…';
+
+  // Document
+  g('doc-text').innerHTML = cds.length ? buildAnnotated(text, cds) : esc(text).replace(/\n/g,'<br>');
 
   // Legend
-  const legend = document.getElementById("ann-legend");
-  const usedLabels = [...new Set(allClaims.map(c=>c.label))];
-  const legColors = {supported:["var(--green-line)","Supported"], contradicted:["var(--red-line)","Contradicted"], unsupported:["var(--amber-line)","Unsupported"], unknown:["var(--slate-line)","Unknown"]};
-  if(usedLabels.length){
-    legend.innerHTML=`<span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);margin-right:4px">Legend:</span>`;
-    usedLabels.forEach(l=>{
-      const [col,name]=legColors[l]||[legColors.unknown];
-      legend.innerHTML+=`<div class="leg-item"><div class="leg-swatch" style="background:${col}"></div>${name}</div>`;
-    });
-  } else { legend.innerHTML=""; }
+  const lbls = [...new Set(cds.map(c=>c.label))];
+  g('doc-legend').innerHTML = lbls.map(l =>
+    `<div class="leg-item"><div class="leg-line ${l}"></div>${l}</div>`).join('');
 
-  // Context
-  if(context){
-    const dc=document.getElementById("doc-context"); dc.style.display="";
-    document.getElementById("doc-ctx-text").textContent=context.length>300?context.slice(0,300)+"…":context;
-  } else { document.getElementById("doc-context").style.display="none"; }
-
-  // --- Claims panel
-  document.getElementById("cp-empty").style.display="none";
-  const cc=document.getElementById("claims-card"); cc.style.display="";
-
-  // Method tabs
-  _claimsForMethod={};
-  mkeys.forEach(k=>{ _claimsForMethod[k]=method_results[k]?.claims||[]; });
-
-  const tabs=document.getElementById("method-tabs"); tabs.innerHTML="";
-  withClaims.forEach((m,i)=>{
-    const btn=document.createElement("button"); btn.className="mtab"+(i===0?" active":"");
-    btn.textContent=m.toUpperCase(); btn.dataset.m=m;
-    btn.onclick=()=>{
-      tabs.querySelectorAll(".mtab").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      renderClaimCards(m,_claimsForMethod[m]);
-    };
-    tabs.appendChild(btn);
-  });
-
-  if(withClaims.length){
-    renderClaimCards(withClaims[0], _claimsForMethod[withClaims[0]]);
-  } else {
-    document.getElementById("claims-list").innerHTML="";
-    document.getElementById("no-claims").style.display="";
-  }
-}
-
-function renderClaimCards(method, claims){
-  document.getElementById("no-claims").style.display="none";
-  const list=document.getElementById("claims-list"); list.innerHTML="";
-  if(!claims||!claims.length){
-    document.getElementById("no-claims").style.display=""; return;
-  }
-  claims.forEach((c,i)=>{
-    const cfg=lbl(c.label);
-    const pct=Math.round((c.confidence||0)*100);
-    const hasEv=c.evidence&&c.evidence.trim()&&c.evidence!=="—"&&c.evidence.length>4;
-    const card=document.createElement("div");
-    card.className=`cc ${cfg.cls}`; card.id=`cc-${i}`;
-    card.style.animationDelay=(i*50)+"ms";
-    card.innerHTML=`
+  // Claim cards
+  const cardsEl = g('claim-cards');
+  g('claim-count').textContent = cds.length ? cds.length+' claims' : '';
+  if (!cds.length) { cardsEl.innerHTML = '<div class="no-claims">No per-claim details available.</div>'; return; }
+  cardsEl.innerHTML = '';
+  cds.forEach((cd,i) => {
+    const pct = Math.round((cd.confidence||0)*100);
+    const el = document.createElement('div');
+    el.className='cc'; el.dataset.idx=i;
+    el.onmouseenter=()=>focus(i); el.onmouseleave=()=>focus(-1);
+    el.innerHTML = `
       <div class="cc-top">
-        <div class="cc-num">${i+1}</div>
-        <div class="cc-body">
-          <div class="cc-text">"${esc(c.claim)}"</div>
-          ${hasEv?`<div class="cc-evidence show"><strong style="font-style:normal;font-size:10px;font-weight:700;color:var(--ink4)">Source:</strong> ${esc(c.evidence)}</div>`:""}
-        </div>
-        <div class="cc-badge ${cfg.cls}"><span class="bdot"></span>${cfg.text}</div>
+        <div class="cc-n ${cd.label}">${i+1}</div>
+        <div class="cc-text">${esc(cd.claim)}</div>
       </div>
-      <div class="cc-conf">
-        <div class="cc-conf-row"><span>Confidence</span><span>${pct}%</span></div>
-        <div class="conf-track"><div class="conf-fill" style="width:0%"></div></div>
-      </div>`;
-    card.addEventListener("mouseenter",()=>focusIdx(i));
-    card.addEventListener("mouseleave",clearFocus);
-    list.appendChild(card);
-    setTimeout(()=>{ card.querySelector(".conf-fill").style.width=pct+"%"; }, i*50+80);
+      <div class="cc-foot">
+        <div class="conf-track"><div class="conf-fill ${cd.label}" style="width:${pct}%"></div></div>
+        <div class="conf-pct">${pct}%</div>
+        <div class="cc-lbl ${cd.label}">${cd.label}</div>
+      </div>
+      ${cd.evidence?`<div class="cc-ev">${esc(cd.evidence)}</div>`:''}`;
+    cardsEl.appendChild(el);
   });
 }
 
-function focusIdx(idx){
-  // Highlight annotation in text
-  document.querySelectorAll(".ann").forEach(el=>{
-    el.classList.toggle("focused", parseInt(el.dataset.idx)===idx);
+/* ── Utilities ─────────────────────────────────────────────── */
+function g(id) { return document.getElementById(id); }
+function show(id) { g(id+'-section').style.display='block'; }
+function hide(id) { g(id+'-section').style.display='none'; }
+function wait(ms) { return new Promise(r=>setTimeout(r,ms)); }
+
+function setPhase(n) {
+  ['Decomposing','Detecting','Complete'].forEach((lbl,i) => {
+    const el = g('ps'+i);
+    el.className = 'ps' + (i<n?' done':i===n?' active':'');
   });
-  // Highlight claim card
-  document.querySelectorAll(".cc").forEach((el,i)=>{
-    el.classList.toggle("focused", i===idx);
-  });
-  // Scroll card into view
-  const cc=document.getElementById("cc-"+idx);
-  if(cc) cc.scrollIntoView({behavior:"smooth",block:"nearest"});
+  g('phase-lbl').textContent = ['Decomposing','Detecting','Complete'][n]||'';
 }
 
-function clearFocus(){
-  document.querySelectorAll(".ann,.cc").forEach(el=>el.classList.remove("focused"));
-}
+function resetUI() { hide('results'); show('input'); }
 
-// ── RESET ─────────────────────────────────────────────────────────────────────
-function resetToInput(){
-  document.getElementById("doc-panel").style.display="none";
-  document.getElementById("input-panel").style.display="";
-  document.getElementById("score-banner").classList.remove("show");
-  document.getElementById("claims-card").style.display="none";
-  document.getElementById("cp-empty").style.display="";
-}
+function showErr(msg) { const e=g('err-banner'); e.textContent=msg; e.style.display='block'; }
+function clearErr()   { g('err-banner').style.display='none'; }
 
-// ── MAIN RUN ──────────────────────────────────────────────────────────────────
-async function runCheck(){
-  hideErr();
-  const response=document.getElementById("ta-response").value.trim();
-  if(!response){ showErr("Response text is required."); return; }
-  const methods=selectedMethods();
-  if(!methods.length){ showErr("Select at least one method."); return; }
-  setLoading(true);
-  try{
-    const body={
-      response,
-      context: document.getElementById("ta-context").value.trim(),
-      prompt:  document.getElementById("ta-prompt").value.trim(),
-      methods,
-      cascade: document.getElementById("cb-cascade").checked,
-    };
-    const res=await fetch("/check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-    if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.detail||`Server error ${res.status}`); }
-    renderResults(await res.json());
-  } catch(e){
-    showErr(e.message||"Request failed — is the server running?");
-  } finally{ setLoading(false); }
-}
-
-// ── EXAMPLES ──────────────────────────────────────────────────────────────────
-function loadEx(i){
-  const ex=EXAMPLES[i];
-  document.getElementById("ta-response").value=ex.response;
-  document.getElementById("ta-context").value=ex.context;
-  document.getElementById("ta-prompt").value=ex.prompt;
-  METHODS.forEach(m=>{
-    const cb=document.getElementById("mcb-"+m.id);
-    cb.checked=ex.methods.includes(m.id);
-    document.getElementById("mpill-"+m.id).classList.toggle("on",cb.checked);
-  });
-  runCheck();
-}
-
-document.addEventListener("keydown",e=>{ if((e.metaKey||e.ctrlKey)&&e.key==="Enter") runCheck(); });
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key==='Enter') runAnalysis();
+});
 </script>
 </body>
 </html>
