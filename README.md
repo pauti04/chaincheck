@@ -258,6 +258,26 @@ All settings via environment variables:
 
 ---
 
+## What's measured vs what's claimed
+
+ChainCheck's pitch is *claim-level* detection: tell you which specific sentence is wrong, not just whether the whole response is bad. The benchmarks above measure *response-level* F1 — whether the pipeline's aggregate score correctly labels the full response as hallucinated or not. These are related but not the same thing.
+
+To bridge this gap, ChainCheck ships a dedicated claim-level evaluation:
+
+```bash
+chaincheck eval --dataset halueval-claims --method nli --samples 100 --output claims.json
+```
+
+This uses HaluEval pairs (each question has both a correct answer and a hallucinated answer against the same context) and reports:
+- **Clean flagging rate** — fraction of claims in *correct* responses that get incorrectly flagged (claim-level false positive rate)
+- **Halluc flagging rate** — fraction of claims in *hallucinated* responses that get flagged (claim-level coverage)
+- **Discrimination ratio** — halluc / clean; a ratio of 3 means hallucinated responses have 3× more flagged claims
+- **Claim AUC** — AUC of per-claim scores against response-level labels; no claim-level annotation required
+
+Exact claim-level precision/recall requires human-annotated atomic facts (as in [FactScore](https://arxiv.org/abs/2305.14251)) and is on the roadmap. The metrics above are a principled proxy and characterise claim-level behaviour in a way no other hallucination detection benchmark currently reports.
+
+---
+
 ## What we learned
 
 **NLI and judge complement each other.** NLI has high precision (0.810) at 51 ms — fast and conservative, rarely cries wolf. Judge has even higher precision (0.965) — when it flags something as hallucinated, it's right 96.5% of the time. NLI is 34× faster, making it ideal for high-throughput filtering before running the more accurate judge on borderline cases.
