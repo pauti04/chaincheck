@@ -45,12 +45,24 @@ def check(
         "nli,judge", "--methods", "-m", help="Comma-separated method list"
     ),
     json_output: bool = typer.Option(False, "--json", help="Output raw JSON instead of table"),
+    debug_claims: bool = typer.Option(
+        False, "--debug-claims", help="Print extracted atomic claims before scoring"
+    ),
 ) -> None:
     """Detect hallucinations in a single response and print a colour-coded table."""
     from chaincheck.detect import detect as _detect
 
     method_list = [m.strip() for m in methods.split(",")]
     result = asyncio.run(_detect(response, context=context, methods=method_list))  # type: ignore[arg-type]
+
+    if debug_claims:
+        claims_table = Table(title=f"Decomposed claims ({len(result.claims)} total)")
+        claims_table.add_column("#", justify="right", style="dim")
+        claims_table.add_column("Claim")
+        for i, claim in enumerate(result.claims, 1):
+            claims_table.add_row(str(i), claim)
+        console.print(claims_table)
+        console.print()
 
     if json_output:
         console.print_json(result.model_dump_json())

@@ -24,7 +24,7 @@ _METHOD_WEIGHTS: dict[str, float] = {
 _RISK_LOW = float(os.getenv("RISK_LOW_THRESHOLD", "0.3"))
 _RISK_HIGH = float(os.getenv("RISK_HIGH_THRESHOLD", "0.7"))
 
-_DEFAULT_METHODS: list[str] = ["nli", "consistency", "judge"]
+_DEFAULT_METHODS: list[str] = ["nli", "judge"]
 
 
 async def detect(
