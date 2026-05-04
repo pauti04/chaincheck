@@ -600,8 +600,8 @@ function focus(idx) {
   document.querySelectorAll('.cc').forEach(el => el.classList.toggle('hi', +el.dataset.idx === idx));
 }
 
-/* ── Main flow ─────────────────────────────────────────────── */
-let _data = null, _rt = '';
+/* ── Main flow (real SSE streaming) ───────────────────────── */
+let _rt = '';
 
 async function runAnalysis() {
   const resp = g('resp-in').value.trim();
@@ -610,58 +610,16 @@ async function runAnalysis() {
   if (!methods.length) { showErr('Select at least one method.'); return; }
   clearErr(); _rt = resp;
 
+  // Reset analysis UI
   show('analysis'); hide('input'); hide('results');
   g('reveal-list').innerHTML = '';
-  g('methods-card').style.display = 'none';
   g('claims-title').textContent = 'Extracting claims…';
   setPhase(0);
 
-  let data;
-  try {
-    const res = await fetch('/check', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        response: resp,
-        context:  g('ctx-in').value.trim(),
-        prompt:   g('prompt-in').value.trim(),
-        methods,
-        cascade:  g('cascade-in').checked
-      })
-    });
-    if (!res.ok) { const e = await res.json().catch(()=>({detail:res.statusText})); throw new Error(e.detail||res.statusText); }
-    data = await res.json();
-  } catch(e) {
-    hide('analysis'); show('input'); showErr('Error: ' + e.message); return;
-  }
-
-  _data = data;
-  await animate(data, methods);
-}
-
-async function animate(data, methods) {
-  // Phase 1: reveal claims
-  const claims = data.claims || [];
-  g('claims-title').textContent = `${claims.length} claim${claims.length!==1?'s':''} found`;
-  setPhase(0, true);
-  const list = g('reveal-list');
-  for (let i = 0; i < claims.length; i++) {
-    await wait(110);
-    const d = document.createElement('div');
-    d.className = 'reveal-item';
-    d.innerHTML = `<div class="rn">${i+1}</div><div class="rt">${esc(claims[i])}</div>`;
-    list.appendChild(d);
-  }
-  await wait(320);
-
-  // Phase 2: method bars
-  setPhase(1);
-  g('methods-card').style.display = 'block';
+  // Pre-build method rows so bars are ready when events arrive
   const rl = g('run-list');
   rl.innerHTML = '';
-  const mr = data.method_results || {};
-  const active = methods.filter(m => mr[m]);
-  active.forEach(m => {
+  methods.forEach(m => {
     const row = document.createElement('div');
     row.className = 'run-row';
     row.innerHTML = `<div class="run-name">${m}</div>
@@ -670,25 +628,95 @@ async function animate(data, methods) {
       <div class="run-stat running" id="rst-${m}">running</div>`;
     rl.appendChild(row);
   });
-  await wait(240);
-  for (let i = 0; i < active.length; i++) {
-    const m = active[i];
-    const r = mr[m];
-    await wait(i * 210);
-    const pct = r.error ? 0 : Math.round((r.raw_score||0)*100);
-    g(`rf-${m}`).style.width = pct + '%';
-    await wait(580);
-    g(`rs-${m}`).textContent = pct + '%';
-    const st = g(`rst-${m}`);
-    st.textContent = r.error ? 'error' : 'done';
-    st.className = 'run-stat ' + (r.error ? 'error' : 'done');
-  }
-  setPhase(2, true);
-  await wait(380);
+  g('methods-card').style.display = 'none'; // shown on first method event
 
-  hide('analysis');
-  renderResults(data, _rt);
-  show('results');
+  let res;
+  try {
+    res = await fetch('/stream', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        response: resp,
+        context:  g('ctx-in').value.trim(),
+        prompt:   g('prompt-in').value.trim(),
+        methods,
+        cascade:  g('cascade-in').checked
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({detail: res.statusText}));
+      throw new Error(e.detail || res.statusText);
+    }
+  } catch(e) {
+    hide('analysis'); show('input'); showErr('Error: ' + e.message); return;
+  }
+
+  // Read the SSE stream
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  try {
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, {stream: true});
+      const lines = buf.split('\n');
+      buf = lines.pop(); // keep incomplete trailing line
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') return;
+        try { handleEvent(JSON.parse(raw)); } catch {}
+      }
+    }
+  } catch(e) {
+    hide('analysis'); show('input'); showErr('Stream error: ' + e.message);
+  }
+}
+
+function handleEvent(ev) {
+  if (ev.type === 'claims') {
+    const claims = ev.claims || [];
+    g('claims-title').textContent =
+      `${claims.length} claim${claims.length !== 1 ? 's' : ''} found`;
+    const list = g('reveal-list');
+    claims.forEach((c, i) => {
+      setTimeout(() => {
+        const d = document.createElement('div');
+        d.className = 'reveal-item';
+        d.innerHTML = `<div class="rn">${i+1}</div><div class="rt">${esc(c)}</div>`;
+        list.appendChild(d);
+      }, i * 100);
+    });
+    // Switch to method phase after claims animate in
+    setTimeout(() => {
+      setPhase(1);
+      g('methods-card').style.display = 'block';
+    }, claims.length * 100 + 200);
+
+  } else if (ev.type === 'method') {
+    const pct = Math.round((ev.score || 0) * 100);
+    const bar = g(`rf-${ev.method}`);
+    if (bar) bar.style.width = pct + '%';
+    setTimeout(() => {
+      const s = g(`rs-${ev.method}`);
+      const st = g(`rst-${ev.method}`);
+      if (s) s.textContent = pct + '%';
+      if (st) {
+        st.textContent = ev.error ? 'error' : 'done';
+        st.className = 'run-stat ' + (ev.error ? 'error' : 'done');
+      }
+    }, 450);
+
+  } else if (ev.type === 'result') {
+    setPhase(2);
+    setTimeout(() => {
+      hide('analysis');
+      renderResults(ev.data, _rt);
+      show('results');
+    }, 500);
+  }
 }
 
 /* ── Render ────────────────────────────────────────────────── */

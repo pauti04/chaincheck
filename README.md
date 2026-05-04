@@ -243,11 +243,33 @@ Response — `DetectionResult`:
 }
 ```
 
+**POST /stream** — same body as `/check`, returns `text/event-stream`. Events arrive as each method completes:
+```
+data: {"type": "claims",  "claims": ["...", "..."], "request_id": "uuid"}
+data: {"type": "method",  "method": "nli",   "score": 0.12, "latency_ms": 210}
+data: {"type": "method",  "method": "judge",  "score": 0.08, "latency_ms": 1340}
+data: {"type": "result",  "data": {...full DetectionResult...}}
+data: [DONE]
+```
+
 **POST /batch** — same as `/check` but body is `{"inputs": [...]}`, returns array.
+
+**GET /history?limit=20** — returns the last N detection results (max 100), persisted in SQLite:
+```json
+[{
+  "request_id": "uuid",
+  "created_at": 1714900000.0,
+  "response_preview": "The Eiffel Tower is located in...",
+  "aggregate_score": 0.71,
+  "risk_level": "high",
+  "total_latency_ms": 1420.3,
+  "methods": ["judge", "nli"]
+}]
+```
 
 **GET /health**
 ```json
-{ "status": "ok", "version": "0.1.0", "models_loaded": true }
+{ "status": "ok", "version": "0.3.0", "models_loaded": true }
 ```
 
 ---

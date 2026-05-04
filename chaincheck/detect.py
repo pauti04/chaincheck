@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+import json as _json
 import os
 import time
 import uuid
+from collections.abc import AsyncGenerator
 from typing import Literal
 
 from chaincheck.config import (
@@ -72,6 +74,88 @@ async def detect(
         return await _cascade_detect(claims, response, context, prompt, active, rid)
 
     return await _full_detect(claims, response, context, prompt, active, rid)
+
+
+async def detect_stream(
+    response: str,
+    context: str = "",
+    prompt: str = "",
+    methods: list[str] | None = None,
+    request_id: str | None = None,
+) -> AsyncGenerator[dict, None]:
+    """
+    Stream detection events via async generator as each stage completes.
+
+    Yields dicts with a ``type`` key:
+      - ``{"type": "claims",  "claims": [...], "request_id": "..."}``
+      - ``{"type": "method",  "method": "nli", "score": 0.72, "latency_ms": 230, "error": null}``
+      - ``{"type": "result",  "data": {...full DetectionResult as dict...}}``
+    """
+    t0 = time.time()
+    active = list(methods or _DEFAULT_METHODS)
+    rid = request_id or str(uuid.uuid4())
+
+    claims = await decompose(response)
+    yield {"type": "claims", "claims": claims, "request_id": rid}
+
+    task_map: dict[asyncio.Task, str] = {}
+    if "nli" in active and context.strip():
+        task_map[asyncio.create_task(check_nli(claims, context))] = "nli"
+    if "judge" in active:
+        task_map[asyncio.create_task(check_judge(claims, context))] = "judge"
+    if "qa" in active and context.strip():
+        task_map[asyncio.create_task(check_qa(claims, context))] = "qa"
+    if "consistency" in active and prompt.strip():
+        task_map[asyncio.create_task(check_consistency(prompt, response))] = "consistency"
+    if "logprobs" in active and prompt.strip():
+        task_map[asyncio.create_task(check_logprobs(prompt, claims))] = "logprobs"
+
+    method_results: dict[str, MethodResult] = {}
+    consistency_result = None
+    pending = set(task_map.keys())
+
+    while pending:
+        done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+        for task in done:
+            name = task_map[task]
+            try:
+                raw = task.result()
+                if name == "consistency":
+                    consistency_result = raw
+                    mr = MethodResult(
+                        method=name,
+                        raw_score=max(0.0, 1.0 - raw.consistency_score),
+                        latency_ms=raw.latency_ms,
+                    )
+                else:
+                    mr = raw
+                method_results[name] = mr
+            except Exception as exc:
+                mr = MethodResult(method=name, raw_score=0.0, latency_ms=0.0, error=str(exc))
+                method_results[name] = mr
+
+            yield {
+                "type": "method",
+                "method": name,
+                "score": round(mr.raw_score, 4),
+                "latency_ms": round(mr.latency_ms, 1),
+                "error": mr.error,
+            }
+
+    aggregate = _weighted_aggregate(method_results, list(method_results.keys()))
+    final = DetectionResult(
+        response=response,
+        claims=claims,
+        method_results=method_results,
+        consistency=consistency_result,
+        claim_details=_compute_claim_details(method_results),
+        aggregate_score=aggregate,
+        risk_level=_compute_risk_level(aggregate),
+        latency_ms={m: mr.latency_ms for m, mr in method_results.items()},
+        total_latency_ms=(time.time() - t0) * 1000,
+        request_id=rid,
+    )
+    yield {"type": "result", "data": _json.loads(final.model_dump_json())}
 
 
 async def _cascade_detect(
