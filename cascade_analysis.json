@@ -1,0 +1,366 @@
+{
+  "frontier": [
+    {
+      "low": 0.1,
+      "high": 0.2,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    }
+  ],
+  "optimal": {
+    "low": 0.1,
+    "high": 0.2,
+    "f1": 0.5736,
+    "precision": 0.8102,
+    "recall": 0.444,
+    "avg_latency_ms": 60.0,
+    "escalation_rate": 0.0
+  },
+  "nli_only": {
+    "low": 0.0,
+    "high": 0.0,
+    "f1": 0.5736,
+    "precision": 0.8102,
+    "recall": 0.444,
+    "avg_latency_ms": 60.0,
+    "escalation_rate": 1.0
+  },
+  "both_methods": {
+    "low": 0.0,
+    "high": 1.0,
+    "f1": 0.763,
+    "precision": 0.936,
+    "recall": 0.644,
+    "avg_latency_ms": 1172.9,
+    "escalation_rate": 1.0
+  },
+  "all_points": [
+    {
+      "low": 0.1,
+      "high": 0.2,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.1,
+      "high": 0.3,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.1,
+      "high": 0.4,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.1,
+      "high": 0.5,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 62.2,
+      "escalation_rate": 0.002
+    },
+    {
+      "low": 0.1,
+      "high": 0.6,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.1,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.1,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.1,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.2,
+      "high": 0.3,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.2,
+      "high": 0.4,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.2,
+      "high": 0.5,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 62.2,
+      "escalation_rate": 0.002
+    },
+    {
+      "low": 0.2,
+      "high": 0.6,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.2,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.2,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.2,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.3,
+      "high": 0.4,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.3,
+      "high": 0.5,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 62.2,
+      "escalation_rate": 0.002
+    },
+    {
+      "low": 0.3,
+      "high": 0.6,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.3,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.3,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.3,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.4,
+      "high": 0.5,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 62.2,
+      "escalation_rate": 0.002
+    },
+    {
+      "low": 0.4,
+      "high": 0.6,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.4,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.4,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.4,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 71.9,
+      "escalation_rate": 0.006
+    },
+    {
+      "low": 0.5,
+      "high": 0.6,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 69.6,
+      "escalation_rate": 0.004
+    },
+    {
+      "low": 0.5,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 69.6,
+      "escalation_rate": 0.004
+    },
+    {
+      "low": 0.5,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 69.6,
+      "escalation_rate": 0.004
+    },
+    {
+      "low": 0.5,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 69.6,
+      "escalation_rate": 0.004
+    },
+    {
+      "low": 0.6,
+      "high": 0.7,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.6,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.6,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.7,
+      "high": 0.8,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.7,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    },
+    {
+      "low": 0.8,
+      "high": 0.9,
+      "f1": 0.5736,
+      "precision": 0.8102,
+      "recall": 0.444,
+      "avg_latency_ms": 60.0,
+      "escalation_rate": 0.0
+    }
+  ]
+}

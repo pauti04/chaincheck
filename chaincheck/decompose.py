@@ -79,6 +79,11 @@ async def decompose(
     except (json.JSONDecodeError, ValueError, IndexError, AttributeError, LLMError):
         claims = _sentence_split_fallback(response)
 
+    # If the model returned nothing but the response has content, use sentence split.
+    # This handles terse answers (e.g. "Nothing happens") that the model skips over.
+    if not claims and len(response.strip()) >= 15:
+        claims = _sentence_split_fallback(response)
+
     cache.set(key, claims, expire=_CACHE_TTL)
     return claims
 

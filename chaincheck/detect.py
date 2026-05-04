@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import uuid
 from typing import Literal
 
@@ -19,6 +20,7 @@ from chaincheck.methods.consistency import check_consistency
 from chaincheck.methods.judge import check_judge
 from chaincheck.methods.logprobs import check_logprobs
 from chaincheck.methods.nli import check_nli
+from chaincheck.methods.qa import check_qa
 from chaincheck.models import DetectionResult, MethodResult
 
 _METHOD_WEIGHTS: dict[str, float] = {
@@ -26,6 +28,7 @@ _METHOD_WEIGHTS: dict[str, float] = {
     "consistency": WEIGHT_CONSISTENCY,
     "judge": WEIGHT_JUDGE,
     "logprobs": WEIGHT_LOGPROBS,
+    "qa": float(os.getenv("QA_WEIGHT", "0.25")),
 }
 
 _RISK_LOW = RISK_LOW_THRESHOLD
@@ -115,6 +118,8 @@ async def _full_detect(
         tasks["nli"] = check_nli(claims, context)
     if "judge" in active:
         tasks["judge"] = check_judge(claims, context)
+    if "qa" in active and context.strip():
+        tasks["qa"] = check_qa(claims, context)
     if "consistency" in active and prompt.strip():
         tasks["consistency"] = check_consistency(prompt, response)
     if "logprobs" in active and prompt.strip():
