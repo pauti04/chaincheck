@@ -162,6 +162,49 @@ def eval(
         save_report(run, output)
         print_report(run)
 
+    elif dataset == "cascade":
+        from chaincheck.eval.cascade import run_cascade_analysis
+
+        console.print("[bold]Running cascade tradeoff analysis (offline, no API calls)...[/bold]")
+        analysis = run_cascade_analysis()
+        table = Table(title="Cascade Pareto Frontier — NLI-first escalation to Judge")
+        table.add_column("Low", justify="right")
+        table.add_column("High", justify="right")
+        table.add_column("F1", justify="right")
+        table.add_column("Precision", justify="right")
+        table.add_column("Avg Latency", justify="right")
+        table.add_column("Escalation %", justify="right")
+        for p in analysis.frontier:
+            table.add_row(
+                str(p.low), str(p.high),
+                f"{p.f1:.4f}", f"{p.precision:.4f}",
+                f"{p.avg_latency_ms:.0f} ms",
+                f"{p.escalation_rate * 100:.1f}%",
+            )
+        console.print(table)
+        console.print(
+            f"\n[bold]Baselines:[/bold]"
+            f"  NLI-only  F1={analysis.nli_only.f1:.4f}  {analysis.nli_only.avg_latency_ms:.0f} ms"
+            f"  |  Both  F1={analysis.both_methods.f1:.4f}  {analysis.both_methods.avg_latency_ms:.0f} ms"
+        )
+        console.print(
+            f"[green]Optimal cascade:[/green]"
+            f"  band=[{analysis.optimal.low}, {analysis.optimal.high}]"
+            f"  F1={analysis.optimal.f1:.4f}"
+            f"  {analysis.optimal.avg_latency_ms:.0f} ms"
+            f"  ({analysis.optimal.escalation_rate * 100:.1f}% escalated)"
+        )
+        import json as _json
+        Path(output).write_text(_json.dumps({
+            "frontier": [p.__dict__ for p in analysis.frontier],
+            "optimal": analysis.optimal.__dict__,
+            "nli_only": analysis.nli_only.__dict__,
+            "both_methods": analysis.both_methods.__dict__,
+            "all_points": [p.__dict__ for p in analysis.points],
+        }, indent=2))
+        console.print(f"\n[green]Results saved to {output}[/green]")
+        return
+
     elif dataset == "halueval-claims":
         from chaincheck.eval.claimlevel import run_claimlevel
         from chaincheck.eval.report import print_claimlevel_report, save_claimlevel_report

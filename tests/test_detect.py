@@ -131,3 +131,70 @@ async def test_detect_handles_method_exception_gracefully():
         result = await detect("Some claim.", context="ctx", methods=["judge"])
 
     assert result.method_results["judge"].error is not None
+
+
+@pytest.mark.asyncio
+async def test_detect_cascade_low_score_skips_judge():
+    """cascade=True should skip judge when NLI score is clearly low (< 0.2)."""
+    from chaincheck.detect import detect
+
+    mock_claims = ["Some claim."]
+    nli_result = MethodResult(method="nli", raw_score=0.05, latency_ms=50.0)
+
+    with (
+        patch("chaincheck.detect.decompose", new=AsyncMock(return_value=mock_claims)),
+        patch("chaincheck.detect.check_nli", new=AsyncMock(return_value=nli_result)),
+        patch("chaincheck.detect.check_judge", new=AsyncMock()) as mock_judge,
+    ):
+        result = await detect(
+            "Some claim.", context="ctx", methods=["nli", "judge"], cascade=True
+        )
+
+    mock_judge.assert_not_called()
+    assert "judge" not in result.method_results
+    assert "nli" in result.method_results
+
+
+@pytest.mark.asyncio
+async def test_detect_cascade_ambiguous_score_runs_judge():
+    """cascade=True should run judge when NLI score is in the ambiguous band [0.2, 0.8]."""
+    from chaincheck.detect import detect
+
+    mock_claims = ["Some claim."]
+    nli_result = MethodResult(method="nli", raw_score=0.5, latency_ms=50.0)
+    judge_result = MethodResult(method="judge", raw_score=0.6, latency_ms=200.0)
+
+    with (
+        patch("chaincheck.detect.decompose", new=AsyncMock(return_value=mock_claims)),
+        patch("chaincheck.detect.check_nli", new=AsyncMock(return_value=nli_result)),
+        patch("chaincheck.detect.check_judge", new=AsyncMock(return_value=judge_result)) as mock_j,
+    ):
+        result = await detect(
+            "Some claim.", context="ctx", methods=["nli", "judge"], cascade=True
+        )
+
+    mock_j.assert_called_once()
+    assert "judge" in result.method_results
+    assert "nli" in result.method_results
+
+
+@pytest.mark.asyncio
+async def test_detect_cascade_without_context_falls_back_to_full():
+    """cascade=True with no context should run the standard full detect path."""
+    from chaincheck.detect import detect
+
+    mock_claims = ["Some claim."]
+    judge_result = MethodResult(method="judge", raw_score=0.5, latency_ms=200.0)
+
+    with (
+        patch("chaincheck.detect.decompose", new=AsyncMock(return_value=mock_claims)),
+        patch("chaincheck.detect.check_judge", new=AsyncMock(return_value=judge_result)),
+        patch("chaincheck.detect.check_nli", new=AsyncMock()) as mock_nli,
+    ):
+        result = await detect(
+            "Some claim.", context="", methods=["nli", "judge"], cascade=True
+        )
+
+    # No context → cascade condition not met → NLI skipped (no context), judge runs
+    mock_nli.assert_not_called()
+    assert "judge" in result.method_results
