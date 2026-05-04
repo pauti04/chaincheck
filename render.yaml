@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: chaincheck
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CHAINCHECK_API_KEY
+        sync: false
+      - key: HISTORY_DB
+        value: /tmp/chaincheck_history.db
+    healthCheckPath: /health
+    autoDeploy: true
