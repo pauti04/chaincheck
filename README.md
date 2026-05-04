@@ -190,11 +190,14 @@ chaincheck serve --port 8000
 |-----------|-------------|
 | You have a context/reference document (RAG) | `--methods nli,judge` (default) |
 | High throughput, latency < 100 ms per check | `--methods nli` |
-| You want to flag borderline cases for human review | Run NLI first; escalate scores 0.3–0.7 to judge |
+| Fast LLM check without NLI model download | `--methods qa` |
+| You want to flag borderline cases for human review | `--cascade` — runs NLI first, judge only on 0.2–0.8 scores |
 | Checking open-ended generation with no ground truth | `--methods consistency` |
-| Need the highest-precision signal (96.5%) | `--methods judge` |
+| Need the highest-precision signal (95.5%) | `--methods judge` |
 
-**Consistency** detects when a model gives *inconsistent* answers to the same question — it scores near-random on factual benchmarks because a confidently wrong model is consistently wrong. Do not use it as a substitute for NLI or judge on context-grounded tasks.
+**QA method** (`--methods qa`) — asks the LLM "does the context support this claim? yes/no" at temperature=0. No chain-of-thought, ~3× fewer output tokens than judge. Useful when you want an LLM check but don't want to download the NLI model, or as a fast second opinion.
+
+**Consistency** detects when a model gives *inconsistent* answers to the same question. It scores F1=0.000 on HaluEval (confidently wrong models are consistently wrong). Use it only for open-ended generation with no reference context — it is not a substitute for NLI or judge on context-grounded tasks.
 
 **Logprobs** requires a prompt and is most useful as a cheap pre-filter: high token uncertainty correlates with hallucination risk but does not catch confident errors.
 
