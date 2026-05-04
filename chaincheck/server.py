@@ -11,15 +11,16 @@ Endpoints:
 from __future__ import annotations
 
 import asyncio
+import os
 import time
 import uuid
 from contextlib import asynccontextmanager
 
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -33,6 +34,7 @@ from chaincheck.models import DetectionResult
 limiter = Limiter(key_func=get_remote_address)
 
 _models_loaded = False
+_API_KEY = os.getenv("CHAINCHECK_API_KEY", "")
 
 
 class CheckRequest(BaseModel):
@@ -87,6 +89,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+_OPEN_PATHS = {"/", "/health", "/docs", "/openapi.json", "/favicon.ico"}
+
+
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next) -> Response:
+    """Enforce API key auth when CHAINCHECK_API_KEY is set."""
+    if _API_KEY and request.url.path not in _OPEN_PATHS:
+        key = request.headers.get("X-API-Key", "")
+        if key != _API_KEY:
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "Invalid or missing API key. Set X-API-Key header."},
+            )
+    return await call_next(request)
 
 
 @app.middleware("http")

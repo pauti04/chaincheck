@@ -183,12 +183,57 @@ def _compute_risk_level(score: float) -> Literal["low", "medium", "high"]:
 def _compute_claim_details(
     method_results: dict[str, MethodResult],
 ) -> list[ClaimResult] | None:
-    """Return per-claim details from the highest-priority method that has them."""
-    for method in ("judge", "logprobs", "nli", "qa"):
-        mr = method_results.get(method)
-        if mr and mr.claims:
-            return mr.claims
-    return None
+    """
+    Aggregate per-claim verdicts across all methods using confidence-weighted voting.
+
+    When only one method has per-claim data its results are returned directly.
+    When multiple methods have results, each method's weight × confidence votes
+    for a label; the label with the most accumulated weight wins, and the best
+    evidence (by weight × confidence) is selected.
+    """
+    active = [
+        (m, mr)
+        for m, mr in method_results.items()
+        if mr.claims and not mr.error
+    ]
+    if not active:
+        return None
+    if len(active) == 1:
+        return active[0][1].claims
+
+    n = min(len(mr.claims) for _, mr in active)
+    aggregated: list[ClaimResult] = []
+
+    for i in range(n):
+        label_weights: dict[str, float] = {}
+        best_evidence = ""
+        best_weight = -1.0
+
+        for method_name, mr in active:
+            w = _METHOD_WEIGHTS.get(method_name, 0.25)
+            cr = mr.claims[i]
+            vote = w * cr.confidence
+            label_weights[cr.label] = label_weights.get(cr.label, 0.0) + vote
+            if vote > best_weight and cr.evidence not in ("", "no relevant context found"):
+                best_weight = vote
+                best_evidence = cr.evidence
+
+        best_label = max(label_weights, key=lambda k: label_weights[k])
+        total = sum(label_weights.values())
+        confidence = label_weights[best_label] / total if total > 0 else 0.0
+        claim_text = active[0][1].claims[i].claim
+
+        aggregated.append(
+            ClaimResult(
+                claim=claim_text,
+                label=best_label,
+                confidence=round(confidence, 4),
+                evidence=best_evidence or "no evidence available",
+                method="ensemble",
+            )
+        )
+
+    return aggregated
 
 
 def _weighted_aggregate(
