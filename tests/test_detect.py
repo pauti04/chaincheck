@@ -50,13 +50,14 @@ class TestWeightedAggregate:
         assert score == pytest.approx(1.0, abs=1e-6)
 
     def test_two_methods_normalises_weights(self):
+        from chaincheck.config import WEIGHT_JUDGE, WEIGHT_NLI
+
         results = {
             "nli": _mr("nli", 0.0),
             "judge": _mr("judge", 1.0),
         }
         score = _weighted_aggregate(results, ["nli", "judge"])
-        # nli weight=0.35, judge weight=0.25 → normalised sum = 0.6
-        expected = (0.35 * 0.0 + 0.25 * 1.0) / (0.35 + 0.25)
+        expected = (WEIGHT_NLI * 0.0 + WEIGHT_JUDGE * 1.0) / (WEIGHT_NLI + WEIGHT_JUDGE)
         assert score == pytest.approx(expected, abs=1e-6)
 
     def test_unknown_method_ignored(self):

@@ -87,8 +87,9 @@ async def run_halueval(
     y_true = [r["ground_truth"] for r in raw_results]
     y_pred = [r["predicted"] for r in raw_results]
     latencies = [r["latency_ms"] for r in raw_results]
+    scores = [r["score"] for r in raw_results]
 
-    metrics = compute_metrics(y_true, y_pred, latencies)
+    metrics = compute_metrics(y_true, y_pred, latencies, scores=scores)
     return EvalRun(
         method=method, samples=len(raw_results), metrics=metrics, raw_results=raw_results
     )
