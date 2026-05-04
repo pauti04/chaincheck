@@ -51,5 +51,7 @@ class DetectionResult(BaseModel):
         ge=0.0, le=1.0, description="Weighted hallucination risk score"
     )
     risk_level: Literal["low", "medium", "high"]
+    claim_details: list[ClaimResult] | None = None
     latency_ms: dict[str, float] = Field(default_factory=dict)
+    total_latency_ms: float = 0.0
     request_id: str | None = None

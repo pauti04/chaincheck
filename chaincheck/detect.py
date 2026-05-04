@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import time
 import uuid
 from typing import Literal
 
@@ -21,7 +22,7 @@ from chaincheck.methods.judge import check_judge
 from chaincheck.methods.logprobs import check_logprobs
 from chaincheck.methods.nli import check_nli
 from chaincheck.methods.qa import check_qa
-from chaincheck.models import DetectionResult, MethodResult
+from chaincheck.models import ClaimResult, DetectionResult, MethodResult
 
 _METHOD_WEIGHTS: dict[str, float] = {
     "nli": WEIGHT_NLI,
@@ -82,6 +83,7 @@ async def _cascade_detect(
     rid: str,
 ) -> DetectionResult:
     """Run NLI; escalate to judge only when score is in the ambiguous band (0.2–0.8)."""
+    t0 = time.time()
     nli_result = await check_nli(claims, context)
     nli_score = nli_result.raw_score
     method_results: dict[str, MethodResult] = {"nli": nli_result}
@@ -97,9 +99,11 @@ async def _cascade_detect(
         response=response,
         claims=claims,
         method_results=method_results,
+        claim_details=_compute_claim_details(method_results),
         aggregate_score=aggregate,
         risk_level=_compute_risk_level(aggregate),
         latency_ms=latency_ms,
+        total_latency_ms=(time.time() - t0) * 1000,
         request_id=rid,
     )
 
@@ -113,6 +117,7 @@ async def _full_detect(
     rid: str,
 ) -> DetectionResult:
     """Run all requested methods in parallel."""
+    t0 = time.time()
     tasks: dict[str, object] = {}
     if "nli" in active and context.strip():
         tasks["nli"] = check_nli(claims, context)
@@ -157,9 +162,11 @@ async def _full_detect(
         claims=claims,
         method_results=method_results,
         consistency=consistency_result,
+        claim_details=_compute_claim_details(method_results),
         aggregate_score=aggregate,
         risk_level=_compute_risk_level(aggregate),
         latency_ms=latency_ms,
+        total_latency_ms=(time.time() - t0) * 1000,
         request_id=rid,
     )
 
@@ -171,6 +178,17 @@ def _compute_risk_level(score: float) -> Literal["low", "medium", "high"]:
     if score >= _RISK_HIGH:
         return "high"
     return "medium"
+
+
+def _compute_claim_details(
+    method_results: dict[str, MethodResult],
+) -> list[ClaimResult] | None:
+    """Return per-claim details from the highest-priority method that has them."""
+    for method in ("judge", "logprobs", "nli", "qa"):
+        mr = method_results.get(method)
+        if mr and mr.claims:
+            return mr.claims
+    return None
 
 
 def _weighted_aggregate(

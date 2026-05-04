@@ -41,7 +41,7 @@ class CheckRequest(BaseModel):
     response: str = Field(min_length=1)
     context: str = ""
     prompt: str = ""
-    methods: list[str] = Field(default_factory=lambda: ["nli", "consistency", "judge"])
+    methods: list[str] = Field(default_factory=lambda: ["nli", "judge"])
     cascade: bool = False
 
 
@@ -125,6 +125,7 @@ async def batch_endpoint(request: Request, body: BatchRequest) -> list[Detection
                     context=inp.context,
                     prompt=inp.prompt,
                     methods=inp.methods or None,  # type: ignore[arg-type]
+                    cascade=inp.cascade,
                 )
                 for inp in body.inputs
             ]
