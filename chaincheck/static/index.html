@@ -725,7 +725,7 @@ function renderResults(data, text) {
   }).join('');
 
   // Meta
-  g('meta-lat').textContent   = data.latency_ms ? Math.round(data.latency_ms)+' ms' : '–';
+  g('meta-lat').textContent   = data.total_latency_ms ? Math.round(data.total_latency_ms)+' ms' : '–';
   g('meta-claims').textContent= (data.claims||[]).length;
   g('meta-rid').textContent   = (data.request_id||'–').slice(0,8)+'…';
 
