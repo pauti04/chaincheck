@@ -413,10 +413,10 @@ mark.ann::after{
     <div class="card-foot">
       <div class="pills" id="pills">
         <div class="pill on" data-m="nli"         onclick="togglePill(this)">NLI</div>
-        <div class="pill on" data-m="consistency" onclick="togglePill(this)">Consistency</div>
         <div class="pill on" data-m="judge"       onclick="togglePill(this)">Judge</div>
         <div class="pill"    data-m="logprobs"    onclick="togglePill(this)">Logprobs</div>
         <div class="pill"    data-m="qa"          onclick="togglePill(this)">QA</div>
+        <div class="pill"    data-m="consistency" onclick="togglePill(this)" title="Weight=0 in ensemble — results shown but do not affect aggregate score">Consistency</div>
       </div>
       <div class="foot-right">
         <label class="cascade-lbl" title="Skip expensive methods when fast methods are confident">
