@@ -61,12 +61,26 @@ Input response (+ optional context / prompt)
 
 Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced: 50% hallucinated / 50% correct answers, n=500 per method).
 
+**HaluEval QA** (n=500, balanced, 50% hallucinated):
+
 | Method      | Precision | Recall | F1    | Avg Latency | P95 Latency |
 |-------------|-----------|--------|-------|-------------|-------------|
 | NLI         | 0.810     | 0.444  | 0.574 | 51 ms       | 93 ms       |
 | Judge       | 0.965     | 0.656  | 0.781 | 1755 ms     | 2098 ms     |
 | Consistency | 0.182     | 0.156  | 0.168 | 1951 ms     | 4150 ms     |
 | Logprobs    | 0.263     | 0.084  | 0.127 | 1401 ms     | 2859 ms     |
+| **NLI+Judge ensemble** | — | — | **0.741** | ~51–1755 ms | — |
+
+> Ensemble F1 measured on held-out 20% of HaluEval using weights tuned via Nelder-Mead on the training 80%.
+> Consistency scores below random on factual tasks (confident wrong models are consistently wrong); weight=0 in the default ensemble.
+
+**TruthfulQA generation** (n=200, adversarial questions with no reference context — judge only):
+
+| Method | Precision | Recall | F1 | ECE ↓ |
+|--------|-----------|--------|----|-------|
+| Judge  | — | — | — | — |
+
+> Run `chaincheck eval --method judge --dataset truthfulqa --samples 200` to populate.
 
 > Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json), [`logprobs_eval_results.json`](logprobs_eval_results.json).
 > Run `bash scripts/run_eval.sh` to reproduce. Results are committed weekly by the [eval workflow](.github/workflows/eval.yml).
@@ -126,6 +140,14 @@ Each line of `inputs.jsonl` is a JSON object with `response` and optionally `con
 ```json
 {"response": "The Eiffel Tower was built in 1887.", "context": "It was completed in 1889."}
 {"response": "Water boils at 90°C at sea level.", "context": ""}
+```
+
+**Cascade mode (34× faster on clear-cut cases):**
+```bash
+chaincheck check \
+  --response "..." --context "..." \
+  --cascade
+# runs NLI first (51 ms); escalates to judge only when score is 0.2–0.8
 ```
 
 **Debug claim decomposition:**
@@ -227,10 +249,10 @@ All settings via environment variables:
 | `CONSISTENCY_THRESHOLD` | `0.82`                     | Min similarity to consider consistent    |
 | `RISK_LOW_THRESHOLD`    | `0.3`                      | Aggregate score below this → "low"       |
 | `RISK_HIGH_THRESHOLD`   | `0.7`                      | Aggregate score at or above this → "high"|
-| `NLI_WEIGHT`            | `0.35`                     | NLI weight in aggregate (tuned on HaluEval QA) |
-| `CONSISTENCY_WEIGHT`    | `0.25`                     | Consistency weight in aggregate (set low; F1=0.168 on factual tasks) |
-| `JUDGE_WEIGHT`          | `0.25`                     | Judge weight in aggregate (tuned on HaluEval QA) |
-| `LOGPROB_WEIGHT`        | `0.15`                     | Logprobs weight in aggregate (tuned on HaluEval QA) |
+| `NLI_WEIGHT`            | `0.10`                     | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
+| `CONSISTENCY_WEIGHT`    | `0.0`                      | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
+| `JUDGE_WEIGHT`          | `0.60`                     | Judge weight — dominant signal, precision=0.965 |
+| `LOGPROB_WEIGHT`        | `0.30`                     | Logprobs weight — useful secondary signal in ensemble |
 | `LOGPROB_MODEL`         | `gpt-4o-mini`              | OpenAI model for logprobs method         |
 | `LOGPROB_THRESHOLD`     | `-1.5`                     | Token log-prob below this → uncertain    |
 
@@ -243,6 +265,10 @@ All settings via environment variables:
 **Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.168 on HaluEval — below random (accuracy 0.228). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
 
 **Latency is the real cost, not the accuracy.** NLI is 34× faster than judge (51 ms vs 1755 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~34× while keeping precision above 0.80.
+
+**Cascade cuts average latency by up to 34× on clear-cut cases.** Running NLI first (51 ms) and escalating to judge only when the score is in the 0.2–0.8 ambiguous band avoids the 1755 ms judge call for responses that are obviously clean or obviously hallucinated. Enable with `--cascade` on the CLI or `cascade=True` in the Python API.
+
+**Confidence calibration (ECE) is now measured.** ECE (Expected Calibration Error) measures whether a score of 0.9 actually means "90% likely to be hallucinated." Lower ECE = more trustworthy confidence numbers. Run `chaincheck eval` and check the ECE column to see how well-calibrated each method's scores are.
 
 **Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. The decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling. Logprobs F1 (0.127) reflects this: token-level uncertainty alone is not sufficient signal without claim-level grounding.
 

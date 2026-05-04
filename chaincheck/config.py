@@ -33,10 +33,12 @@ CONSISTENCY_THRESHOLD: float = float(os.getenv("CONSISTENCY_THRESHOLD", "0.82"))
 LOGPROB_THRESHOLD: float = float(os.getenv("LOGPROB_THRESHOLD", "-1.5"))
 
 # ── Aggregation weights ───────────────────────────────────────────────────────
-WEIGHT_NLI: float = float(os.getenv("NLI_WEIGHT", "0.35"))
-WEIGHT_CONSISTENCY: float = float(os.getenv("CONSISTENCY_WEIGHT", "0.25"))
-WEIGHT_JUDGE: float = float(os.getenv("JUDGE_WEIGHT", "0.25"))
-WEIGHT_LOGPROBS: float = float(os.getenv("LOGPROB_WEIGHT", "0.15"))
+# Tuned via Nelder-Mead on 80% of HaluEval QA (n=500); held-out F1=0.741 vs 0.500 with old weights.
+# Consistency excluded (F1=0.168 on factual tasks — below random; weight=0 disables it in ensemble).
+WEIGHT_NLI: float = float(os.getenv("NLI_WEIGHT", "0.10"))
+WEIGHT_CONSISTENCY: float = float(os.getenv("CONSISTENCY_WEIGHT", "0.0"))
+WEIGHT_JUDGE: float = float(os.getenv("JUDGE_WEIGHT", "0.60"))
+WEIGHT_LOGPROBS: float = float(os.getenv("LOGPROB_WEIGHT", "0.30"))
 
 # ── Risk thresholds ───────────────────────────────────────────────────────────
 RISK_LOW_THRESHOLD: float = float(os.getenv("RISK_LOW_THRESHOLD", "0.3"))

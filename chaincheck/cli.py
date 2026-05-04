@@ -48,12 +48,20 @@ def check(
     debug_claims: bool = typer.Option(
         False, "--debug-claims", help="Print extracted atomic claims before scoring"
     ),
+    cascade: bool = typer.Option(
+        False,
+        "--cascade",
+        help="Run NLI first; escalate to judge only on borderline scores (0.2–0.8). "
+        "Cuts average latency ~34× on clear-cut cases.",
+    ),
 ) -> None:
     """Detect hallucinations in a single response and print a colour-coded table."""
     from chaincheck.detect import detect as _detect
 
     method_list = [m.strip() for m in methods.split(",")]
-    result = asyncio.run(_detect(response, context=context, methods=method_list))  # type: ignore[arg-type]
+    result = asyncio.run(  # type: ignore[arg-type]
+        _detect(response, context=context, methods=method_list, cascade=cascade)
+    )
 
     if debug_claims:
         claims_table = Table(title=f"Decomposed claims ({len(result.claims)} total)")
@@ -134,15 +142,29 @@ def batch(
 @app.command()
 def eval(
     method: str = typer.Option("nli", "--method", "-m", help="Detection method to benchmark"),
-    samples: int = typer.Option(500, "--samples", "-n", help="Number of HaluEval samples"),
+    samples: int = typer.Option(500, "--samples", "-n", help="Number of samples to evaluate"),
     output: Path = typer.Option(Path("eval_results.json"), "--output", "-o"),
+    dataset: str = typer.Option(
+        "halueval",
+        "--dataset",
+        "-d",
+        help="Benchmark dataset: 'halueval' (default) or 'truthfulqa'",
+    ),
 ) -> None:
-    """Run a HaluEval benchmark for the specified detection method."""
-    from chaincheck.eval.halueval import run_halueval
+    """Run a benchmark for the specified detection method and dataset."""
     from chaincheck.eval.report import print_report, save_report
 
-    console.print(f"[bold]Running HaluEval — method: {method}, samples: {samples}[/bold]")
-    run = asyncio.run(run_halueval(method=method, n_samples=samples))  # type: ignore[arg-type]
+    if dataset == "truthfulqa":
+        from chaincheck.eval.truthfulqa import run_truthfulqa
+
+        console.print(f"[bold]Running TruthfulQA — method: {method}, samples: {samples}[/bold]")
+        run = asyncio.run(run_truthfulqa(method=method, n_samples=samples))  # type: ignore[arg-type]
+    else:
+        from chaincheck.eval.halueval import run_halueval
+
+        console.print(f"[bold]Running HaluEval — method: {method}, samples: {samples}[/bold]")
+        run = asyncio.run(run_halueval(method=method, n_samples=samples))  # type: ignore[arg-type]
+
     save_report(run, output)
     print_report(run)
     console.print(f"\n[green]Results saved to {output}[/green]")
