@@ -9,7 +9,7 @@
     "avg_claims_per_response": 0.82,
     "n_clean_claims": 63,
     "n_halluc_claims": 101,
-    "latency_ms": 14974.030256271362
+    "latency_ms": 16611.555814743042
   },
   "raw_results": [
     {

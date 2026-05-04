@@ -129,3 +129,63 @@ async def test_decompose_uses_cache_on_second_call():
             mock_complete.assert_not_called()
 
     assert result == cached_claims
+
+
+@pytest.mark.asyncio
+async def test_decompose_secondary_fallback_on_empty_llm_result():
+    """When the LLM returns [] for a long-enough response, sentence split is used."""
+    from chaincheck.decompose import decompose
+
+    with (
+        patch("chaincheck.decompose._get_cache") as mock_cache_fn,
+        patch("chaincheck.llm.complete", new=AsyncMock(return_value="[]")),
+    ):
+        mock_cache = MagicMock()
+        mock_cache.get.return_value = None
+        mock_cache.set = MagicMock()
+        mock_cache_fn.return_value = mock_cache
+
+        result = await decompose("The sky is blue. Water is wet.")
+
+    assert len(result) >= 1
+
+
+@pytest.mark.asyncio
+async def test_decompose_strips_markdown_code_fence():
+    """decompose() strips ```json ... ``` wrappers before parsing."""
+    from chaincheck.decompose import decompose
+
+    fenced = '```json\n["The sun is a star."]\n```'
+
+    with (
+        patch("chaincheck.decompose._get_cache") as mock_cache_fn,
+        patch("chaincheck.llm.complete", new=AsyncMock(return_value=fenced)),
+    ):
+        mock_cache = MagicMock()
+        mock_cache.get.return_value = None
+        mock_cache.set = MagicMock()
+        mock_cache_fn.return_value = mock_cache
+
+        result = await decompose("The sun is our nearest star.")
+
+    assert len(result) >= 1
+    assert all(isinstance(c, str) for c in result)
+
+
+@pytest.mark.asyncio
+async def test_decompose_raises_on_non_list_json():
+    """decompose() falls back to sentence split when JSON is not an array."""
+    from chaincheck.decompose import decompose
+
+    with (
+        patch("chaincheck.decompose._get_cache") as mock_cache_fn,
+        patch("chaincheck.llm.complete", new=AsyncMock(return_value='{"claim": "x"}')),
+    ):
+        mock_cache = MagicMock()
+        mock_cache.get.return_value = None
+        mock_cache.set = MagicMock()
+        mock_cache_fn.return_value = mock_cache
+
+        result = await decompose("The sky is blue. Water is wet.")
+
+    assert isinstance(result, list)

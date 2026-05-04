@@ -9,8 +9,14 @@ from pathlib import Path
 
 import pytest
 
-from chaincheck.eval.metrics import EvalMetrics, compute_metrics
-from chaincheck.eval.report import print_report, save_report
+from chaincheck.eval.claimlevel import ClaimLevelMetrics, ClaimLevelRun
+from chaincheck.eval.metrics import EvalMetrics, _compute_ece, compute_metrics
+from chaincheck.eval.report import (
+    print_claimlevel_report,
+    print_report,
+    save_claimlevel_report,
+    save_report,
+)
 
 
 def _metrics(**kwargs) -> EvalMetrics:
@@ -122,8 +128,98 @@ class TestSaveReport:
         path.unlink()
 
 
+class TestComputeEce:
+    def test_perfect_calibration(self):
+        # Score exactly 1.0 for all positives → confidence == accuracy == 1.0 → ECE = 0
+        y_true = ["yes", "yes", "yes"]
+        scores = [1.0, 1.0, 1.0]
+        ece = _compute_ece(y_true, scores, "yes", n_bins=10)
+        assert ece == pytest.approx(0.0, abs=1e-6)
+
+    def test_worst_calibration(self):
+        # High confidence, all wrong → ECE close to confidence level
+        y_true = ["no", "no", "no"]
+        scores = [0.95, 0.95, 0.95]
+        ece = _compute_ece(y_true, scores, "yes", n_bins=10)
+        assert ece > 0.5
+
+    def test_empty_scores(self):
+        assert _compute_ece([], [], "yes", n_bins=10) == pytest.approx(0.0, abs=1e-6)
+
+    def test_returns_float(self):
+        y_true = ["yes", "no", "yes", "no"]
+        scores = [0.8, 0.2, 0.7, 0.3]
+        result = _compute_ece(y_true, scores, "yes", n_bins=10)
+        assert isinstance(result, float)
+        assert 0.0 <= result <= 1.0
+
+    def test_compute_metrics_with_scores_sets_ece(self):
+        y_true = ["yes", "yes", "no", "no"]
+        y_pred = ["yes", "yes", "no", "no"]
+        scores = [0.9, 0.85, 0.1, 0.15]
+        latencies = [100.0] * 4
+        m = compute_metrics(y_true, y_pred, latencies, scores=scores)
+        assert m.ece == pytest.approx(0.0, abs=0.15)
+
+    def test_compute_metrics_without_scores_ece_is_zero(self):
+        y_true = ["yes", "no"]
+        y_pred = ["yes", "no"]
+        m = compute_metrics(y_true, y_pred, [100.0, 100.0])
+        assert m.ece == pytest.approx(0.0, abs=1e-6)
+
+
+def _fake_claimlevel_run(pairs: int = 5) -> ClaimLevelRun:
+    metrics = ClaimLevelMetrics(
+        clean_flagging_rate=0.1,
+        halluc_flagging_rate=0.6,
+        discrimination_ratio=6.0,
+        claim_auc=0.85,
+        n_pairs=pairs,
+        n_clean_claims=20,
+        n_halluc_claims=22,
+        avg_claims_per_response=4.2,
+        latency_ms=1234.5,
+    )
+    return ClaimLevelRun(method="nli", pairs=pairs, metrics=metrics)
+
+
+class TestSaveClaimlevelReport:
+    def test_creates_json_file(self):
+        run = _fake_claimlevel_run()
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            path = Path(f.name)
+        save_claimlevel_report(run, path)
+        data = json.loads(path.read_text())
+        assert data["method"] == "nli"
+        assert data["pairs"] == 5
+        assert "clean_flagging_rate" in data["metrics"]
+        path.unlink()
+
+    def test_metrics_written_correctly(self):
+        run = _fake_claimlevel_run()
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            path = Path(f.name)
+        save_claimlevel_report(run, path)
+        data = json.loads(path.read_text())
+        assert data["metrics"]["discrimination_ratio"] == pytest.approx(6.0, abs=1e-6)
+        assert data["metrics"]["claim_auc"] == pytest.approx(0.85, abs=1e-6)
+        path.unlink()
+
+    def test_raw_results_empty(self):
+        run = _fake_claimlevel_run()
+        with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
+            path = Path(f.name)
+        save_claimlevel_report(run, path)
+        data = json.loads(path.read_text())
+        assert data["raw_results"] == []
+        path.unlink()
+
+
 class TestPrintReport:
     def test_runs_without_error(self, capsys):
         run = _FakeRun()
         print_report(run)
-        # Just check it doesn't raise — Rich output goes through its own system
+
+    def test_claimlevel_runs_without_error(self):
+        run = _fake_claimlevel_run()
+        print_claimlevel_report(run)
