@@ -1,0 +1,916 @@
+{
+  "method": "nli",
+  "pairs": 100,
+  "metrics": {
+    "clean_flagging_rate": 0.12698412698412698,
+    "halluc_flagging_rate": 0.5247524752475248,
+    "discrimination_ratio": 4.132425742574258,
+    "claim_auc": 0.9130913091309131,
+    "avg_claims_per_response": 0.82,
+    "n_clean_claims": 63,
+    "n_halluc_claims": 101,
+    "latency_ms": 14974.030256271362
+  },
+  "raw_results": [
+    {
+      "question": "Which magazine was started first Arthur's Magazine or First for Women?",
+      "correct_score": 1.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The Oberoi family is part of a hotel company that has a head office in what city?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Musician and satirist Allie Goertz wrote a song about the \"The Simpsons\" character Milhouse, who Mat",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": " What nationality was James Henry Miller's wife?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Cadmium Chloride is slightly soluble in this chemical, it is also called what?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which tennis player won more Grand Slam titles, Henri Leconte or Jonathan Stark?",
+      "correct_score": 1.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which genus of moth in the world's seventh-largest country contains only one species?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who was once considered the best kick boxer in the world, however he has been involved in a number o",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The Dutch-Belgian television series that \"House of Anubis\" was based on first aired in what year?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What is the length of the track where the 2013 Liqui Moly Bathurst 12 Hour was staged?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Fast Cars, Danger, Fire and Knives includes guest appearances from which hip hop record executive?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Gunmen from Laredo starred which narrator of \"Frontier\"?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Where did the form of music played by Die Rh\u00f6ner S\u00e4uw\u00e4ntzt originate?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "In which American football game was Malcolm Smith named Most Valuable player?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The 1988 American comedy film, The Great Outdoors, starred a four-time Academy Award nominee, who re",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What are the names of the current members of  American heavy metal band who wrote the music for  Hur",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Human Error\" is the season finale of the third season of a tv show that aired on what network?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Dua Lipa, an English singer, songwriter and model, the album spawned the number-one single \"New Rule",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "American politician Joe Heck ran unsuccessfully against Democrat Catherine Cortez Masto, a woman who",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which state does the drug stores, of which the CEO is Warren Bryant, are located?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which  American politician did Donahue replaced ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which band was founded first, Hole, the rock band that Courtney Love was a frontwoman of, or The Wol",
+      "correct_score": 1.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "How old is the female main protagonist of Catching Fire?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Chang Ucchin was born in korea during a time that ended with the conclusion of what? ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who is the director of the 2003 film which has scenes in it filmed at the Quality Cafe in Los Angele",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "New Faces of 1952 is a musical revue with songs and comedy skits, it helped jump start the career of",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Were Pavel Urysohn and Leonid Levin known for the same type of work?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Are both The New Pornographers and Kings of Leon American rock bands?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "750 7th Avenue and 101 Park Avenue, are located in which city?",
+      "correct_score": 1.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which actress played the part of fictitious character Kimberly Ann Hart, in the franchise built arou",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who was born first, Pablo Trapero or Aleksander Ford?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Are Jane and First for Women both women's magazines?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What profession does Nicholas Ray and Elia Kazan have in common?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Where is the company that purchased Aixam based in?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?",
+      "correct_score": 1.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who was inducted into the Rock and Roll Hall of Fame, David Lee Roth or Cia Berg?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Zimbabwe's Guwe Secondary School has a sister school in what New York cunty?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The Royal Commission into Drug Trafficking (1977\u20131979) or Woodward Royal Commission was a royal comm",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The 337th Flight Test Squadron (337 FLTS) was most recently part of the 46th Test Wing and based at ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The axial turbojet Pirna 014 was designed by engineers from this German aircraft and aircraft engine",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which faith is designated to the University of Providence, private university accredited by the NW a",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Pauline Henry was known as the vocalist of a very popular cover song. Which album was this song from",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Guitars for Wounded Warriors is an album that was recorded in the village in which New York county?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What American country music singer-songwriter, born in May of 1942, sang a duet with her ex-husband ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who was born first, Francis Nethersole or Elizabeth Stuart?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What does the Hacker-Pschorr Brewery have to limit in order to comply with German regulations?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Don Barry Mason was the founder of the Psychedelic Shamanistic Institute (PSI), which other member t",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What male actor starred in The Messenger?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Are Gin and tonic and Paloma both cocktails based on tequila?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who is older Glenn Hughes or Ross Lynch?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "In what year was the creator of the current arrangement of the \"Simpson's Theme\" born?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The Southern Railway runs from Vienna to Graz and the border with Slovenia at Spielfeld via the firs",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "In what show did Cynthia Nixon receive the 2004 Primetime Emmy Award for Outstanding Supporting Actr",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Lee Jun-fan played what character in \"The Green Hornet\" television series?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The 1895/96 Football League season was the eighth in Football League history with Everton, their Goo",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "A Head Full of Dreams Tour is the seventh tour by Coldplay, and which had it's first show at a stadi",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Roger Avary (born August 23, 1965) is a Canadian film and television producer, screenwriter and dire",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The American Pre-Code comedy film featuring an American actress, dancer, and singer, widely known fo",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "An edited version of \"Just the Two of Us\" reached number two on the \"Billboard\" Hot 100 behind a son",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 2,
+      "correct_flagged": 0,
+      "halluc_flagged": 2
+    },
+    {
+      "question": "Which band has more members, Saint Motel or Curve?",
+      "correct_score": 1.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "\"Funnybot\" is the second episode of the fifteenth season of which American animated television serie",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which private research university is located in Chestnut Hill, Massachusetts Boston College or Stanf",
+      "correct_score": 1.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What American stage, film, and television actor  who also appeared in a large number of musicals, pl",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Iqaluit Airport and Canadian North are based out of what country?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "In what political party was the man who officially opened he Royal Spa Centre in 1972?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Which Oscar-nominated film was written by the screenwriter who wrote a 1991 romantic drama based upo",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Are both Tim McIlrath and Spike Slawson American punk rock musicians?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The Golden Globe Award winner for best actor from \"Roseanne\" starred along what actress in Gigantic?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The expert mentor to the celebrities that perform on \"Splash!\" won the 2009 FINA World Championionsh",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Still Da Baddest is the fourth studio album by American rapper Trina, following the poor chart perfo",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What profession does Am Rong and Alexandre Rockwell have in common?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "El Nuevo Cojo and Golf Magazine are both special interest publications but which one is owned by Tim",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who funds the bowling team that includes the school bus driver for Springfield Elementary School?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "What city are George Washington University Hospital and MedStar Washington Hospital Center located i",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "what is the connection between Peter O'Meara and Norman Dike?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What author has contributed to such works as \"New Statesmen\", \"The Nation\", and \"The Atlantic\", amon",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Who developed the prototype pacemaker used by the 34th President of the USA?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which publishing company has published Bizarre and a sister publication devoted to the anomalous phe",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Who performed the lead single on the album Friends in Low Places, No Fences, that reached #1 on Bill",
+      "correct_score": 1.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 1,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Hate to Feel is the tenth track on what Alice in Chains' album that peaked as number six on the Bill",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The lead singer and guitarist in the Portland, Oregon rock band consisting of John Gourley, Zach Car",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "What year was the winner of the 2016 Marrakesh ePrix born?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "South Korean actor Kim Yool-ho starred in what 2016 movie directed by Yeon Sang-ho Yeon Sang-ho and ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "According to the 2006 census what is the population of the city in which James Iroha Uchechukwu was ",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "What actor in the film D.C. Cab also had a role in the TV series Barney Miller?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Which industry do Richard Hawley and Chicago's Catherine belong to? ",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Are Pam Veasey and Jon Jost both American?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Maurice Hines and his brother were famous for what?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Are the New Orleans Outfall Canals the same length as the Augusta Canal?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "In which stadium do the teams owned by Myra Kraft's husband play?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "What southern California based band covered Blue \u00d6yster Cult's Godzilla?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The Swedish-British entertainment studio executive and film executive producer, who was the Executiv",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "an Emmy Award winner and two-time Tony Award winner, was on the episode 15 of the third season of \"C",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "What is the current name of the Atlanta Mansion built for the daughter of the 41st Mayor of Atlanta,",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Who invented the type of script used in autographs?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "Approximately what percentage of the global population is made up of the ethnic group Princess Fragr",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 0,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "The Boren-McCurdy proposals were partially brought about by which Oklahoma politician in 1992?",
+      "correct_score": 0.0,
+      "halluc_score": 1.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 1
+    },
+    {
+      "question": "The Thoen Stone is on display at a museum in what county?",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    },
+    {
+      "question": "Is Children's National Medical Center or MedStar Washington Hospital Center the largest private hosp",
+      "correct_score": 0.0,
+      "halluc_score": 0.0,
+      "correct_claims": 1,
+      "halluc_claims": 1,
+      "correct_flagged": 0,
+      "halluc_flagged": 0
+    }
+  ]
+}

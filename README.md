@@ -61,29 +61,48 @@ Input response (+ optional context / prompt)
 
 Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced: 50% hallucinated / 50% correct answers, n=500 per method).
 
-**HaluEval QA** (n=500, balanced, 50% hallucinated):
+**HaluEval QA** — response-level (n=500, balanced, 50% hallucinated, with reference context):
 
-| Method      | Precision | Recall | F1    | Avg Latency | P95 Latency |
-|-------------|-----------|--------|-------|-------------|-------------|
-| NLI         | 0.810     | 0.444  | 0.574 | 51 ms       | 93 ms       |
-| Judge       | 0.965     | 0.656  | 0.781 | 1755 ms     | 2098 ms     |
-| Consistency | 0.182     | 0.156  | 0.168 | 1951 ms     | 4150 ms     |
-| Logprobs    | 0.263     | 0.084  | 0.127 | 1401 ms     | 2859 ms     |
-| **NLI+Judge ensemble** | — | — | **0.741** | ~51–1755 ms | — |
+| Method      | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
+|-------------|-----------|--------|-----------|--------|-------------|-------------|
+| NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 52 ms       | 97 ms       |
+| Judge       | 0.955     | 0.676  | **0.792** | 0.161  | 1116 ms     | 2236 ms     |
+| Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 2117 ms     | 4740 ms     |
+| Logprobs    | 0.263     | 0.084  | 0.127     | —      | 1401 ms     | 2859 ms     |
+| **NLI+Judge ensemble** | — | — | **0.741** | — | ~52–1116 ms | — |
 
-> Ensemble F1 measured on held-out 20% of HaluEval using weights tuned via Nelder-Mead on the training 80%.
-> Consistency scores below random on factual tasks (confident wrong models are consistently wrong); weight=0 in the default ensemble.
+> Ensemble F1 on held-out 20% of HaluEval; weights tuned via Nelder-Mead on training 80%.
+> Consistency predicts "not hallucinated" for all samples (F1=0, ECE=0.5); excluded from default ensemble.
+> ECE — lower is better; 0 = perfectly calibrated confidence scores.
 
-**TruthfulQA generation** (n=200, adversarial questions with no reference context — judge only):
+**TruthfulQA generation** — response-level (n=500, adversarial questions, no reference context):
 
-| Method | Precision | Recall | F1 | ECE ↓ |
-|--------|-----------|--------|----|-------|
-| Judge  | — | — | — | — |
+| Method | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
+|--------|-----------|--------|-----------|--------|-------------|-------------|
+| Judge  | 0.660     | 0.708  | **0.683** | 0.143  | 1726 ms     | 3498 ms     |
 
-> Run `chaincheck eval --method judge --dataset truthfulqa --samples 200` to populate.
+> No reference context — judge relies entirely on its own knowledge. F1 drop vs HaluEval (0.792 → 0.683)
+> reflects the difficulty of adversarial questions designed to elicit confident confabulations.
+> ECE 0.143 is the best calibration of any method — judge confidence scores are most trustworthy
+> when no context document is present.
 
-> Full results in [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`consistency_eval_results.json`](consistency_eval_results.json), [`logprobs_eval_results.json`](logprobs_eval_results.json).
-> Run `bash scripts/run_eval.sh` to reproduce. Results are committed weekly by the [eval workflow](.github/workflows/eval.yml).
+**HaluEval claim-level** — discrimination metrics (n=100 pairs, NLI, no annotation required):
+
+| Metric | Value | Meaning |
+|--------|-------|---------|
+| Clean flagging rate ↓ | 0.127 | 12.7% of claims in correct responses incorrectly flagged |
+| Halluc flagging rate ↑ | 0.525 | 52.5% of claims in hallucinated responses flagged |
+| Discrimination ratio ↑ | **4.13×** | hallucinated responses have 4× more flagged claims |
+| Claim AUC ↑ | **0.913** | per-claim NLI scores vs response-level labels |
+| Avg claims / response | 0.8 | decomposition quality proxy (short answers → fewer claims) |
+
+> Claim AUC of 0.913 means NLI's per-claim scores rank claims from hallucinated responses above
+> claims from correct responses 91.3% of the time — without any claim-level human annotation.
+> Avg claims/response of 0.8 reflects a known limitation: the decomposer produces fewer claims
+> for terse answers; longer factual responses yield richer claim-level signal.
+
+> Full results: [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`truthfulqa_judge_eval_results.json`](truthfulqa_judge_eval_results.json), [`claimlevel_nli_eval_results.json`](claimlevel_nli_eval_results.json).
+> Reproduce with `bash scripts/run_eval.sh`. Results committed weekly by the [eval workflow](.github/workflows/eval.yml).
 
 ---
 
