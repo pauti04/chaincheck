@@ -27,7 +27,7 @@ jobs:
         run: uv run ruff check chaincheck/ tests/
 
       - name: Run tests with coverage
-        run: uv run pytest --cov=chaincheck --cov-report=xml
+        run: uv run pytest --cov=chaincheck --cov-report=xml:coverage.xml
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
@@ -35,4 +35,5 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml
+          files: coverage.xml
+          fail_ci_if_error: false

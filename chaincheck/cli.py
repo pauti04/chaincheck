@@ -159,14 +159,28 @@ def eval(
 
         console.print(f"[bold]Running TruthfulQA — method: {method}, samples: {samples}[/bold]")
         run = asyncio.run(run_truthfulqa(method=method, n_samples=samples))  # type: ignore[arg-type]
+        save_report(run, output)
+        print_report(run)
+
+    elif dataset == "halueval-claims":
+        from chaincheck.eval.claimlevel import run_claimlevel
+        from chaincheck.eval.report import print_claimlevel_report, save_claimlevel_report
+
+        console.print(
+            f"[bold]Running claim-level eval — method: {method}, pairs: {samples}[/bold]"
+        )
+        run = asyncio.run(run_claimlevel(method=method, n_pairs=samples))  # type: ignore[arg-type]
+        save_claimlevel_report(run, output)
+        print_claimlevel_report(run)
+
     else:
         from chaincheck.eval.halueval import run_halueval
 
         console.print(f"[bold]Running HaluEval — method: {method}, samples: {samples}[/bold]")
         run = asyncio.run(run_halueval(method=method, n_samples=samples))  # type: ignore[arg-type]
+        save_report(run, output)
+        print_report(run)
 
-    save_report(run, output)
-    print_report(run)
     console.print(f"\n[green]Results saved to {output}[/green]")
 
 
