@@ -131,7 +131,7 @@ def run_cascade_analysis(
 
     # Baselines
     nli_preds = (nli_scores >= 0.5).astype(int)
-    nli_only = _point_from_preds(nli_preds, y_true, float(nli_latencies.mean()), 0.0, 0.0, 1.0)
+    nli_only = _point_from_preds(nli_preds, y_true, float(nli_latencies.mean()), 0.0, 0.0, 0.0)
 
     ensemble_scores = w_nli_n * nli_scores + w_judge_n * judge_scores
     both_preds = (ensemble_scores >= 0.5).astype(int)
