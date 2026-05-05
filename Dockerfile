@@ -5,7 +5,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 WORKDIR /app
 
 # Install dependencies first (better layer caching)
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
 RUN uv pip install --system --no-cache .
 
 # Pre-download models at build time — eliminates cold-start latency
