@@ -14,5 +14,5 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 
 COPY chaincheck/ ./chaincheck/
 
-EXPOSE 8000
-CMD ["uvicorn", "chaincheck.server:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 10000
+CMD ["sh", "-c", "uvicorn chaincheck.server:app --host 0.0.0.0 --port ${PORT:-10000}"]
