@@ -96,16 +96,18 @@ async def detect(
     active = list(methods or _DEFAULT_METHODS)
     rid = request_id or str(uuid.uuid4())
     ctx = _build_context(context, documents)
+    fact_check = not ctx.strip()
 
     claims = await decompose(response)
 
     if cascade and "nli" in active and "judge" in active and ctx.strip():
         result = await _cascade_detect(claims, response, ctx, prompt, active, rid)
     else:
-        result = await _full_detect(claims, response, ctx, prompt, active, rid)
+        result = await _full_detect(claims, response, ctx, prompt, active, rid, fact_check=fact_check)
 
+    mode = "fact_check" if fact_check else "hallucination"
     attributed = _attribute_sources(result.claim_details, documents)
-    return result.model_copy(update={"claim_details": attributed})
+    return result.model_copy(update={"claim_details": attributed, "mode": mode})
 
 
 async def detect_stream(
@@ -136,8 +138,9 @@ async def detect_stream(
     task_map: dict[asyncio.Task, str] = {}
     if "nli" in active and ctx.strip():
         task_map[asyncio.create_task(check_nli(claims, ctx))] = "nli"
+    fact_check = not ctx.strip()
     if "judge" in active:
-        task_map[asyncio.create_task(check_judge(claims, ctx))] = "judge"
+        task_map[asyncio.create_task(check_judge(claims, ctx, fact_check=fact_check))] = "judge"
     if "qa" in active and ctx.strip():
         task_map[asyncio.create_task(check_qa(claims, ctx))] = "qa"
     if "consistency" in active and prompt.strip():
@@ -198,6 +201,7 @@ async def detect_stream(
         latency_ms={m: mr.latency_ms for m, mr in method_results.items()},
         total_latency_ms=(time.time() - t0) * 1000,
         request_id=rid,
+        mode="fact_check" if fact_check else "hallucination",
     )
     yield {"type": "result", "data": _json.loads(final.model_dump_json())}
 
@@ -243,6 +247,7 @@ async def _full_detect(
     prompt: str,
     active: list[str],
     rid: str,
+    fact_check: bool = False,
 ) -> DetectionResult:
     """Run all requested methods in parallel."""
     t0 = time.time()
@@ -250,7 +255,7 @@ async def _full_detect(
     if "nli" in active and context.strip():
         tasks["nli"] = check_nli(claims, context)
     if "judge" in active:
-        tasks["judge"] = check_judge(claims, context)
+        tasks["judge"] = check_judge(claims, context, fact_check=fact_check)
     if "qa" in active and context.strip():
         tasks["qa"] = check_qa(claims, context)
     if "consistency" in active and prompt.strip():

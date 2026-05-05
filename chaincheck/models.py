@@ -65,3 +65,4 @@ class DetectionResult(BaseModel):
     latency_ms: dict[str, float] = Field(default_factory=dict)
     total_latency_ms: float = 0.0
     request_id: str | None = None
+    mode: Literal["hallucination", "fact_check"] = "hallucination"
