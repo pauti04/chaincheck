@@ -52,24 +52,19 @@ def _attribute_sources(
     claim_details: list[ClaimResult] | None,
     documents: list[Document] | None,
 ) -> list[ClaimResult] | None:
-    """For each claim, find which document its evidence quote came from."""
+    """
+    For each claim, run NLI against every document and assign the one with the
+    highest entailment or contradiction score as the source.
+    """
     if not claim_details or not documents:
         return claim_details
-    doc_map = {d.id: d for d in documents}
-    result = []
-    for cr in claim_details:
-        source_id = None
-        source_url = None
-        if cr.evidence and cr.evidence not in ("no relevant context found", "no evidence available"):
-            for doc in documents:
-                if cr.evidence[:60] in doc.content or any(
-                    word in doc.content for word in cr.evidence.split()[:6] if len(word) > 4
-                ):
-                    source_id = doc.id
-                    source_url = doc.url or None
-                    break
-        result.append(cr.model_copy(update={"source_id": source_id, "source_url": source_url}))
-    return result
+    from chaincheck.methods.nli import attribute_to_documents
+    claims = [cr.claim for cr in claim_details]
+    attributions = attribute_to_documents(claims, documents)
+    return [
+        cr.model_copy(update={"source_id": src_id, "source_url": src_url})
+        for cr, (src_id, src_url) in zip(claim_details, attributions, strict=True)
+    ]
 
 
 async def detect(
