@@ -7,6 +7,14 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class Document(BaseModel):
+    """A reference document for source attribution."""
+
+    id: str = Field(description="Unique identifier for the document")
+    content: str = Field(min_length=1)
+    url: str = ""
+
+
 class ClaimResult(BaseModel):
     """Verification result for a single atomic claim from one detection method."""
 
@@ -17,6 +25,8 @@ class ClaimResult(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0, description="Confidence in the label (0–1)")
     evidence: str = Field(description="Supporting quote or 'no relevant context found'")
     method: str = Field(description="Detection method that produced this result")
+    source_id: str | None = None
+    source_url: str | None = None
 
 
 class MethodResult(BaseModel):

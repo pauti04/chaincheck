@@ -361,6 +361,39 @@ mark.ann::after{
 
 .fade-in{animation:fi .3s ease both}
 @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── HISTORY SECTION ────────────────────────────────────────── */
+#history-section{display:none}
+.hist-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.hist-grid{display:flex;flex-direction:column;gap:10px}
+.hist-card{
+  border:1px solid var(--b1);border-radius:var(--r);padding:14px 16px;
+  cursor:pointer;transition:all .12s;box-shadow:var(--sh);
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+}
+.hist-card:hover{border-color:var(--b2);background:var(--s1)}
+.hist-preview{font-size:13px;color:var(--t1);margin-bottom:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:560px}
+.hist-meta{font-size:11px;color:var(--t3);display:flex;gap:12px;flex-wrap:wrap}
+.hist-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.hist-score{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:500}
+.hist-empty{text-align:center;padding:48px;color:var(--t3);font-size:14px}
+
+/* ── FEEDBACK ───────────────────────────────────────────────── */
+.feedback-row{
+  display:flex;align-items:center;gap:10px;
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--b1);
+}
+.fb-lbl{font-size:12px;color:var(--t3)}
+.fb-btn{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:500;padding:5px 12px;
+  border:1px solid var(--b1);border-radius:20px;background:var(--bg);
+  cursor:pointer;font-family:inherit;color:var(--t2);transition:all .12s;
+}
+.fb-btn:hover{background:var(--s1);border-color:var(--b2);color:var(--t1)}
+.fb-btn.sent{opacity:.5;cursor:not-allowed}
+.fb-thanks{font-size:12px;color:var(--low);display:none}
 </style>
 </head>
 <body>
@@ -369,9 +402,12 @@ mark.ann::after{
   <div class="logo">
     <div class="logo-mark">⛓</div>
     ChainCheck
-    <span class="v-badge">v0.3.0</span>
+    <span class="v-badge">v0.5.0</span>
   </div>
-  <nav><a href="/docs" target="_blank">API Docs →</a></nav>
+  <nav style="display:flex;align-items:center;gap:18px">
+    <a href="#" onclick="openHistory();return false">History</a>
+    <a href="/docs" target="_blank">API Docs →</a>
+  </nav>
 </header>
 
 <main>
@@ -497,6 +533,13 @@ mark.ann::after{
     </div>
   </div>
 
+  <div class="feedback-row">
+    <span class="fb-lbl">Was this detection accurate?</span>
+    <button class="fb-btn" id="fb-yes" onclick="sendFeedback(true)">👍 Yes</button>
+    <button class="fb-btn" id="fb-no"  onclick="sendFeedback(false)">👎 No</button>
+    <span class="fb-thanks" id="fb-thanks">Thanks for the feedback!</span>
+  </div>
+
   <div class="res-grid">
     <div class="panel fade-in">
       <div class="panel-head"><span class="panel-title">Annotated response</span></div>
@@ -515,6 +558,15 @@ mark.ann::after{
       </div>
     </div>
   </div>
+</section>
+
+<!-- ── HISTORY ─────────────────────────────────────────────── -->
+<section id="history-section">
+  <div class="hist-topbar">
+    <span class="res-lbl">Recent scans</span>
+    <button class="btn-back" onclick="resetUI()">← New analysis</button>
+  </div>
+  <div id="hist-grid" class="hist-grid"></div>
 </section>
 
 </main>
@@ -721,6 +773,11 @@ function handleEvent(ev) {
 
 /* ── Render ────────────────────────────────────────────────── */
 function renderResults(data, text) {
+  _currentRid = data.request_id || null;
+  g('fb-yes').classList.remove('sent');
+  g('fb-no').classList.remove('sent');
+  g('fb-thanks').style.display = 'none';
+
   const score = Math.round((data.aggregate_score||0)*100);
   const risk  = data.risk_level || 'unknown';
   const cds   = data.claim_details || [];
@@ -804,10 +861,70 @@ function setPhase(n) {
   g('phase-lbl').textContent = ['Decomposing','Detecting','Complete'][n]||'';
 }
 
-function resetUI() { hide('results'); show('input'); }
+function resetUI() {
+  hide('results'); hide('history'); show('input');
+}
 
 function showErr(msg) { const e=g('err-banner'); e.textContent=msg; e.style.display='block'; }
 function clearErr()   { g('err-banner').style.display='none'; }
+
+/* ── History ───────────────────────────────────────────────── */
+async function openHistory() {
+  hide('input'); hide('results'); hide('analysis');
+  show('history');
+  const grid = g('hist-grid');
+  grid.innerHTML = '<div class="hist-empty">Loading…</div>';
+  try {
+    const rows = await fetch('/history?limit=50').then(r => r.json());
+    if (!rows.length) {
+      grid.innerHTML = '<div class="hist-empty">No scans yet. Run an analysis first.</div>';
+      return;
+    }
+    grid.innerHTML = '';
+    rows.forEach(row => {
+      const risk = row.risk_level || 'unknown';
+      const score = Math.round((row.aggregate_score || 0) * 100);
+      const col = risk === 'high' ? 'var(--hi)' : risk === 'medium' ? 'var(--med)' : 'var(--low)';
+      const date = row.created_at ? new Date(row.created_at * 1000).toLocaleString() : '–';
+      const methods = (row.methods || []).join(', ');
+      const ms = row.total_latency_ms ? Math.round(row.total_latency_ms) + ' ms' : '–';
+      const card = document.createElement('div');
+      card.className = 'hist-card fade-in';
+      card.innerHTML = `
+        <div>
+          <div class="hist-preview">${esc(row.response_preview || '–')}</div>
+          <div class="hist-meta">
+            <span>${date}</span>
+            <span>${methods}</span>
+            <span>${ms}</span>
+            <span>${row.request_id ? row.request_id.slice(0,8)+'…' : ''}</span>
+          </div>
+        </div>
+        <div class="hist-right">
+          <div class="hist-score" style="color:${col}">${score}</div>
+          <div class="risk-badge ${risk}" style="margin:0"><div class="rdot"></div>${risk}</div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  } catch(e) {
+    grid.innerHTML = `<div class="hist-empty">Failed to load history: ${e.message}</div>`;
+  }
+}
+
+/* ── Feedback ──────────────────────────────────────────────── */
+let _currentRid = null;
+
+function sendFeedback(correct) {
+  if (!_currentRid) return;
+  fetch(`/feedback/${_currentRid}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({correct})
+  });
+  g('fb-yes').classList.add('sent');
+  g('fb-no').classList.add('sent');
+  g('fb-thanks').style.display = 'inline';
+}
 
 document.addEventListener('keydown', e => {
   if ((e.metaKey||e.ctrlKey) && e.key==='Enter') runAnalysis();

@@ -32,7 +32,7 @@ from slowapi.util import get_remote_address
 
 from chaincheck import __version__
 from chaincheck.detect import detect, detect_stream
-from chaincheck.models import DetectionResult
+from chaincheck.models import DetectionResult, Document
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -58,6 +58,15 @@ def _init_history_db() -> None:
             )
         """)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_ts ON results (created_at DESC)")
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS feedback (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                request_id  TEXT NOT NULL,
+                correct     INTEGER NOT NULL,
+                note        TEXT,
+                created_at  REAL NOT NULL
+            )
+        """)
 
 
 def _save_result(result: DetectionResult) -> None:
@@ -91,12 +100,20 @@ class CheckRequest(BaseModel):
     prompt: str = ""
     methods: list[str] = Field(default_factory=lambda: ["nli", "judge"])
     cascade: bool = False
+    documents: list[Document] = Field(default_factory=list)
 
 
 class BatchRequest(BaseModel):
     """Request body for POST /batch."""
 
     inputs: list[CheckRequest]
+
+
+class FeedbackRequest(BaseModel):
+    """Request body for POST /feedback/{request_id}."""
+
+    correct: bool
+    note: str = ""
 
 
 class HealthResponse(BaseModel):
@@ -187,6 +204,7 @@ async def check_endpoint(request: Request, body: CheckRequest) -> DetectionResul
         prompt=body.prompt,
         methods=body.methods or None,  # type: ignore[arg-type]
         cascade=body.cascade,
+        documents=body.documents or None,
     )
     _save_result(result)
     return result
@@ -210,6 +228,7 @@ async def stream_endpoint(request: Request, body: CheckRequest) -> StreamingResp
             context=body.context,
             prompt=body.prompt,
             methods=body.methods or None,  # type: ignore[arg-type]
+            documents=body.documents or None,
         ):
             yield f"data: {_json.dumps(event)}\n\n"
             if event.get("type") == "result":
@@ -239,6 +258,7 @@ async def batch_endpoint(request: Request, body: BatchRequest) -> list[Detection
                     prompt=inp.prompt,
                     methods=inp.methods or None,  # type: ignore[arg-type]
                     cascade=inp.cascade,
+                    documents=inp.documents or None,
                 )
                 for inp in body.inputs
             ]
@@ -274,10 +294,72 @@ async def history_endpoint(limit: int = 20) -> list[dict]:
     ]
 
 
+@app.post("/feedback/{request_id}", status_code=204)
+async def feedback_endpoint(request_id: str, body: FeedbackRequest) -> None:
+    """Record whether a detection result was correct."""
+    try:
+        with sqlite3.connect(_HISTORY_DB) as conn:
+            conn.execute(
+                "INSERT INTO feedback (request_id, correct, note, created_at) VALUES (?,?,?,?)",
+                (request_id, int(body.correct), body.note, time.time()),
+            )
+    except Exception:
+        pass
+
+
 @app.get("/health", response_model=HealthResponse)
 async def health_endpoint() -> HealthResponse:
     """Return service liveness status and loaded model info."""
     return HealthResponse(status="ok", version=__version__, models_loaded=_models_loaded)
+
+
+@app.post("/v1/chat/completions")
+@limiter.limit("30/minute")
+async def proxy_endpoint(request: Request) -> Response:
+    """
+    Drop-in OpenAI-compatible proxy with automatic hallucination detection.
+
+    Forwards the request to OpenAI, runs ChainCheck on the response, and
+    returns the original OpenAI payload with extra headers:
+      X-Hallucination-Score  — aggregate score 0.0–1.0
+      X-Risk-Level           — low | medium | high
+      X-Request-ID           — ChainCheck trace ID
+    """
+    import httpx
+
+    api_key = os.getenv("OPENAI_API_KEY", "")
+    if not api_key:
+        return JSONResponse(status_code=503, content={"error": "OPENAI_API_KEY not configured"})
+
+    body = await request.json()
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        resp = await client.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json=body,
+        )
+
+    payload = resp.json()
+    headers = dict(resp.headers)
+
+    try:
+        text = payload["choices"][0]["message"]["content"] or ""
+        prompt_text = ""
+        for msg in reversed(body.get("messages", [])):
+            if msg.get("role") == "user":
+                prompt_text = msg.get("content", "")
+                break
+        result = await detect(text, prompt=prompt_text, methods=["nli", "judge"])
+        headers["X-Hallucination-Score"] = str(round(result.aggregate_score, 4))
+        headers["X-Risk-Level"] = result.risk_level
+        headers["X-Request-ID"] = result.request_id or ""
+        _save_result(result)
+    except Exception:
+        pass
+
+    _skip = {"content-encoding", "content-length", "transfer-encoding", "connection"}
+    clean_headers = {k: v for k, v in headers.items() if k.lower() not in _skip}
+    return Response(content=resp.content, status_code=resp.status_code, headers=clean_headers)
 
 
 _STATIC_DIR = Path(__file__).parent / "static"

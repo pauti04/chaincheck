@@ -24,7 +24,7 @@ from chaincheck.methods.judge import check_judge
 from chaincheck.methods.logprobs import check_logprobs
 from chaincheck.methods.nli import check_nli
 from chaincheck.methods.qa import check_qa
-from chaincheck.models import ClaimResult, DetectionResult, MethodResult
+from chaincheck.models import ClaimResult, DetectionResult, Document, MethodResult
 
 _METHOD_WEIGHTS: dict[str, float] = {
     "nli": WEIGHT_NLI,
@@ -40,6 +40,38 @@ _RISK_HIGH = RISK_HIGH_THRESHOLD
 _DEFAULT_METHODS: list[str] = ["nli", "judge"]
 
 
+def _build_context(context: str, documents: list[Document] | None) -> str:
+    """Merge free-text context with structured documents into a single context string."""
+    if not documents:
+        return context
+    doc_text = "\n\n".join(f"[{d.id}]\n{d.content}" for d in documents)
+    return f"{context}\n\n{doc_text}".strip() if context else doc_text
+
+
+def _attribute_sources(
+    claim_details: list[ClaimResult] | None,
+    documents: list[Document] | None,
+) -> list[ClaimResult] | None:
+    """For each claim, find which document its evidence quote came from."""
+    if not claim_details or not documents:
+        return claim_details
+    doc_map = {d.id: d for d in documents}
+    result = []
+    for cr in claim_details:
+        source_id = None
+        source_url = None
+        if cr.evidence and cr.evidence not in ("no relevant context found", "no evidence available"):
+            for doc in documents:
+                if cr.evidence[:60] in doc.content or any(
+                    word in doc.content for word in cr.evidence.split()[:6] if len(word) > 4
+                ):
+                    source_id = doc.id
+                    source_url = doc.url or None
+                    break
+        result.append(cr.model_copy(update={"source_id": source_id, "source_url": source_url}))
+    return result
+
+
 async def detect(
     response: str,
     context: str = "",
@@ -47,6 +79,7 @@ async def detect(
     methods: list[Literal["nli", "consistency", "judge", "logprobs"]] | None = None,
     request_id: str | None = None,
     cascade: bool = False,
+    documents: list[Document] | None = None,
 ) -> DetectionResult:
     """
     Detect hallucinations in an LLM response.
@@ -67,13 +100,17 @@ async def detect(
     """
     active = list(methods or _DEFAULT_METHODS)
     rid = request_id or str(uuid.uuid4())
+    ctx = _build_context(context, documents)
 
     claims = await decompose(response)
 
-    if cascade and "nli" in active and "judge" in active and context.strip():
-        return await _cascade_detect(claims, response, context, prompt, active, rid)
+    if cascade and "nli" in active and "judge" in active and ctx.strip():
+        result = await _cascade_detect(claims, response, ctx, prompt, active, rid)
+    else:
+        result = await _full_detect(claims, response, ctx, prompt, active, rid)
 
-    return await _full_detect(claims, response, context, prompt, active, rid)
+    attributed = _attribute_sources(result.claim_details, documents)
+    return result.model_copy(update={"claim_details": attributed})
 
 
 async def detect_stream(
@@ -82,6 +119,7 @@ async def detect_stream(
     prompt: str = "",
     methods: list[str] | None = None,
     request_id: str | None = None,
+    documents: list[Document] | None = None,
 ) -> AsyncGenerator[dict, None]:
     """
     Stream detection events via async generator as each stage completes.
@@ -94,17 +132,18 @@ async def detect_stream(
     t0 = time.time()
     active = list(methods or _DEFAULT_METHODS)
     rid = request_id or str(uuid.uuid4())
+    ctx = _build_context(context, documents)
 
     claims = await decompose(response)
     yield {"type": "claims", "claims": claims, "request_id": rid}
 
     task_map: dict[asyncio.Task, str] = {}
-    if "nli" in active and context.strip():
-        task_map[asyncio.create_task(check_nli(claims, context))] = "nli"
+    if "nli" in active and ctx.strip():
+        task_map[asyncio.create_task(check_nli(claims, ctx))] = "nli"
     if "judge" in active:
-        task_map[asyncio.create_task(check_judge(claims, context))] = "judge"
-    if "qa" in active and context.strip():
-        task_map[asyncio.create_task(check_qa(claims, context))] = "qa"
+        task_map[asyncio.create_task(check_judge(claims, ctx))] = "judge"
+    if "qa" in active and ctx.strip():
+        task_map[asyncio.create_task(check_qa(claims, ctx))] = "qa"
     if "consistency" in active and prompt.strip():
         task_map[asyncio.create_task(check_consistency(prompt, response))] = "consistency"
     if "logprobs" in active and prompt.strip():
@@ -143,12 +182,13 @@ async def detect_stream(
             }
 
     aggregate = _weighted_aggregate(method_results, list(method_results.keys()))
+    claim_details = _attribute_sources(_compute_claim_details(method_results), documents)
     final = DetectionResult(
         response=response,
         claims=claims,
         method_results=method_results,
         consistency=consistency_result,
-        claim_details=_compute_claim_details(method_results),
+        claim_details=claim_details,
         aggregate_score=aggregate,
         risk_level=_compute_risk_level(aggregate),
         latency_ms={m: mr.latency_ms for m, mr in method_results.items()},
