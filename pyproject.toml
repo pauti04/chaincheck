@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "chaincheck"
-version = "0.3.0"
+version = "0.4.0"
 description = "LLM hallucination detection toolkit — claim-level verification via NLI, self-consistency, and LLM-as-judge"
 readme = "README.md"
 license = { text = "MIT" }
