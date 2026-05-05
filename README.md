@@ -5,7 +5,7 @@
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
+**Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
 ---
 
@@ -66,7 +66,7 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 | Method      | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
 |-------------|-----------|--------|-----------|--------|-------------|-------------|
 | NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 55 ms       | 97 ms       |
-| Judge       | **0.944** | 0.676  | **0.788** | 0.161  | 1125 ms     | 2045 ms     |
+| Judge (+ second pass) | **0.944** | 0.676  | **0.788** | 0.161  | 1125 ms     | 2045 ms     |
 | Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 2117 ms     | 4740 ms     |
 | Logprobs    | 0.263     | 0.084  | 0.127     | —      | 1401 ms     | 2859 ms     |
 | **NLI+Judge ensemble** | — | — | **0.741** | — | ~55–1199 ms | — |
