@@ -20,7 +20,16 @@ from pydantic import BaseModel, Field
 
 from chaincheck.models import ClaimResult, MethodResult
 
-_JUDGE_MODEL = os.getenv("JUDGE_MODEL", "gpt-4o-mini")
+def _default_judge_model() -> str:
+    if os.getenv("JUDGE_MODEL"):
+        return os.getenv("JUDGE_MODEL")  # type: ignore[return-value]
+    if os.getenv("OPENAI_API_KEY"):
+        return "gpt-4o-mini"
+    if os.getenv("ANTHROPIC_API_KEY"):
+        return "claude-haiku-4-5-20251001"
+    return "gpt-4o-mini"
+
+_JUDGE_MODEL = _default_judge_model()
 _MAX_CONTEXT_TOKENS = 800
 _MAX_RETRIES = 3
 _VALID_LABELS = {"supported", "unsupported", "contradicted"}
