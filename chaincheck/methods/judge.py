@@ -164,9 +164,12 @@ def _truncate_context(context: str, max_tokens: int = _MAX_CONTEXT_TOKENS) -> st
 
 def _build_factcheck_prompt(claim: str) -> str:
     """Return a world-knowledge fact-check prompt (no source document)."""
+    from datetime import date
+    today = date.today().strftime("%B %d, %Y")
     return (
-        "You are a careful fact-checker using general world knowledge.\n"
-        "No source document is available — assess based on widely-accepted facts only.\n\n"
+        f"You are a careful fact-checker using general world knowledge. Today's date is {today}.\n"
+        "No source document is available — assess based on widely-accepted facts only.\n"
+        "When evaluating age or time-sensitive claims, use today's date for your calculations.\n\n"
         f"Claim: {claim}\n\n"
         "Is this claim generally accurate based on common knowledge?\n"
         "Be conservative — if the claim is plausible or partially true, lean toward 'supported'.\n"
@@ -174,7 +177,7 @@ def _build_factcheck_prompt(claim: str) -> str:
         'Respond with ONLY valid JSON:\n'
         '{"label": "supported" | "unsupported" | "contradicted", '
         '"confidence": <float 0.0-0.7>, '
-        '"evidence": "<brief explanation from general knowledge>"}'
+        '"evidence": "<brief explanation from general knowledge, citing today\'s date if relevant>"}'
     )
 
 
