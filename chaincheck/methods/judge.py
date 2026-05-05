@@ -47,6 +47,7 @@ async def check_judge(
     claims: list[str],
     context: str,
     model: str = _JUDGE_MODEL,
+    fact_check: bool = False,
 ) -> MethodResult:
     """
     Verify claims using an LLM judge with a structured rubric.
@@ -75,7 +76,7 @@ async def check_judge(
     original_indices, shuffled_claims = zip(*indexed, strict=False)
 
     verdicts = list(
-        await asyncio.gather(*[_verify_claim(c, truncated_ctx, model) for c in shuffled_claims])
+        await asyncio.gather(*[_verify_claim(c, truncated_ctx, model, fact_check=fact_check) for c in shuffled_claims])
     )
 
     # Restore original claim order
@@ -83,6 +84,7 @@ async def check_judge(
     for orig_idx, verdict in zip(original_indices, verdicts, strict=True):
         ordered[orig_idx] = verdict
 
+    conf_cap = 0.7 if fact_check else 1.0
     claim_results: list[ClaimResult] = []
     for claim, verdict in zip(claims, ordered, strict=True):
         raw_label = verdict.label.lower() if verdict else "unknown"
@@ -91,7 +93,7 @@ async def check_judge(
             ClaimResult(
                 claim=claim,
                 label=label,
-                confidence=verdict.confidence if verdict else 0.0,
+                confidence=min(verdict.confidence, conf_cap) if verdict else 0.0,
                 evidence=verdict.evidence if verdict else "parse error",
                 method="judge",
             )
@@ -109,6 +111,7 @@ async def _verify_claim(
     context: str,
     model: str,
     retries: int = _MAX_RETRIES,
+    fact_check: bool = False,
 ) -> JudgeVerdict:
     """
     Send a single claim to the judge model and parse structured JSON output.
@@ -118,7 +121,7 @@ async def _verify_claim(
     """
     from chaincheck.llm import complete
 
-    prompt = _build_judge_prompt(claim, context)
+    prompt = _build_factcheck_prompt(claim) if fact_check else _build_judge_prompt(claim, context)
 
     last_err: str = ""
     for attempt in range(retries):
@@ -157,6 +160,22 @@ def _truncate_context(context: str, max_tokens: int = _MAX_CONTEXT_TOKENS) -> st
     if len(words) <= max_words:
         return context
     return " ".join(words[:max_words])
+
+
+def _build_factcheck_prompt(claim: str) -> str:
+    """Return a world-knowledge fact-check prompt (no source document)."""
+    return (
+        "You are a careful fact-checker using general world knowledge.\n"
+        "No source document is available — assess based on widely-accepted facts only.\n\n"
+        f"Claim: {claim}\n\n"
+        "Is this claim generally accurate based on common knowledge?\n"
+        "Be conservative — if the claim is plausible or partially true, lean toward 'supported'.\n"
+        "Only mark 'unsupported' if the claim is clearly factually wrong.\n"
+        'Respond with ONLY valid JSON:\n'
+        '{"label": "supported" | "unsupported" | "contradicted", '
+        '"confidence": <float 0.0-0.7>, '
+        '"evidence": "<brief explanation from general knowledge>"}'
+    )
 
 
 def _build_judge_prompt(claim: str, context: str) -> str:
