@@ -171,9 +171,10 @@ def _build_factcheck_prompt(claim: str) -> str:
         "No source document is available — assess based on widely-accepted facts only.\n"
         "When evaluating age or time-sensitive claims, use today's date for your calculations.\n\n"
         f"Claim: {claim}\n\n"
-        "Is this claim generally accurate based on common knowledge?\n"
-        "Be conservative — if the claim is plausible or partially true, lean toward 'supported'.\n"
-        "Only mark 'unsupported' if the claim is clearly factually wrong.\n"
+        "Is this claim factually accurate based on common knowledge?\n"
+        "For specific numeric facts (ages, dates, statistics): if the number is clearly wrong, mark 'unsupported'.\n"
+        "Reserve 'supported' for claims that are actually correct or very close to correct.\n"
+        "Only be conservative for genuinely ambiguous or hard-to-verify claims.\n"
         'Respond with ONLY valid JSON:\n'
         '{"label": "supported" | "unsupported" | "contradicted", '
         '"confidence": <float 0.0-0.7>, '
