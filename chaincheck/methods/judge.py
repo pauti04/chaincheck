@@ -84,6 +84,23 @@ async def check_judge(
     for orig_idx, verdict in zip(original_indices, verdicts, strict=True):
         ordered[orig_idx] = verdict
 
+    # Second pass: re-examine low-confidence supported claims (recall recovery)
+    if not fact_check and truncated_ctx.strip():
+        recheck_indices = [
+            i for i, v in enumerate(ordered)
+            if v and v.label.lower() == "supported" and v.confidence < 0.45
+        ]
+        if recheck_indices:
+            recheck_claims = [claims[i] for i in recheck_indices]
+            recheck_verdicts = list(
+                await asyncio.gather(*[
+                    _verify_claim(c, truncated_ctx, model, prompt_fn=_build_recheck_prompt)
+                    for c in recheck_claims
+                ])
+            )
+            for i, rv in zip(recheck_indices, recheck_verdicts, strict=True):
+                ordered[i] = rv
+
     conf_cap = 0.7 if fact_check else 1.0
     claim_results: list[ClaimResult] = []
     for claim, verdict in zip(claims, ordered, strict=True):
@@ -112,6 +129,7 @@ async def _verify_claim(
     model: str,
     retries: int = _MAX_RETRIES,
     fact_check: bool = False,
+    prompt_fn=None,
 ) -> JudgeVerdict:
     """
     Send a single claim to the judge model and parse structured JSON output.
@@ -121,7 +139,12 @@ async def _verify_claim(
     """
     from chaincheck.llm import complete
 
-    prompt = _build_factcheck_prompt(claim) if fact_check else _build_judge_prompt(claim, context)
+    if prompt_fn is not None:
+        prompt = prompt_fn(claim, context)
+    elif fact_check:
+        prompt = _build_factcheck_prompt(claim)
+    else:
+        prompt = _build_judge_prompt(claim, context)
 
     last_err: str = ""
     for attempt in range(retries):
@@ -194,6 +217,23 @@ def _build_judge_prompt(claim: str, context: str) -> str:
         '{"label": "supported" | "unsupported" | "contradicted", '
         '"confidence": <float 0.0-1.0>, '
         '"evidence": "<relevant quote or \'no relevant context found\'>"}'
+    )
+
+
+def _build_recheck_prompt(claim: str, context: str) -> str:
+    """Second-pass prompt for low-confidence supported claims."""
+    ctx_section = f"Context:\n{context}\n\n" if context else "Context: (none provided)\n\n"
+    return (
+        "You are a precise fact-checking assistant doing a careful second review.\n\n"
+        + ctx_section
+        + f"Claim: {claim}\n\n"
+        "A first pass marked this claim as 'supported' with low confidence. "
+        "Please re-examine critically: does the context explicitly confirm every specific detail "
+        "(names, numbers, dates, attributions)? If any detail is not directly stated, label it 'unsupported'.\n"
+        'Respond with ONLY valid JSON (no markdown fences):\n'
+        '{"label": "supported" | "unsupported" | "contradicted", '
+        '"confidence": <float 0.0-1.0>, '
+        '"evidence": "<direct quote from context, or \'not explicitly stated\'>"}'
     )
 
 
