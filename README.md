@@ -5,7 +5,7 @@
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**Claim-level hallucination detection for LLM outputs.** Give ChainCheck a response (and optionally the source context), and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
+**Claim-level hallucination detection for LLM outputs.** Achieves **78% F1 / 93% precision** on HaluEval-QA (n=500). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
 ---
 
@@ -65,11 +65,11 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 
 | Method      | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
 |-------------|-----------|--------|-----------|--------|-------------|-------------|
-| NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 52 ms       | 97 ms       |
-| Judge       | 0.955     | 0.676  | **0.792** | 0.161  | 1116 ms     | 2236 ms     |
+| NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 55 ms       | 97 ms       |
+| Judge       | **0.933** | 0.668  | **0.779** | 0.165  | 1199 ms     | 2160 ms     |
 | Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 2117 ms     | 4740 ms     |
 | Logprobs    | 0.263     | 0.084  | 0.127     | —      | 1401 ms     | 2859 ms     |
-| **NLI+Judge ensemble** | — | — | **0.741** | — | ~52–1116 ms | — |
+| **NLI+Judge ensemble** | — | — | **0.741** | — | ~55–1199 ms | — |
 
 > Ensemble F1 on held-out 20% of HaluEval; weights tuned via Nelder-Mead on training 80%.
 > Consistency predicts "not hallucinated" for all samples (F1=0, ECE=0.5); excluded from default ensemble.
@@ -269,7 +269,7 @@ data: [DONE]
 
 **GET /health**
 ```json
-{ "status": "ok", "version": "0.3.0", "models_loaded": true }
+{ "status": "ok", "version": "0.6.0", "models_loaded": true }
 ```
 
 ---
