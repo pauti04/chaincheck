@@ -39,6 +39,8 @@ limiter = Limiter(key_func=get_remote_address)
 _models_loaded = False
 _API_KEY = os.getenv("CHAINCHECK_API_KEY", "")
 _HISTORY_DB = Path(os.getenv("HISTORY_DB", "chaincheck_history.db"))
+_PROXY_BLOCK_THRESHOLD = float(os.getenv("PROXY_BLOCK_THRESHOLD", "0.8"))
+_PROXY_MODE = os.getenv("PROXY_MODE", "passthrough")  # passthrough | warn | block
 
 
 # ── History persistence ────────────────────────────────────────────────────────
@@ -294,6 +296,73 @@ async def history_endpoint(limit: int = 20) -> list[dict]:
     ]
 
 
+@app.get("/history/{request_id}")
+async def history_detail_endpoint(request_id: str) -> dict:
+    """Return the full DetectionResult payload for a single past scan."""
+    with sqlite3.connect(_HISTORY_DB) as conn:
+        row = conn.execute(
+            "SELECT payload FROM results WHERE request_id = ?", (request_id,)
+        ).fetchone()
+    if not row:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Result not found")
+    return _json.loads(row[0])
+
+
+@app.get("/analytics")
+async def analytics_endpoint() -> dict:
+    """Aggregate detection history into charts-ready stats."""
+    with sqlite3.connect(_HISTORY_DB) as conn:
+        risk_rows = conn.execute(
+            "SELECT risk_level, COUNT(*) FROM results GROUP BY risk_level"
+        ).fetchall()
+        trend_rows = conn.execute(
+            """SELECT created_at, aggregate_score, risk_level
+               FROM results ORDER BY created_at DESC LIMIT 60"""
+        ).fetchall()
+        total = conn.execute("SELECT COUNT(*) FROM results").fetchone()[0]
+        avg_latency = conn.execute(
+            "SELECT AVG(total_latency_ms) FROM results"
+        ).fetchone()[0]
+        fb_rows = conn.execute(
+            """SELECT r.risk_level, f.correct, COUNT(*)
+               FROM feedback f
+               JOIN results r ON f.request_id = r.request_id
+               GROUP BY r.risk_level, f.correct"""
+        ).fetchall()
+        method_rows = conn.execute(
+            "SELECT methods FROM results WHERE methods IS NOT NULL"
+        ).fetchall()
+
+    risk_dist = {r[0]: r[1] for r in risk_rows}
+
+    score_trend = [
+        {"ts": r[0], "score": round(r[1], 4), "risk": r[2]}
+        for r in reversed(trend_rows)
+    ]
+
+    method_counts: dict[str, int] = {}
+    for (methods_json,) in method_rows:
+        for m in _json.loads(methods_json):
+            method_counts[m] = method_counts.get(m, 0) + 1
+
+    feedback_accuracy: dict[str, dict] = {}
+    for risk_level, correct, count in fb_rows:
+        if risk_level not in feedback_accuracy:
+            feedback_accuracy[risk_level] = {"correct": 0, "incorrect": 0}
+        key = "correct" if correct else "incorrect"
+        feedback_accuracy[risk_level][key] += count
+
+    return {
+        "total_scans": total,
+        "avg_latency_ms": round(avg_latency or 0, 1),
+        "risk_distribution": risk_dist,
+        "score_trend": score_trend,
+        "method_usage": method_counts,
+        "feedback_accuracy": feedback_accuracy,
+    }
+
+
 @app.post("/feedback/{request_id}", status_code=204)
 async def feedback_endpoint(request_id: str, body: FeedbackRequest) -> None:
     """Record whether a detection result was correct."""
@@ -342,6 +411,7 @@ async def proxy_endpoint(request: Request) -> Response:
     payload = resp.json()
     headers = dict(resp.headers)
 
+    detection_result = None
     try:
         text = payload["choices"][0]["message"]["content"] or ""
         prompt_text = ""
@@ -349,16 +419,53 @@ async def proxy_endpoint(request: Request) -> Response:
             if msg.get("role") == "user":
                 prompt_text = msg.get("content", "")
                 break
-        result = await detect(text, prompt=prompt_text, methods=["nli", "judge"])
-        headers["X-Hallucination-Score"] = str(round(result.aggregate_score, 4))
-        headers["X-Risk-Level"] = result.risk_level
-        headers["X-Request-ID"] = result.request_id or ""
-        _save_result(result)
+        detection_result = await detect(text, prompt=prompt_text, methods=["nli", "judge"])
+        headers["X-Hallucination-Score"] = str(round(detection_result.aggregate_score, 4))
+        headers["X-Risk-Level"] = detection_result.risk_level
+        headers["X-Request-ID"] = detection_result.request_id or ""
+        _save_result(detection_result)
     except Exception:
         pass
 
     _skip = {"content-encoding", "content-length", "transfer-encoding", "connection"}
     clean_headers = {k: v for k, v in headers.items() if k.lower() not in _skip}
+
+    if detection_result and detection_result.aggregate_score >= _PROXY_BLOCK_THRESHOLD:
+        if _PROXY_MODE == "block":
+            return JSONResponse(
+                status_code=451,
+                headers=clean_headers,
+                content={
+                    "error": {
+                        "type": "hallucination_blocked",
+                        "message": (
+                            f"Response blocked by ChainCheck — hallucination score "
+                            f"{detection_result.aggregate_score:.2f} exceeds threshold "
+                            f"{_PROXY_BLOCK_THRESHOLD}."
+                        ),
+                        "score": detection_result.aggregate_score,
+                        "risk_level": detection_result.risk_level,
+                        "request_id": detection_result.request_id,
+                    }
+                },
+            )
+        if _PROXY_MODE == "warn":
+            try:
+                warning = (
+                    f"\n\n⚠️ ChainCheck: This response has a hallucination risk score of "
+                    f"{detection_result.aggregate_score:.0%} ({detection_result.risk_level} risk). "
+                    "Verify key facts before acting on this information."
+                )
+                payload["choices"][0]["message"]["content"] += warning
+                import json as _json_mod
+                return Response(
+                    content=_json_mod.dumps(payload).encode(),
+                    status_code=resp.status_code,
+                    headers=clean_headers,
+                )
+            except Exception:
+                pass
+
     return Response(content=resp.content, status_code=resp.status_code, headers=clean_headers)
 
 

@@ -15,7 +15,7 @@ import time
 
 import numpy as np
 
-from chaincheck.models import ClaimResult, MethodResult
+from chaincheck.models import ClaimResult, Document, MethodResult
 
 _NLI_MODEL_NAME = "cross-encoder/nli-deberta-v3-base"
 _BATCH_SIZE = int(os.getenv("NLI_BATCH_SIZE", "16"))
@@ -164,6 +164,50 @@ def _score_from_claims(claims: list[ClaimResult]) -> float:
     if total_w == 0:
         return float(sum(1 for c in claims if c.label in bad) / len(claims))
     return min(1.0, sum(c.confidence for c in claims if c.label in bad) / total_w)
+
+
+def attribute_to_documents(
+    claims: list[str],
+    documents: list[Document],
+) -> list[tuple[str | None, str | None]]:
+    """
+    For each claim, find the document that best supports or contradicts it.
+
+    Runs NLI on every (document, claim) pair in a single batch and picks the
+    document whose entailment score is highest (for supported claims) or whose
+    contradiction score is highest (for contradicted claims).
+
+    Returns a list of (source_id, source_url) tuples, one per claim.
+    """
+    if not documents or not claims:
+        return [(None, None)] * len(claims)
+
+    _get_model()
+    pairs: list[tuple[str, str]] = []
+    for claim in claims:
+        for doc in documents:
+            pairs.append((doc.content, claim))
+
+    preds = _batch_predict(pairs)
+    n_docs = len(documents)
+    results: list[tuple[str | None, str | None]] = []
+
+    label_map = _label_map or {0: "contradicted", 1: "supported", 2: "unknown"}
+    ent_idx = next((k for k, v in label_map.items() if v == "supported"), 1)
+    con_idx = next((k for k, v in label_map.items() if v == "contradicted"), 0)
+
+    for ci in range(len(claims)):
+        doc_preds = preds[ci * n_docs : (ci + 1) * n_docs]
+        best_score = -1.0
+        best_doc: Document | None = None
+        for di, pred in enumerate(doc_preds):
+            score = max(pred["scores"][ent_idx], pred["scores"][con_idx])
+            if score > best_score:
+                best_score = score
+                best_doc = documents[di]
+        results.append((best_doc.id if best_doc else None, best_doc.url or None if best_doc else None))
+
+    return results
 
 
 def _claim_context_hash(claim: str, context: str) -> str:
