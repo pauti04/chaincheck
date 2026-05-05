@@ -79,12 +79,12 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 
 | Method | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
 |--------|-----------|--------|-----------|--------|-------------|-------------|
-| Judge  | 0.660     | 0.708  | **0.683** | 0.143  | 1726 ms     | 3498 ms     |
+| Judge (fact-check mode) | **0.744** | 0.664  | **0.702** | 0.202  | 2822 ms     | 4608 ms     |
 
-> No reference context — judge relies entirely on its own knowledge. F1 drop vs HaluEval (0.792 → 0.683)
-> reflects the difficulty of adversarial questions designed to elicit confident confabulations.
-> ECE 0.143 is the best calibration of any method — judge confidence scores are most trustworthy
-> when no context document is present.
+> No reference context — fact-check mode uses a world-knowledge prompt with today's date injected
+> and confidence capped at 0.7. F1 improved from 0.683 → 0.702 vs the old generic judge prompt.
+> Precision gain (+8.4pp) reflects the stricter fact-check framing; recall trade-off is expected
+> since the model is more conservative without a source document.
 
 **HaluEval claim-level** — discrimination metrics (n=100 pairs, NLI, no annotation required):
 
