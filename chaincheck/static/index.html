@@ -493,9 +493,11 @@ mark.ann::after{
 
   <div class="examples">
     <span class="ex-lbl">Try an example:</span>
-    <button class="ex-btn" onclick="loadEx(0)">Eiffel Tower</button>
-    <button class="ex-btn" onclick="loadEx(1)">Apollo 11</button>
-    <button class="ex-btn" onclick="loadEx(2)">Aspirin</button>
+    <button class="ex-btn" onclick="loadEx(0)">Subtle error</button>
+    <button class="ex-btn" onclick="loadEx(1)">Medical</button>
+    <button class="ex-btn" onclick="loadEx(2)">Mostly correct</button>
+    <button class="ex-btn" onclick="loadEx(3)">RAG / Policy</button>
+    <button class="ex-btn" onclick="loadEx(4)">mRNA vaccine</button>
   </div>
 </section>
 
@@ -631,19 +633,34 @@ mark.ann::after{
 /* ── Examples ──────────────────────────────────────────────── */
 const EX = [
   {
-    response:"The Eiffel Tower is located in Paris, France, and was completed in 1889. It stands 324 meters tall and was built by Gustave Eiffel as the entrance arch for the 1900 World's Fair. The tower attracts around 7 million visitors each year.",
-    context:"The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. It was constructed from 1887 to 1889 as the centerpiece of the 1889 World's Fair. Named after engineer Gustave Eiffel, whose company designed and built the tower, it stands 330 metres tall and receives about 7 million visitors per year.",
-    prompt:"Tell me about the Eiffel Tower."
+    label: "Subtle error",
+    response: "The Eiffel Tower was built in 1887 and stands 300 meters tall. It was designed by Gustave Eiffel for the 1889 World's Fair.",
+    context: "The Eiffel Tower was constructed from 1887 to 1889 as the centerpiece of the 1889 World's Fair. It stands 330 metres tall. Named after engineer Gustave Eiffel.",
+    prompt: "Tell me about the Eiffel Tower."
   },
   {
-    response:"Apollo 11 landed on the Moon on July 20, 1969. Neil Armstrong was the first human to walk on the Moon, followed by Buzz Aldrin. Michael Collins remained in lunar orbit aboard the Command Module. Armstrong's famous words were 'That's one small step for man, one giant leap for mankind.'",
-    context:"Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and lunar module pilot Buzz Aldrin landed on July 20, 1969. Armstrong became the first person to step onto the lunar surface. His actual words were 'That's one small step for man, one giant leap for mankind.' Command module pilot Michael Collins flew the command spacecraft alone in lunar orbit.",
-    prompt:"What happened during Apollo 11?"
+    label: "Medical",
+    response: "Ibuprofen is a blood thinner that prevents clotting. It's safe for patients with kidney disease and can be taken on an empty stomach without side effects.",
+    context: "Ibuprofen is an NSAID that reduces inflammation. It is not a blood thinner. It should be avoided in patients with kidney disease and taken with food to prevent stomach irritation.",
+    prompt: "Is ibuprofen safe to take?"
   },
   {
-    response:"Aspirin was first synthesized in 1897 by Felix Hoffmann at Bayer. It works by inhibiting cyclooxygenase enzymes, reducing prostaglandin synthesis. Aspirin is used to relieve pain, reduce fever, and prevent blood clots. Low-dose aspirin is commonly recommended for cardiovascular protection.",
-    context:"Aspirin (acetylsalicylic acid) was first synthesized in 1897 by Felix Hoffmann, a chemist at Bayer. It acts by irreversibly inhibiting cyclooxygenase (COX) enzymes, preventing the formation of prostaglandins and thromboxane. It is widely used as an analgesic, antipyretic, and anti-inflammatory drug. Low-dose aspirin is used as a long-term antiplatelet medication to prevent heart attacks and strokes.",
-    prompt:"How does aspirin work?"
+    label: "Mostly correct",
+    response: "Python was created by Guido van Rossum and first released in 1991. Van Rossum named it after the BBC show Monty Python's Flying Circus. Python 3.0 was released in 2008.",
+    context: "Python was created by Guido van Rossum, with the first version released in 1991. Van Rossum named it after Monty Python's Flying Circus. Python 3.0, a major revision not backward compatible with Python 2, was released on December 3, 2008.",
+    prompt: "Tell me about the Python programming language."
+  },
+  {
+    label: "RAG / Policy",
+    response: "Our refund policy allows returns within 60 days of purchase. Customers receive a full refund including shipping costs.",
+    context: "Returns are accepted within 30 days of purchase. Refunds are issued for the product price only; original shipping charges are non-refundable.",
+    prompt: "What is the refund policy?"
+  },
+  {
+    label: "mRNA vaccine",
+    response: "mRNA vaccines work by injecting weakened virus into the body to trigger an immune response. They were first approved for COVID-19 in 2020.",
+    context: "mRNA vaccines work by introducing messenger RNA that instructs cells to produce a protein, triggering immunity. Unlike traditional vaccines, they do not use any virus. The first mRNA vaccines received emergency authorization in December 2020.",
+    prompt: "How do mRNA vaccines work?"
   }
 ];
 
