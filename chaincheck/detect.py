@@ -132,6 +132,7 @@ async def detect_stream(
     claims = await decompose(response)
     yield {"type": "claims", "claims": claims, "request_id": rid}
 
+    _requires = {"nli": "context", "qa": "context", "consistency": "prompt", "logprobs": "prompt"}
     task_map: dict[asyncio.Task, str] = {}
     if "nli" in active and ctx.strip():
         task_map[asyncio.create_task(check_nli(claims, ctx))] = "nli"
@@ -143,6 +144,14 @@ async def detect_stream(
         task_map[asyncio.create_task(check_consistency(prompt, response))] = "consistency"
     if "logprobs" in active and prompt.strip():
         task_map[asyncio.create_task(check_logprobs(prompt, claims))] = "logprobs"
+
+    running = set(task_map.values())
+    for method in active:
+        if method not in running:
+            req = _requires.get(method, "")
+            yield {"type": "method", "method": method, "score": None,
+                   "latency_ms": 0, "skipped": True,
+                   "reason": f"requires {req}" if req else "skipped"}
 
     method_results: dict[str, MethodResult] = {}
     consistency_result = None
