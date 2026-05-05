@@ -156,14 +156,11 @@ def _find_best_evidence(claim: str, context: str) -> str:
 
 
 def _score_from_claims(claims: list[ClaimResult]) -> float:
-    """Compute hallucination risk as confidence-weighted fraction of bad claims."""
+    """Compute hallucination risk as mean confidence of bad claims across all claims."""
     if not claims:
         return 0.0
     bad = {"unsupported", "contradicted"}
-    total_w = sum(c.confidence for c in claims)
-    if total_w == 0:
-        return float(sum(1 for c in claims if c.label in bad) / len(claims))
-    return min(1.0, sum(c.confidence for c in claims if c.label in bad) / total_w)
+    return min(1.0, sum(c.confidence for c in claims if c.label in bad) / len(claims))
 
 
 def attribute_to_documents(
