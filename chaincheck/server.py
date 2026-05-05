@@ -111,16 +111,23 @@ class HealthResponse(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Pre-warm NLI and embedding models; initialise history DB."""
+    """Bind port immediately; warm NLI and embedding models in the background."""
     global _models_loaded
-    from chaincheck.methods.consistency import _get_embed_model
-    from chaincheck.methods.nli import _get_model
-
-    _get_model()
-    _get_embed_model()
-    _models_loaded = True
     _init_history_db()
+
+    loop = asyncio.get_event_loop()
+
+    async def _preload():
+        global _models_loaded
+        from chaincheck.methods.consistency import _get_embed_model
+        from chaincheck.methods.nli import _get_model
+        await loop.run_in_executor(None, _get_model)
+        await loop.run_in_executor(None, _get_embed_model)
+        _models_loaded = True
+
+    task = asyncio.create_task(_preload())
     yield
+    task.cancel()
 
 
 app = FastAPI(
