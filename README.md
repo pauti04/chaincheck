@@ -5,6 +5,8 @@
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+![ChainCheck UI](docs/screenshot.png)
+
 **Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
 ---
@@ -338,21 +340,41 @@ Exact claim-level precision/recall requires human-annotated atomic facts (as in 
 
 ---
 
-## Deployment (Railway)
+## Deployment
 
+**Docker (local):**
 ```bash
-# Install Railway CLI
+cp .env.example .env   # add OPENAI_API_KEY
+docker compose up
+# → http://localhost:8000/docs
+```
+
+The Dockerfile pre-downloads both ML models at build time so the first request is fast.
+
+**Railway (one-command cloud deploy):**
+```bash
 npm install -g @railway/cli
 railway login
-
-# Set secrets
 railway variables set OPENAI_API_KEY=sk-...
-
-# Deploy
 bash scripts/deploy.sh
 ```
 
-The Dockerfile pre-downloads both ML models at build time, so cold starts are fast.
+**Common dev commands (Makefile):**
+```bash
+make install      # uv sync --extra dev
+make test         # pytest
+make lint         # ruff check + format check
+make serve        # chaincheck serve --port 8000
+make eval-all     # run NLI + judge benchmarks
+```
+
+---
+
+## Roadmap
+
+- **Fine-tuned NLI classifier** — explored fine-tuning `microsoft/deberta-v3-small` on HaluEval QA (binary: context + response → hallucinated/not). CPU training is impractical at MAX_LENGTH=256 (~90 s/step); next step is HuggingFace AutoTrain or a Colab T4. A trained checkpoint would replace the zero-shot cross-encoder with a task-specific model, potentially pushing NLI F1 above the current 0.574.
+- **Multi-hop RAG support** — verify claims across a graph of documents, not just a flat context string.
+- **Structured output verification** — detect hallucinations in JSON/table fields, not just free text.
 
 ---
 
@@ -363,6 +385,12 @@ The Dockerfile pre-downloads both ML models at build time, so cold starts are fa
 3. `uv run ruff check chaincheck/ tests/`
 
 PRs welcome. Please add tests for any new detection method.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 

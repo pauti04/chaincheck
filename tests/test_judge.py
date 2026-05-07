@@ -104,7 +104,7 @@ async def test_check_judge_preserves_claim_order():
 
     claims = ["Claim A is here.", "Claim B is here.", "Claim C is here."]
 
-    async def _fake_verify(claim, context, model, retries=3):
+    async def _fake_verify(claim, context, model, retries=3, fact_check=False, prompt_fn=None):
         return JudgeVerdict(
             label="supported" if "A" in claim else "contradicted",
             confidence=0.9,
@@ -127,7 +127,7 @@ async def test_check_judge_returns_correct_count():
 
     claims = ["Claim one.", "Claim two.", "Claim three."]
 
-    async def _fake_verify(claim, context, model, retries=3):
+    async def _fake_verify(claim, context, model, retries=3, fact_check=False, prompt_fn=None):
         return JudgeVerdict(label="supported", confidence=0.8, evidence="ok")
 
     with patch("chaincheck.methods.judge._verify_claim", side_effect=_fake_verify):

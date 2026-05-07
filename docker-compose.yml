@@ -1,0 +1,24 @@
+services:
+  chaincheck:
+    build: .
+    ports:
+      - "${PORT:-8000}:${PORT:-8000}"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - JUDGE_MODEL=${JUDGE_MODEL:-gpt-4o-mini}
+      - PORT=${PORT:-8000}
+    volumes:
+      - chaincheck-cache:/app/.chaincheck_cache
+      - chaincheck-db:/app/chaincheck_history.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  chaincheck-cache:
+  chaincheck-db:
