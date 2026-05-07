@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chaincheck-config
+  namespace: chaincheck
+data:
+  # Detection defaults
+  JUDGE_MODEL: "gpt-4o-mini"
+  NLI_BATCH_SIZE: "16"
+  NLI_THRESHOLD: "0.5"
+  PORT: "8000"
+
+  # Proxy mode: passthrough | warn | block
+  PROXY_MODE: "warn"
+  PROXY_BLOCK_THRESHOLD: "0.8"
+
+  # Point the main API at the in-cluster model server
+  # (set NLI_MODEL_SERVER_URL to use the dedicated pod instead of loading locally)
+  NLI_MODEL_SERVER_URL: "http://chaincheck-model-server:8001"
+
+  # Database — override in Secret for production credentials
+  # DATABASE_URL is kept in the Secret, not here

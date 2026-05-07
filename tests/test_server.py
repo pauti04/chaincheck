@@ -44,6 +44,7 @@ async def test_health_returns_200(client: AsyncClient):
     body = response.json()
     assert body["status"] == "ok"
     assert "version" in body
+    assert "db_backend" in body
 
 
 @pytest.mark.asyncio
@@ -231,8 +232,7 @@ async def test_save_result_is_best_effort(client: AsyncClient):
     """_save_result should silently swallow exceptions."""
     from chaincheck.server import _save_result
 
-    with patch("chaincheck.server.sqlite3") as mock_sqlite:
-        mock_sqlite.connect.side_effect = Exception("db error")
+    with patch("chaincheck.db.get_engine", side_effect=Exception("db error")):
         _save_result(_fake_result())  # should not raise
 
 
@@ -296,7 +296,7 @@ async def test_check_with_cascade_flag(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_feedback_swallows_db_error(client: AsyncClient):
     """POST /feedback should return 204 even when sqlite3 raises."""
-    with patch("chaincheck.server.sqlite3.connect", side_effect=Exception("db gone")):
+    with patch("chaincheck.db.get_engine", side_effect=Exception("db gone")):
         response = await client.post(
             "/feedback/any-id",
             json={"correct": False, "note": "wrong"},

@@ -1,24 +1,104 @@
 services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: chaincheck
+      POSTGRES_USER: chaincheck
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-chaincheck_dev}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chaincheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── DeBERTa model server ────────────────────────────────────────────────────
+  model-server:
+    build: .
+    command: uvicorn chaincheck.model_server:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    environment:
+      CHAINCHECK_NLI_MODEL: ${CHAINCHECK_NLI_MODEL:-cross-encoder/nli-deberta-v3-base}
+      NLI_BATCH_SIZE: "32"
+      USE_GPU: "0"
+    volumes:
+      - model-cache:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+
+  # ── ChainCheck API ──────────────────────────────────────────────────────────
   chaincheck:
     build: .
     ports:
       - "${PORT:-8000}:${PORT:-8000}"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - JUDGE_MODEL=${JUDGE_MODEL:-gpt-4o-mini}
-      - PORT=${PORT:-8000}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CHAINCHECK_API_KEY: ${CHAINCHECK_API_KEY:-}
+      JUDGE_MODEL: ${JUDGE_MODEL:-gpt-4o-mini}
+      PORT: ${PORT:-8000}
+      DATABASE_URL: postgresql://chaincheck:${POSTGRES_PASSWORD:-chaincheck_dev}@postgres:5432/chaincheck
+      NLI_MODEL_SERVER_URL: http://model-server:8001
+      PROXY_MODE: ${PROXY_MODE:-passthrough}
+      PROXY_BLOCK_THRESHOLD: ${PROXY_BLOCK_THRESHOLD:-0.8}
     volumes:
       - chaincheck-cache:/app/.chaincheck_cache
-      - chaincheck-db:/app/chaincheck_history.db
-    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      model-server:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT:-8000}/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 15s
+    restart: unless-stopped
+
+  # ── Prometheus ──────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-lifecycle
+    restart: unless-stopped
+
+  # ── Grafana ─────────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:10.4.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
 volumes:
+  postgres-data:
+  model-cache:
   chaincheck-cache:
-  chaincheck-db:
+  prometheus-data:
+  grafana-data:

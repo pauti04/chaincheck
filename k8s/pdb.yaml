@@ -1,0 +1,23 @@
+# Pod Disruption Budgets — guarantee availability during node drains / rolling upgrades
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chaincheck-api-pdb
+  namespace: chaincheck
+spec:
+  minAvailable: 2      # always keep at least 2 API pods running
+  selector:
+    matchLabels:
+      app: chaincheck-api
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: chaincheck-postgres-pdb
+  namespace: chaincheck
+spec:
+  minAvailable: 1      # single-replica Postgres — never evict during drains
+  selector:
+    matchLabels:
+      app: chaincheck-postgres

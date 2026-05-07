@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    service: chaincheck
+
+scrape_configs:
+  - job_name: chaincheck-api
+    static_configs:
+      - targets: ["chaincheck:8000"]
+    metrics_path: /metrics
+
+  - job_name: chaincheck-model-server
+    static_configs:
+      - targets: ["model-server:8001"]
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

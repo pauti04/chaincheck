@@ -24,6 +24,10 @@ _NLI_MODEL_NAME = os.getenv(
 _BATCH_SIZE = int(os.getenv("NLI_BATCH_SIZE", "16"))
 _NLI_THRESHOLD = float(os.getenv("NLI_THRESHOLD", "0.5"))
 
+# When set, forward inference to the dedicated model server instead of loading
+# the model in-process (see chaincheck/model_server.py and k8s/model-server-deployment.yaml).
+_MODEL_SERVER_URL = os.getenv("NLI_MODEL_SERVER_URL", "").rstrip("/")
+
 _model = None
 _label_map: dict[int, str] | None = None
 
@@ -163,8 +167,35 @@ def _batch_predict(
       for these results.
     """
     global _label_map
-    model = _get_model()
     results = []
+
+    # ── Model-server path (k8s / Docker Compose) ───────────────────────────────
+    if _MODEL_SERVER_URL:
+        import httpx as _httpx
+
+        _label_map = {0: "supported", 1: "contradicted"}
+        for i in range(0, len(pairs), batch_size):
+            chunk = pairs[i : i + batch_size]
+            resp = _httpx.post(
+                f"{_MODEL_SERVER_URL}/predict",
+                json={"pairs": chunk},
+                timeout=30.0,
+            )
+            resp.raise_for_status()
+            for item in resp.json()["results"]:
+                lbl = item["label"]
+                sc = float(item["score"])
+                raw = item.get("scores", [sc])
+                # normalise to 2-element list for consistent downstream indexing
+                if len(raw) >= 2:
+                    results.append({"scores": raw[:2]})
+                elif lbl in ("contradicted", "hallucinated"):
+                    results.append({"scores": [1.0 - sc, sc]})
+                else:
+                    results.append({"scores": [sc, 1.0 - sc]})
+        return results
+
+    model = _get_model()
 
     if _USE_HF_PIPELINE:
         # Flatten pairs to single strings: "context [SEP] claim"

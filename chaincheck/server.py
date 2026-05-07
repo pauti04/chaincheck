@@ -5,8 +5,9 @@ Endpoints:
   POST /check    — detect hallucinations in a single response
   POST /stream   — same as /check but streams events via SSE as each method completes
   POST /batch    — batch detection for multiple inputs
-  GET  /history  — recent detection results (persisted in SQLite)
+  GET  /history  — recent detection results (persisted in SQLite or PostgreSQL)
   GET  /health   — liveness check with version and model status
+  GET  /metrics  — Prometheus metrics (text/plain)
   GET  /docs     — auto-generated OpenAPI documentation
 """
 
@@ -15,7 +16,6 @@ from __future__ import annotations
 import asyncio
 import json as _json
 import os
-import sqlite3
 import time
 import uuid
 from contextlib import asynccontextmanager, suppress
@@ -25,72 +25,53 @@ import httpx
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
 from chaincheck import __version__
+from chaincheck import db as _db
 from chaincheck.detect import detect, detect_stream
+from chaincheck.metrics_prom import (
+    active_requests_gauge,
+    models_loaded_gauge,
+    record_detection,
+    request_latency_ms,
+    requests_total,
+)
 from chaincheck.models import DetectionResult, Document
 
 limiter = Limiter(key_func=get_remote_address)
 
 _models_loaded = False
 _API_KEY = os.getenv("CHAINCHECK_API_KEY", "")
-_HISTORY_DB = Path(os.getenv("HISTORY_DB", "chaincheck_history.db"))
 _PROXY_BLOCK_THRESHOLD = float(os.getenv("PROXY_BLOCK_THRESHOLD", "0.8"))
 _PROXY_MODE = os.getenv("PROXY_MODE", "passthrough")  # passthrough | warn | block
 
 
-# ── History persistence ────────────────────────────────────────────────────────
+# ── Persistence helpers (thin wrappers over chaincheck.db) ────────────────────
 
 def _init_history_db() -> None:
-    with sqlite3.connect(_HISTORY_DB) as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS results (
-                request_id      TEXT PRIMARY KEY,
-                created_at      REAL NOT NULL,
-                response_preview TEXT,
-                aggregate_score REAL,
-                risk_level      TEXT,
-                total_latency_ms REAL,
-                methods         TEXT,
-                payload         TEXT
-            )
-        """)
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_ts ON results (created_at DESC)")
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS feedback (
-                id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                request_id  TEXT NOT NULL,
-                correct     INTEGER NOT NULL,
-                note        TEXT,
-                created_at  REAL NOT NULL
-            )
-        """)
+    _db.init_db()
 
 
 def _save_result(result: DetectionResult) -> None:
-    """Persist a DetectionResult to SQLite. Best-effort — never raises."""
-    try:
-        with sqlite3.connect(_HISTORY_DB) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO results VALUES (?,?,?,?,?,?,?,?)",
-                (
-                    result.request_id,
-                    time.time(),
-                    result.response[:120],
-                    result.aggregate_score,
-                    result.risk_level,
-                    result.total_latency_ms,
-                    _json.dumps(sorted(result.method_results.keys())),
-                    result.model_dump_json(),
-                ),
-            )
-    except Exception:
-        pass
+    """Persist a DetectionResult. Best-effort — never raises."""
+    _db.save_result(
+        request_id=result.request_id,
+        created_at=time.time(),
+        response_preview=result.response[:120],
+        aggregate_score=result.aggregate_score,
+        risk_level=result.risk_level,
+        total_latency_ms=result.total_latency_ms,
+        methods=list(result.method_results.keys()),
+        payload_json=result.model_dump_json(),
+    )
+    # Fire-and-forget Prometheus metrics (no I/O, always succeeds)
+    with suppress(Exception):
+        record_detection(result)
 
 
 # ── Pydantic models ────────────────────────────────────────────────────────────
@@ -125,6 +106,7 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     models_loaded: bool
+    db_backend: str  # "sqlite" or "postgresql"
 
 
 # ── App setup ──────────────────────────────────────────────────────────────────
@@ -144,6 +126,7 @@ async def lifespan(app: FastAPI):
         await loop.run_in_executor(None, _get_model)
         await loop.run_in_executor(None, _get_embed_model)
         _models_loaded = True
+        models_loaded_gauge.set(1)
 
     task = asyncio.create_task(_preload())
     yield
@@ -169,7 +152,7 @@ app.add_middleware(
 
 # ── Middleware ─────────────────────────────────────────────────────────────────
 
-_OPEN_PATHS = {"/", "/health", "/docs", "/openapi.json", "/favicon.ico"}
+_OPEN_PATHS = {"/", "/health", "/docs", "/openapi.json", "/favicon.ico", "/metrics"}
 
 
 @app.middleware("http")
@@ -188,13 +171,26 @@ async def auth_middleware(request: Request, call_next) -> Response:
 
 
 @app.middleware("http")
-async def add_request_id_and_latency(request: Request, call_next) -> Response:
-    """Attach X-Request-ID and X-Latency-Ms headers to every response."""
+async def observability_middleware(request: Request, call_next) -> Response:
+    """Attach X-Request-ID / X-Latency-Ms headers and record Prometheus metrics."""
     request_id = str(uuid.uuid4())
+    endpoint = request.url.path
     start = time.time()
-    response = await call_next(request)
+    active_requests_gauge.labels(endpoint=endpoint).inc()
+    try:
+        response = await call_next(request)
+    finally:
+        elapsed = (time.time() - start) * 1000
+        active_requests_gauge.labels(endpoint=endpoint).dec()
+        with suppress(Exception):
+            requests_total.labels(
+                endpoint=endpoint,
+                method=request.method,
+                status_code=str(response.status_code),
+            ).inc()
+            request_latency_ms.labels(endpoint=endpoint).observe(elapsed)
     response.headers["X-Request-ID"] = request_id
-    response.headers["X-Latency-Ms"] = f"{(time.time() - start) * 1000:.2f}"
+    response.headers["X-Latency-Ms"] = f"{elapsed:.2f}"
     return response
 
 
@@ -276,113 +272,54 @@ async def batch_endpoint(request: Request, body: BatchRequest) -> list[Detection
 @app.get("/history")
 async def history_endpoint(limit: int = 20) -> list[dict]:
     """Return the most recent detection results (max 100)."""
-    limit = min(max(1, limit), 100)
-    with sqlite3.connect(_HISTORY_DB) as conn:
-        rows = conn.execute(
-            """SELECT request_id, created_at, response_preview,
-                      aggregate_score, risk_level, total_latency_ms, methods
-               FROM results ORDER BY created_at DESC LIMIT ?""",
-            (limit,),
-        ).fetchall()
-    return [
-        {
-            "request_id": r[0],
-            "created_at": r[1],
-            "response_preview": r[2],
-            "aggregate_score": r[3],
-            "risk_level": r[4],
-            "total_latency_ms": r[5],
-            "methods": _json.loads(r[6]),
-        }
-        for r in rows
-    ]
+    return _db.fetch_history(min(max(1, limit), 100))
 
 
 @app.get("/history/{request_id}")
 async def history_detail_endpoint(request_id: str) -> dict:
     """Return the full DetectionResult payload for a single past scan."""
-    with sqlite3.connect(_HISTORY_DB) as conn:
-        row = conn.execute(
-            "SELECT payload FROM results WHERE request_id = ?", (request_id,)
-        ).fetchone()
-    if not row:
+    payload = _db.fetch_result_payload(request_id)
+    if not payload:
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Result not found")
-    return _json.loads(row[0])
+    return _json.loads(payload)
 
 
 @app.get("/analytics")
 async def analytics_endpoint() -> dict:
     """Aggregate detection history into charts-ready stats."""
-    with sqlite3.connect(_HISTORY_DB) as conn:
-        risk_rows = conn.execute(
-            "SELECT risk_level, COUNT(*) FROM results GROUP BY risk_level"
-        ).fetchall()
-        trend_rows = conn.execute(
-            """SELECT created_at, aggregate_score, risk_level
-               FROM results ORDER BY created_at DESC LIMIT 60"""
-        ).fetchall()
-        total = conn.execute("SELECT COUNT(*) FROM results").fetchone()[0]
-        avg_latency = conn.execute(
-            "SELECT AVG(total_latency_ms) FROM results"
-        ).fetchone()[0]
-        fb_rows = conn.execute(
-            """SELECT r.risk_level, f.correct, COUNT(*)
-               FROM feedback f
-               JOIN results r ON f.request_id = r.request_id
-               GROUP BY r.risk_level, f.correct"""
-        ).fetchall()
-        method_rows = conn.execute(
-            "SELECT methods FROM results WHERE methods IS NOT NULL"
-        ).fetchall()
-
-    risk_dist = {r[0]: r[1] for r in risk_rows}
-
-    score_trend = [
-        {"ts": r[0], "score": round(r[1], 4), "risk": r[2]}
-        for r in reversed(trend_rows)
-    ]
-
-    method_counts: dict[str, int] = {}
-    for (methods_json,) in method_rows:
-        for m in _json.loads(methods_json):
-            method_counts[m] = method_counts.get(m, 0) + 1
-
-    feedback_accuracy: dict[str, dict] = {}
-    for risk_level, correct, count in fb_rows:
-        if risk_level not in feedback_accuracy:
-            feedback_accuracy[risk_level] = {"correct": 0, "incorrect": 0}
-        key = "correct" if correct else "incorrect"
-        feedback_accuracy[risk_level][key] += count
-
-    return {
-        "total_scans": total,
-        "avg_latency_ms": round(avg_latency or 0, 1),
-        "risk_distribution": risk_dist,
-        "score_trend": score_trend,
-        "method_usage": method_counts,
-        "feedback_accuracy": feedback_accuracy,
-    }
+    return _db.fetch_analytics()
 
 
 @app.post("/feedback/{request_id}", status_code=204)
 async def feedback_endpoint(request_id: str, body: FeedbackRequest) -> None:
     """Record whether a detection result was correct."""
-    try:
-        with sqlite3.connect(_HISTORY_DB) as conn:
-            conn.execute(
-                "INSERT INTO feedback (request_id, correct, note, created_at) VALUES (?,?,?,?)",
-                (request_id, int(body.correct), body.note, time.time()),
-            )
-    except Exception:
-        pass
+    _db.save_feedback(request_id, body.correct, body.note)
 
 
 @app.get("/health", response_model=HealthResponse)
 async def health_endpoint() -> HealthResponse:
-    """Return service liveness status and loaded model info."""
-    return HealthResponse(status="ok", version=__version__, models_loaded=_models_loaded)
+    """Return service liveness status, loaded model info, and DB backend."""
+    return HealthResponse(
+        status="ok",
+        version=__version__,
+        models_loaded=_models_loaded,
+        db_backend="postgresql" if _db._IS_POSTGRES else "sqlite",
+    )
 
+
+@app.get("/metrics", response_class=PlainTextResponse, include_in_schema=False)
+async def metrics_endpoint() -> PlainTextResponse:
+    """Expose Prometheus metrics in text format (scrape target for Prometheus)."""
+    from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+
+    return PlainTextResponse(
+        content=generate_latest().decode(),
+        media_type=CONTENT_TYPE_LATEST,
+    )
+
+
+# ── OpenAI-compatible proxy ────────────────────────────────────────────────────
 
 async def _openai_request(api_key: str, body: dict) -> httpx.Response:  # pragma: no cover
     """Forward a request to OpenAI. Extracted for testability."""

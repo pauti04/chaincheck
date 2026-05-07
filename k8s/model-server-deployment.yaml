@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chaincheck-model-server
+  namespace: chaincheck
+  labels:
+    app: chaincheck-model-server
+    component: inference
+spec:
+  replicas: 1   # single replica is fine — model is read-only
+  selector:
+    matchLabels:
+      app: chaincheck-model-server
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0   # always keep one replica warm
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: chaincheck-model-server
+        component: inference
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      # On GPU nodes, add: nodeSelector: { accelerator: nvidia-tesla-t4 }
+      # and uncomment the resources.limits.nvidia.com/gpu block below.
+      containers:
+        - name: model-server
+          image: ghcr.io/pauti04/chaincheck:latest
+          command: ["uvicorn", "chaincheck.model_server:app", "--host", "0.0.0.0", "--port", "8001"]
+          ports:
+            - containerPort: 8001
+              name: http
+          env:
+            - name: CHAINCHECK_NLI_MODEL
+              value: "cross-encoder/nli-deberta-v3-base"
+            - name: NLI_BATCH_SIZE
+              value: "32"
+            - name: USE_GPU
+              value: "0"   # set to "1" when deploying on GPU node
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            # Uncomment for GPU nodes:
+            # limits:
+            #   nvidia.com/gpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 60   # model load takes ~45 s
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+          volumeMounts:
+            - name: model-cache
+              mountPath: /root/.cache/huggingface
+      volumes:
+        - name: model-cache
+          emptyDir: {}
+          # For production, use a PVC or a pre-baked image with the model embedded:
+          # persistentVolumeClaim:
+          #   claimName: model-cache-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chaincheck-model-server
+  namespace: chaincheck
+  labels:
+    app: chaincheck-model-server
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8001
+      targetPort: 8001
+      name: http
+  selector:
+    app: chaincheck-model-server
