@@ -21,6 +21,8 @@ import uuid
 from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
+import httpx
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
@@ -382,6 +384,16 @@ async def health_endpoint() -> HealthResponse:
     return HealthResponse(status="ok", version=__version__, models_loaded=_models_loaded)
 
 
+async def _openai_request(api_key: str, body: dict) -> httpx.Response:  # pragma: no cover
+    """Forward a request to OpenAI. Extracted for testability."""
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        return await client.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json=body,
+        )
+
+
 @app.post("/v1/chat/completions")
 @limiter.limit("30/minute")
 async def proxy_endpoint(request: Request) -> Response:
@@ -394,19 +406,12 @@ async def proxy_endpoint(request: Request) -> Response:
       X-Risk-Level           — low | medium | high
       X-Request-ID           — ChainCheck trace ID
     """
-    import httpx
-
     api_key = os.getenv("OPENAI_API_KEY", "")
     if not api_key:
         return JSONResponse(status_code=503, content={"error": "OPENAI_API_KEY not configured"})
 
     body = await request.json()
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            json=body,
-        )
+    resp = await _openai_request(api_key, body)
 
     payload = resp.json()
     headers = dict(resp.headers)

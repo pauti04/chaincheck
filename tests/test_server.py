@@ -253,7 +253,6 @@ async def test_proxy_endpoint_no_api_key(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_proxy_endpoint_passthrough(client: AsyncClient):
     """POST /v1/chat/completions should forward to OpenAI and return its response."""
-
     fake_openai_body = {
         "choices": [{"message": {"content": "The sky is blue."}}]
     }
@@ -263,15 +262,10 @@ async def test_proxy_endpoint_passthrough(client: AsyncClient):
     mock_response.status_code = 200
     mock_response.headers = {"content-type": "application/json"}
 
-    mock_client = AsyncMock()
-    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
-    mock_client.__aexit__ = AsyncMock(return_value=False)
-    mock_client.post = AsyncMock(return_value=mock_response)
-
     with (
         patch("chaincheck.server.os.getenv", return_value="sk-fake"),
         patch("chaincheck.server.detect", new=AsyncMock(return_value=_fake_result())),
-        patch("httpx.AsyncClient", return_value=mock_client),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=mock_response)),
     ):
         response = await client.post(
             "/v1/chat/completions",
@@ -295,3 +289,285 @@ async def test_check_with_cascade_flag(client: AsyncClient):
     assert response.status_code == 200
     _, kwargs = mock_detect.call_args
     assert kwargs.get("cascade") is True
+
+
+# ── Feedback exception path ────────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_feedback_swallows_db_error(client: AsyncClient):
+    """POST /feedback should return 204 even when sqlite3 raises."""
+    with patch("chaincheck.server.sqlite3.connect", side_effect=Exception("db gone")):
+        response = await client.post(
+            "/feedback/any-id",
+            json={"correct": False, "note": "wrong"},
+        )
+    assert response.status_code == 204
+
+
+# ── Lifespan model preloading ──────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_lifespan_preloads_models():
+    """lifespan() should call _get_model and _get_embed_model then set _models_loaded."""
+    import asyncio as _aio
+    from chaincheck.server import app, lifespan
+
+    with (
+        patch("chaincheck.server._init_history_db"),
+        patch("chaincheck.methods.nli._get_model", return_value=MagicMock()),
+        patch("chaincheck.methods.consistency._get_embed_model", return_value=MagicMock()),
+    ):
+        async with lifespan(app):
+            # Give the background _preload task one event-loop cycle to complete
+            # (the mocked executors return immediately, so this is enough).
+            await _aio.sleep(0.05)
+
+
+# ── Proxy block mode ───────────────────────────────────────────────────────────
+
+def _make_proxy_patches(openai_body: dict, detect_result, proxy_mode: str, threshold: float = 0.7):
+    """
+    Return a list of context-manager patches for the proxy endpoint.
+
+    Patches _openai_request (the extracted helper) so coverage.py
+    can track all lines in proxy_endpoint without async-with mock complexity.
+    """
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = openai_body
+    mock_resp.content = json.dumps(openai_body).encode()
+    mock_resp.status_code = 200
+    mock_resp.headers = {"content-type": "application/json"}
+
+    return [
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server._PROXY_MODE", proxy_mode),
+        patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", threshold),
+        patch("chaincheck.server.detect", new=AsyncMock(return_value=detect_result)),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=mock_resp)),
+    ]
+
+
+@pytest.mark.asyncio
+async def test_proxy_block_mode_returns_451(client: AsyncClient):
+    """When PROXY_MODE=block and score >= threshold, proxy should return 451."""
+    from chaincheck.models import DetectionResult, MethodResult
+    high_risk = DetectionResult(
+        response="hallucinated", claims=["c"],
+        method_results={"judge": MethodResult(method="judge", raw_score=0.95, latency_ms=10)},
+        aggregate_score=0.95, risk_level="high",
+        latency_ms={"judge": 10}, request_id="rid-block",
+    )
+    openai_body = {"choices": [{"message": {"content": "hallucinated text"}}]}
+
+    patches = _make_proxy_patches(openai_body, high_risk, "block")
+    with patches[0], patches[1], patches[2], patches[3], patches[4]:
+        response = await client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}]},
+        )
+    assert response.status_code == 451
+    body = response.json()
+    assert body["error"]["type"] == "hallucination_blocked"
+    assert body["error"]["score"] == 0.95
+
+
+@pytest.mark.asyncio
+async def test_proxy_warn_mode_appends_warning(client: AsyncClient):
+    """When PROXY_MODE=warn and score >= threshold, response content should include warning."""
+    from chaincheck.models import DetectionResult, MethodResult
+    high_risk = DetectionResult(
+        response="slightly wrong", claims=["c"],
+        method_results={"judge": MethodResult(method="judge", raw_score=0.85, latency_ms=10)},
+        aggregate_score=0.85, risk_level="high",
+        latency_ms={"judge": 10}, request_id="rid-warn",
+    )
+    openai_body = {"choices": [{"message": {"content": "The sky is green."}}]}
+
+    patches = _make_proxy_patches(openai_body, high_risk, "warn")
+    with patches[0], patches[1], patches[2], patches[3], patches[4]:
+        response = await client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}]},
+        )
+    assert response.status_code == 200
+    payload = json.loads(response.content)
+    content = payload["choices"][0]["message"]["content"]
+    assert "ChainCheck" in content
+    assert "85%" in content
+
+
+@pytest.mark.asyncio
+async def test_proxy_passthrough_below_threshold(client: AsyncClient):
+    """When score < threshold proxy should return the OpenAI response unchanged."""
+    openai_body = {"choices": [{"message": {"content": "Perfectly accurate."}}]}
+    patches = _make_proxy_patches(openai_body, _fake_result(), "block")
+    with patches[0], patches[1], patches[2], patches[3], patches[4]:
+        response = await client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}]},
+        )
+    assert response.status_code == 200
+    assert json.loads(response.content) == openai_body
+
+
+# ── Direct proxy_endpoint.__wrapped__ tests (bypass slowapi for coverage) ─────
+#
+# @limiter.limit wraps the function with a new code-object (co_firstlineno=719
+# in slowapi's internals), so coverage.py never traces into server.py's lines.
+# Calling __wrapped__ directly gives us full line coverage.
+
+def _make_mock_request(messages=None):
+    """Build a minimal Request mock for the proxy tests."""
+    req = MagicMock()
+    req.json = AsyncMock(return_value={
+        "model": "gpt-4o-mini",
+        "messages": messages or [{"role": "user", "content": "hi"}],
+    })
+    return req
+
+
+def _make_mock_resp(body: dict):
+    """Build a minimal httpx.Response mock."""
+    mock = MagicMock()
+    mock.json.return_value = body
+    mock.content = json.dumps(body).encode()
+    mock.status_code = 200
+    mock.headers = {"content-type": "application/json"}
+    return mock
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_block_returns_451():
+    """Proxy block mode returns 451 when score >= threshold (direct function call)."""
+    from chaincheck.models import DetectionResult, MethodResult
+    from chaincheck.server import proxy_endpoint
+
+    high_risk = DetectionResult(
+        response="hallucinated", claims=["c"],
+        method_results={"judge": MethodResult(method="judge", raw_score=0.95, latency_ms=10)},
+        aggregate_score=0.95, risk_level="high",
+        latency_ms={"judge": 10}, request_id="rid-block",
+    )
+    body = {"choices": [{"message": {"content": "hallucinated text"}}]}
+
+    with (
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server._PROXY_MODE", "block"),
+        patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
+        patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+    ):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    assert result.status_code == 451
+    payload = json.loads(result.body)
+    assert payload["error"]["type"] == "hallucination_blocked"
+    assert payload["error"]["score"] == 0.95
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_warn_appends_warning():
+    """Proxy warn mode appends ChainCheck warning (direct function call)."""
+    from chaincheck.models import DetectionResult, MethodResult
+    from chaincheck.server import proxy_endpoint
+
+    high_risk = DetectionResult(
+        response="slightly wrong", claims=["c"],
+        method_results={"judge": MethodResult(method="judge", raw_score=0.85, latency_ms=10)},
+        aggregate_score=0.85, risk_level="high",
+        latency_ms={"judge": 10}, request_id="rid-warn",
+    )
+    body = {"choices": [{"message": {"content": "The sky is green."}}]}
+
+    with (
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server._PROXY_MODE", "warn"),
+        patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
+        patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+    ):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    assert result.status_code == 200
+    payload = json.loads(result.body)
+    content = payload["choices"][0]["message"]["content"]
+    assert "ChainCheck" in content
+    assert "85%" in content
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_passthrough_below_threshold():
+    """Proxy returns unmodified response when score < threshold (direct function call)."""
+    from chaincheck.server import proxy_endpoint
+
+    body = {"choices": [{"message": {"content": "Perfectly accurate."}}]}
+
+    with (
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server._PROXY_MODE", "block"),
+        patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
+        patch("chaincheck.server.detect", new=AsyncMock(return_value=_fake_result())),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+    ):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    assert result.status_code == 200
+    assert json.loads(result.body) == body
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_no_api_key_returns_503():
+    """Proxy returns 503 when OPENAI_API_KEY is absent (direct function call)."""
+    from chaincheck.server import proxy_endpoint
+
+    with patch("chaincheck.server.os.getenv", return_value=""):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    assert result.status_code == 503
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_detect_exception_passthrough():
+    """Proxy silently swallows detect() errors and returns the OpenAI body unchanged."""
+    from chaincheck.server import proxy_endpoint
+
+    body = {"choices": [{"message": {"content": "some text"}}]}
+
+    with (
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server.detect", side_effect=Exception("model down")),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+    ):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    assert result.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_proxy_wrapped_warn_bad_payload_falls_through():
+    """Proxy warn mode falls through gracefully when payload lacks expected structure."""
+    from chaincheck.models import DetectionResult, MethodResult
+    from chaincheck.server import proxy_endpoint
+
+    high_risk = DetectionResult(
+        response="wrong", claims=["c"],
+        method_results={"judge": MethodResult(method="judge", raw_score=0.9, latency_ms=10)},
+        aggregate_score=0.9, risk_level="high",
+        latency_ms={"judge": 10}, request_id="rid-bad",
+    )
+    # content=None survives text extraction (→ ""), passes detection,
+    # but `None += warning` raises TypeError inside the warn-mode mutation,
+    # covering the except/pass at lines 471-472.
+    bad_body = {"choices": [{"message": {"content": None}}]}
+
+    with (
+        patch("chaincheck.server.os.getenv", return_value="sk-fake"),
+        patch("chaincheck.server._PROXY_MODE", "warn"),
+        patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
+        patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
+        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(bad_body))),
+    ):
+        result = await proxy_endpoint.__wrapped__(_make_mock_request())
+
+    # Falls through to the passthrough Response (200) when content mutation fails
+    assert result.status_code == 200
