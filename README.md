@@ -4,6 +4,7 @@
 [![CI](https://github.com/pauti04/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/pauti04/chaincheck/actions)
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub Action](https://img.shields.io/badge/GitHub_Action-chaincheck--action-black?logo=github)](https://github.com/pauti04/chaincheck-action)
 
 ![ChainCheck UI](docs/screenshot.png)
 
