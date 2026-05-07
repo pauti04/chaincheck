@@ -238,8 +238,12 @@ def _build_recheck_prompt(claim: str, context: str) -> str:
 
 
 def _score_from_claims(claims: list[ClaimResult]) -> float:
-    """Compute hallucination risk as mean confidence of bad claims across all claims."""
+    """Compute hallucination risk as mean confidence of bad claims across all claims.
+    Falls back to unweighted count ratio when all confidences are zero."""
     if not claims:
         return 0.0
     bad = {"unsupported", "contradicted"}
-    return min(1.0, sum(c.confidence for c in claims if c.label in bad) / len(claims))
+    weighted = sum(c.confidence for c in claims if c.label in bad)
+    if weighted == 0.0:
+        return sum(1 for c in claims if c.label in bad) / len(claims)
+    return min(1.0, weighted / len(claims))
