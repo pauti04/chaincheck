@@ -1,7 +1,8 @@
 """Tests for chaincheck.eval.claimlevel — claim-level discrimination metrics."""
 
 from __future__ import annotations
-from unittest.mock import AsyncMock, MagicMock, patch
+
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -104,7 +105,9 @@ def _fake_detect_result(label: str) -> DetectionResult:
     claim_result = ClaimResult(
         claim="test claim", label=label, confidence=0.9, evidence="", method="nli"
     )
-    method_result = MethodResult(method="nli", claims=[claim_result], raw_score=0.8, latency_ms=50.0)
+    method_result = MethodResult(
+        method="nli", claims=[claim_result], raw_score=0.8, latency_ms=50.0
+    )
     return DetectionResult(
         response="test response",
         claims=["test claim"],

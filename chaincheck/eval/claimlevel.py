@@ -40,8 +40,6 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 
-import numpy as np
-
 
 @dataclass
 class ClaimLevelMetrics:
@@ -187,14 +185,13 @@ def _compute_claimlevel_metrics(raw: list[dict], elapsed_s: float) -> ClaimLevel
 
 def _roc_auc(labels: list[int], scores: list[float]) -> float:
     """Compute ROC-AUC via the trapezoidal rule without sklearn dependency."""
-    paired = sorted(zip(scores, labels), reverse=True)
+    paired = sorted(zip(scores, labels, strict=True), reverse=True)
     n_pos = sum(labels)
     n_neg = len(labels) - n_pos
     if n_pos == 0 or n_neg == 0:
         return 0.5
     tp = fp = 0
     auc = 0.0
-    prev_fp = 0
     for _, label in paired:
         if label == 1:
             tp += 1
