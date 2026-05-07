@@ -17,11 +17,11 @@ from __future__ import annotations
 
 import asyncio
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 from chaincheck.eval.halueval import EvalRun
-from chaincheck.eval.metrics import EvalMetrics, compute_metrics
+from chaincheck.eval.metrics import compute_metrics
 
 _TRUTHFULQA_REPO = "truthful_qa"
 _TRUTHFULQA_CONFIG = "generation"
