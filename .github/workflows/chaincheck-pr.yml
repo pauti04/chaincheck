@@ -1,0 +1,23 @@
+name: ChainCheck PR Description
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  hallucination-check:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+      - uses: pauti04/chaincheck-action@v1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          check: pr-description
+          threshold: '0.7'
+          post-comment: 'true'
+          methods: 'judge'
+        continue-on-error: true   # never block merges, just inform
