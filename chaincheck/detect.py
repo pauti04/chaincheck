@@ -103,7 +103,9 @@ async def detect(
     if cascade and "nli" in active and "judge" in active and ctx.strip():
         result = await _cascade_detect(claims, response, ctx, prompt, active, rid)
     else:
-        result = await _full_detect(claims, response, ctx, prompt, active, rid, fact_check=fact_check)
+        result = await _full_detect(
+            claims, response, ctx, prompt, active, rid, fact_check=fact_check
+        )
 
     mode = "fact_check" if fact_check else "hallucination"
     attributed = _attribute_sources(result.claim_details, documents)

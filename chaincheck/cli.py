@@ -185,7 +185,8 @@ def eval(
         console.print(
             f"\n[bold]Baselines:[/bold]"
             f"  NLI-only  F1={analysis.nli_only.f1:.4f}  {analysis.nli_only.avg_latency_ms:.0f} ms"
-            f"  |  Both  F1={analysis.both_methods.f1:.4f}  {analysis.both_methods.avg_latency_ms:.0f} ms"
+            f"  |  Both  F1={analysis.both_methods.f1:.4f}"
+            f"  {analysis.both_methods.avg_latency_ms:.0f} ms"
         )
         console.print(
             f"[green]Optimal cascade:[/green]"

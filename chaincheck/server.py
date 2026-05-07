@@ -18,13 +18,12 @@ import os
 import sqlite3
 import time
 import uuid
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -174,12 +173,15 @@ _OPEN_PATHS = {"/", "/health", "/docs", "/openapi.json", "/favicon.ico"}
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next) -> Response:
     """Enforce API key auth when CHAINCHECK_API_KEY is set."""
-    if _API_KEY and request.url.path not in _OPEN_PATHS:
-        if request.headers.get("X-API-Key", "") != _API_KEY:
-            return JSONResponse(
-                status_code=401,
-                content={"detail": "Invalid or missing API key. Set X-API-Key header."},
-            )
+    if (
+        _API_KEY
+        and request.url.path not in _OPEN_PATHS
+        and request.headers.get("X-API-Key", "") != _API_KEY
+    ):
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Invalid or missing API key. Set X-API-Key header."},
+        )
     return await call_next(request)
 
 
@@ -234,10 +236,8 @@ async def stream_endpoint(request: Request, body: CheckRequest) -> StreamingResp
         ):
             yield f"data: {_json.dumps(event)}\n\n"
             if event.get("type") == "result":
-                try:
+                with suppress(Exception):
                     _save_result(DetectionResult.model_validate(event["data"]))
-                except Exception:
-                    pass
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(
