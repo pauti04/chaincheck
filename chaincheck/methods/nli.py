@@ -206,7 +206,9 @@ def attribute_to_documents(
             if score > best_score:
                 best_score = score
                 best_doc = documents[di]
-        results.append((best_doc.id if best_doc else None, best_doc.url or None if best_doc else None))
+        doc_id  = best_doc.id if best_doc else None
+        doc_url = best_doc.url or None if best_doc else None
+        results.append((doc_id, doc_url))
 
     return results
 

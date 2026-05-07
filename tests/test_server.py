@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -28,9 +27,10 @@ def _fake_result() -> DetectionResult:
 
 @pytest.fixture
 async def client():
-    """Async test client — skips lifespan model loading."""
-    from chaincheck.server import app
+    """Async test client — skips lifespan model loading but initialises the DB."""
+    from chaincheck.server import _init_history_db, app
 
+    _init_history_db()  # lifespan is skipped by ASGITransport; init DB explicitly
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
 
@@ -239,19 +239,20 @@ async def test_save_result_is_best_effort(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_proxy_endpoint_no_api_key(client: AsyncClient):
     """POST /v1/chat/completions without OPENAI_API_KEY should return 503."""
-    with patch.dict("os.environ", {}, clear=True):
-        with patch("chaincheck.server.os.getenv", return_value=""):
-            response = await client.post(
-                "/v1/chat/completions",
-                json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}]},
-            )
+    with (
+        patch.dict("os.environ", {}, clear=True),
+        patch("chaincheck.server.os.getenv", return_value=""),
+    ):
+        response = await client.post(
+            "/v1/chat/completions",
+            json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hi"}]},
+        )
     assert response.status_code == 503
 
 
 @pytest.mark.asyncio
 async def test_proxy_endpoint_passthrough(client: AsyncClient):
     """POST /v1/chat/completions should forward to OpenAI and return its response."""
-    import httpx
 
     fake_openai_body = {
         "choices": [{"message": {"content": "The sky is blue."}}]
