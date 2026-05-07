@@ -11,6 +11,10 @@ jobs:
       pull-requests: write
 
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so git diff works
+
       - uses: pauti04/chaincheck-action@v1.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
