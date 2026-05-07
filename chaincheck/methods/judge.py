@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field
 
 from chaincheck.models import ClaimResult, MethodResult
 
+
 def _default_judge_model() -> str:
     if os.getenv("JUDGE_MODEL"):
         return os.getenv("JUDGE_MODEL")  # type: ignore[return-value]
@@ -76,7 +77,10 @@ async def check_judge(
     original_indices, shuffled_claims = zip(*indexed, strict=False)
 
     verdicts = list(
-        await asyncio.gather(*[_verify_claim(c, truncated_ctx, model, fact_check=fact_check) for c in shuffled_claims])
+        await asyncio.gather(*[
+            _verify_claim(c, truncated_ctx, model, fact_check=fact_check)
+            for c in shuffled_claims
+        ])
     )
 
     # Restore original claim order
@@ -195,13 +199,15 @@ def _build_factcheck_prompt(claim: str) -> str:
         "When evaluating age or time-sensitive claims, use today's date for your calculations.\n\n"
         f"Claim: {claim}\n\n"
         "Is this claim factually accurate based on common knowledge?\n"
-        "For specific numeric facts (ages, dates, statistics): if the number is clearly wrong, mark 'unsupported'.\n"
+        "For specific numeric facts (ages, dates, statistics): "
+        "if the number is clearly wrong, mark 'unsupported'.\n"
         "Reserve 'supported' for claims that are actually correct or very close to correct.\n"
         "Only be conservative for genuinely ambiguous or hard-to-verify claims.\n"
         'Respond with ONLY valid JSON:\n'
         '{"label": "supported" | "unsupported" | "contradicted", '
         '"confidence": <float 0.0-0.7>, '
-        '"evidence": "<brief explanation from general knowledge, citing today\'s date if relevant>"}'
+        '"evidence": "<brief explanation from general knowledge, '
+        "citing today's date if relevant>\"}"
     )
 
 
@@ -229,7 +235,8 @@ def _build_recheck_prompt(claim: str, context: str) -> str:
         + f"Claim: {claim}\n\n"
         "A first pass marked this claim as 'supported' with low confidence. "
         "Please re-examine critically: does the context explicitly confirm every specific detail "
-        "(names, numbers, dates, attributions)? If any detail is not directly stated, label it 'unsupported'.\n"
+        "(names, numbers, dates, attributions)? "
+        "If any detail is not directly stated, label it 'unsupported'.\n"
         'Respond with ONLY valid JSON (no markdown fences):\n'
         '{"label": "supported" | "unsupported" | "contradicted", '
         '"confidence": <float 0.0-1.0>, '
