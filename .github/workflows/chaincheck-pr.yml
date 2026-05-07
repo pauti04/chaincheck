@@ -11,7 +11,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: pauti04/chaincheck-action@v1
+      - uses: pauti04/chaincheck-action@v1.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
