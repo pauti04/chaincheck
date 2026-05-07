@@ -27,9 +27,10 @@ def _fake_result() -> DetectionResult:
 
 @pytest.fixture
 async def client():
-    """Async test client — skips lifespan model loading."""
-    from chaincheck.server import app
+    """Async test client — skips lifespan model loading but initialises the DB."""
+    from chaincheck.server import _init_history_db, app
 
+    _init_history_db()  # lifespan is skipped by ASGITransport; init DB explicitly
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
 
