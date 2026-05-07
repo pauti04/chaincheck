@@ -17,22 +17,48 @@ import numpy as np
 
 from chaincheck.models import ClaimResult, Document, MethodResult
 
-_NLI_MODEL_NAME = "cross-encoder/nli-deberta-v3-base"
+_NLI_MODEL_NAME = os.getenv(
+    "CHAINCHECK_NLI_MODEL",
+    "cross-encoder/nli-deberta-v3-base",
+)
 _BATCH_SIZE = int(os.getenv("NLI_BATCH_SIZE", "16"))
 _NLI_THRESHOLD = float(os.getenv("NLI_THRESHOLD", "0.5"))
 
 _model = None
 _label_map: dict[int, str] | None = None
 
+# When CHAINCHECK_NLI_MODEL points to a fine-tuned seq-classification model
+# (e.g. the output of notebooks/deberta_finetune.ipynb), we use the HuggingFace
+# pipeline directly instead of CrossEncoder.
+_USE_HF_PIPELINE = bool(os.getenv("CHAINCHECK_NLI_MODEL", ""))
+
 
 def _get_model():
-    """Lazily load the NLI cross-encoder model (once per process)."""
+    """Lazily load the NLI model (once per process).
+
+    Supports two backends:
+    * CrossEncoder (default) — cross-encoder/nli-deberta-v3-base
+    * HuggingFace pipeline — any AutoModelForSequenceClassification pointed to
+      by CHAINCHECK_NLI_MODEL (e.g. the fine-tuned DeBERTa from the Colab notebook)
+    """
     global _model, _label_map
     if _model is None:
-        from sentence_transformers import CrossEncoder
+        if _USE_HF_PIPELINE:
+            from transformers import pipeline as hf_pipeline
 
-        _model = CrossEncoder(_NLI_MODEL_NAME, num_labels=3)
-        _label_map = _build_label_map(_model)
+            _model = hf_pipeline(
+                "text-classification",
+                model=_NLI_MODEL_NAME,
+                truncation=True,
+                max_length=512,
+                device=-1,  # CPU; set to 0 for GPU
+            )
+            _label_map = None  # pipeline returns label names directly
+        else:
+            from sentence_transformers import CrossEncoder
+
+            _model = CrossEncoder(_NLI_MODEL_NAME, num_labels=3)
+            _label_map = _build_label_map(_model)
     return _model
 
 
@@ -126,15 +152,40 @@ def _batch_predict(
     """
     Run NLI inference on (premise, hypothesis) pairs in fixed-size batches.
 
-    Returns a list of dicts with key 'scores': list[float] of length 3.
+    Supports two backends:
+
+    * **CrossEncoder** (default): returns ``{"scores": [s0, s1, s2]}`` where
+      indices are mapped via ``_label_map`` to supported/contradicted/unknown.
+    * **HuggingFace pipeline** (CHAINCHECK_NLI_MODEL set): the fine-tuned binary
+      classifier from ``notebooks/deberta_finetune.ipynb``. Returns the same
+      ``{"scores": [p_supported, p_contradicted]}`` format so downstream code
+      is unchanged.  ``_label_map`` is set to ``{0: "supported", 1: "contradicted"}``
+      for these results.
     """
+    global _label_map
     model = _get_model()
     results = []
-    for i in range(0, len(pairs), batch_size):
-        batch = pairs[i : i + batch_size]
-        scores = model.predict(batch, apply_softmax=True)
-        for score_vec in scores:
-            results.append({"scores": score_vec.tolist()})
+
+    if _USE_HF_PIPELINE:
+        # Flatten pairs to single strings: "context [SEP] claim"
+        texts = [f"{prem}\n{hyp}" for prem, hyp in pairs]
+        _label_map = {0: "supported", 1: "contradicted"}
+        for i in range(0, len(texts), batch_size):
+            batch_texts = texts[i : i + batch_size]
+            outputs = model(batch_texts)
+            for out in outputs:
+                lbl = (out["label"] or "").lower()
+                score = float(out["score"])
+                if "hallucinated" in lbl or "contradict" in lbl:
+                    results.append({"scores": [1.0 - score, score]})
+                else:
+                    results.append({"scores": [score, 1.0 - score]})
+    else:
+        for i in range(0, len(pairs), batch_size):
+            batch = pairs[i : i + batch_size]
+            scores = model.predict(batch, apply_softmax=True)
+            for score_vec in scores:
+                results.append({"scores": score_vec.tolist()})
     return results
 
 
