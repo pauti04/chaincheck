@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub Action](https://img.shields.io/badge/GitHub_Action-chaincheck--action-black?logo=github)](https://github.com/pauti04/chaincheck-action)
 
-![ChainCheck UI](docs/screenshot.png)
+![ChainCheck demo](docs/demo.gif)
 
 **Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
