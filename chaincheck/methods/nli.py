@@ -31,10 +31,11 @@ _MODEL_SERVER_URL = os.getenv("NLI_MODEL_SERVER_URL", "").rstrip("/")
 _model = None
 _label_map: dict[int, str] | None = None
 
-# When CHAINCHECK_NLI_MODEL points to a fine-tuned seq-classification model
-# (e.g. the output of notebooks/deberta_finetune.ipynb), we use the HuggingFace
-# pipeline directly instead of CrossEncoder.
-_USE_HF_PIPELINE = bool(os.getenv("CHAINCHECK_NLI_MODEL", ""))
+# Set CHAINCHECK_NLI_PIPELINE=1 to use a fine-tuned HuggingFace seq-classification
+# model (e.g. the output of notebooks/deberta_finetune.ipynb) instead of CrossEncoder.
+# Changing CHAINCHECK_NLI_MODEL to a different CrossEncoder name does NOT trigger
+# pipeline mode — it just swaps the CrossEncoder checkpoint.
+_USE_HF_PIPELINE = os.getenv("CHAINCHECK_NLI_PIPELINE", "").lower() in ("1", "true", "yes")
 
 
 def _get_model():

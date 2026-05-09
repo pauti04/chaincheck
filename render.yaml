@@ -11,5 +11,7 @@ services:
         sync: false
       - key: HISTORY_DB
         value: /tmp/chaincheck_history.db
+      - key: CHAINCHECK_NLI_MODEL
+        value: cross-encoder/nli-MiniLM2-L6-H768
     healthCheckPath: /health
     autoDeploy: true

@@ -4,11 +4,12 @@
 [![CI](https://github.com/pauti04/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/pauti04/chaincheck/actions)
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://chaincheck-71mh.onrender.com)
 [![GitHub Action](https://img.shields.io/badge/GitHub_Action-chaincheck--action-black?logo=github)](https://github.com/pauti04/chaincheck-action)
 
 ![ChainCheck demo](docs/demo.gif)
 
-**Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
+**[🔗 Live demo](https://chaincheck-71mh.onrender.com)** · **Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
 ---
 
@@ -281,27 +282,31 @@ data: [DONE]
 
 All settings via environment variables:
 
-| Variable                | Default                    | Description                              |
-|-------------------------|----------------------------|------------------------------------------|
-| `OPENAI_API_KEY`        | —                          | Required — used for all LLM calls by default |
-| `ANTHROPIC_API_KEY`     | —                          | Optional — set to use Claude models instead |
-| `OLLAMA_BASE_URL`       | `http://localhost:11434`   | Optional — prefix model IDs with `ollama:` to use local models |
-| `JUDGE_MODEL`           | `gpt-4o-mini`              | Judge LLM model ID                       |
-| `CONSISTENCY_MODEL`     | `gpt-4o-mini`              | Model for self-consistency sampling      |
-| `DECOMPOSE_MODEL`       | `gpt-4o-mini`              | Model for claim decomposition            |
-| `CONSISTENCY_SAMPLES`   | `5`                        | LLM samples per consistency check        |
-| `NLI_BATCH_SIZE`        | `16`                       | Claims per NLI inference batch           |
-| `CACHE_PATH`            | `.chaincheck_cache`        | diskcache directory (24h TTL; key = SHA-256 of the full response string) |
-| `NLI_THRESHOLD`         | `0.5`                      | Min confidence to label a claim          |
-| `CONSISTENCY_THRESHOLD` | `0.82`                     | Min similarity to consider consistent    |
-| `RISK_LOW_THRESHOLD`    | `0.3`                      | Aggregate score below this → "low"       |
-| `RISK_HIGH_THRESHOLD`   | `0.7`                      | Aggregate score at or above this → "high"|
-| `NLI_WEIGHT`            | `0.10`                     | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
-| `CONSISTENCY_WEIGHT`    | `0.0`                      | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
-| `JUDGE_WEIGHT`          | `0.60`                     | Judge weight — dominant signal, precision=0.965 |
-| `LOGPROB_WEIGHT`        | `0.30`                     | Logprobs weight — useful secondary signal in ensemble |
-| `LOGPROB_MODEL`         | `gpt-4o-mini`              | OpenAI model for logprobs method         |
-| `LOGPROB_THRESHOLD`     | `-1.5`                     | Token log-prob below this → uncertain    |
+| Variable                | Default                              | Description                              |
+|-------------------------|--------------------------------------|------------------------------------------|
+| `OPENAI_API_KEY`        | —                                    | Required — used for all LLM calls by default |
+| `ANTHROPIC_API_KEY`     | —                                    | Optional — set to use Claude models instead |
+| `OLLAMA_BASE_URL`       | `http://localhost:11434`             | Optional — prefix model IDs with `ollama:` to use local models |
+| `JUDGE_MODEL`           | `gpt-4o-mini`                        | Judge LLM model ID                       |
+| `CONSISTENCY_MODEL`     | `gpt-4o-mini`                        | Model for self-consistency sampling      |
+| `DECOMPOSE_MODEL`       | `gpt-4o-mini`                        | Model for claim decomposition            |
+| `CONSISTENCY_SAMPLES`   | `5`                                  | LLM samples per consistency check        |
+| `CHAINCHECK_NLI_MODEL`  | `cross-encoder/nli-deberta-v3-base`  | NLI CrossEncoder checkpoint. Set to `cross-encoder/nli-MiniLM2-L6-H768` for ~90 MB memory-constrained deployments (Docker default) |
+| `CHAINCHECK_NLI_PIPELINE` | —                                  | Set to `1` to load `CHAINCHECK_NLI_MODEL` as a HuggingFace seq-classification pipeline (fine-tuned DeBERTa from `notebooks/deberta_finetune.ipynb`) |
+| `NLI_MODEL_SERVER_URL`  | —                                    | Forward NLI inference to a dedicated model server (`chaincheck/model_server.py`) instead of loading in-process. Reduces main API pod RAM to <200 MB |
+| `NLI_BATCH_SIZE`        | `16`                                 | Claims per NLI inference batch           |
+| `NLI_THRESHOLD`         | `0.5`                                | Min confidence to label a claim          |
+| `DATABASE_URL`          | `sqlite:///./chaincheck_history.db`  | SQLAlchemy URL. Set to `postgresql://user:pass@host/db` for production |
+| `CACHE_PATH`            | `.chaincheck_cache`                  | diskcache directory (24h TTL; key = SHA-256 of the full response string) |
+| `CONSISTENCY_THRESHOLD` | `0.82`                               | Min similarity to consider consistent    |
+| `RISK_LOW_THRESHOLD`    | `0.3`                                | Aggregate score below this → "low"       |
+| `RISK_HIGH_THRESHOLD`   | `0.7`                                | Aggregate score at or above this → "high"|
+| `NLI_WEIGHT`            | `0.10`                               | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
+| `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
+| `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.965 |
+| `LOGPROB_WEIGHT`        | `0.30`                               | Logprobs weight — useful secondary signal in ensemble |
+| `LOGPROB_MODEL`         | `gpt-4o-mini`                        | OpenAI model for logprobs method         |
+| `LOGPROB_THRESHOLD`     | `-1.5`                               | Token log-prob below this → uncertain    |
 
 ---
 
@@ -343,21 +348,41 @@ Exact claim-level precision/recall requires human-annotated atomic facts (as in 
 
 ## Deployment
 
-**Docker (local):**
+**Live demo:** [chaincheck-71mh.onrender.com](https://chaincheck-71mh.onrender.com)
+
+**Docker (local — full stack):**
 ```bash
 cp .env.example .env   # add OPENAI_API_KEY
 docker compose up
-# → http://localhost:8000/docs
+# → http://localhost:8000      (UI)
+# → http://localhost:8000/docs (API)
+# → http://localhost:9090      (Prometheus)
+# → http://localhost:3000      (Grafana)
 ```
 
-The Dockerfile pre-downloads both ML models at build time so the first request is fast.
+The Docker Compose stack runs: chaincheck API · dedicated NLI model server · Postgres · Prometheus · Grafana.
+The Dockerfile pre-downloads the NLI model at build time — first request is fast.
 
-**Railway (one-command cloud deploy):**
+**Default NLI model (Docker/Render):** `cross-encoder/nli-MiniLM2-L6-H768` (~90 MB, fits in 512 MB free-tier).
+For higher accuracy override at build time:
 ```bash
-npm install -g @railway/cli
-railway login
-railway variables set OPENAI_API_KEY=sk-...
-bash scripts/deploy.sh
+docker build --build-arg NLI_MODEL=cross-encoder/nli-deberta-v3-base -t chaincheck .
+```
+
+**Render (one-click deploy):**
+
+`render.yaml` is pre-configured — just connect your GitHub repo to [render.com](https://render.com), select this repo, and deploy. Set `OPENAI_API_KEY` in the Render environment dashboard.
+
+**Kubernetes:**
+```bash
+kubectl apply -f k8s/
+```
+Includes: Postgres StatefulSet · API Deployment with HPA (3→20 replicas) · dedicated model-server Deployment · nginx Ingress with cert-manager TLS · PodDisruptionBudgets · Prometheus ServiceMonitors.
+
+**Dedicated model server** (reduces main API pod RAM from ~800 MB to <200 MB):
+```bash
+uvicorn chaincheck.model_server:app --port 8001
+# then set NLI_MODEL_SERVER_URL=http://model-server:8001 on the API pods
 ```
 
 **Common dev commands (Makefile):**
@@ -373,9 +398,11 @@ make eval-all     # run NLI + judge benchmarks
 
 ## Roadmap
 
-- **Fine-tuned NLI classifier** — explored fine-tuning `microsoft/deberta-v3-small` on HaluEval QA (binary: context + response → hallucinated/not). CPU training is impractical at MAX_LENGTH=256 (~90 s/step); next step is HuggingFace AutoTrain or a Colab T4. A trained checkpoint would replace the zero-shot cross-encoder with a task-specific model, potentially pushing NLI F1 above the current 0.574.
+- ~~**Fine-tuned NLI classifier**~~ ✅ — `notebooks/deberta_finetune.ipynb` Colab-ready notebook fine-tunes `microsoft/deberta-v3-small` on HaluEval QA. Load the checkpoint with `CHAINCHECK_NLI_MODEL=./deberta-halueval CHAINCHECK_NLI_PIPELINE=1`.
 - **Multi-hop RAG support** — verify claims across a graph of documents, not just a flat context string.
 - **Structured output verification** — detect hallucinations in JSON/table fields, not just free text.
+- **FactScore integration** — atomic fact precision against Wikipedia, no reference document required.
+- **Streaming claim cards** — show each claim verdict as it arrives rather than waiting for all methods.
 
 ---
 
