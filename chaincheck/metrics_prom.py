@@ -17,14 +17,7 @@ Usage:
 
 from __future__ import annotations
 
-from prometheus_client import CollectorRegistry, Counter, Gauge, Histogram, multiprocess
-
-# Use the default registry (works with both single-process and gunicorn multiprocess)
-try:
-    from prometheus_client import REGISTRY as _registry
-except ImportError:
-    _registry = CollectorRegistry()
-
+from prometheus_client import Counter, Gauge, Histogram
 
 # ── Counters ───────────────────────────────────────────────────────────────────
 
