@@ -8,7 +8,7 @@ Route by model prefix:
 
 Usage:
     from chaincheck.llm import complete, provider_for_model
-    text = await complete("Tell me about X.", model="claude-haiku-4-5-20251001")
+    text = await complete("Tell me about X.", model="gpt-4o-mini")
 """
 
 from __future__ import annotations

@@ -37,7 +37,7 @@ Input response (+ optional context / prompt)
 │                        asyncio.gather()                              │
 │  ┌──────────┐  ┌──────────────────┐  ┌────────────┐  ┌───────────┐  │
 │  │  NLI     │  │  Consistency     │  │  Judge LLM │  │  Logprobs │  │
-│  │ DeBERTa  │  │  all-MiniLM-L6   │  │  Claude/   │  │  OpenAI   │  │
+│  │ DeBERTa  │  │  all-MiniLM-L6   │  │  Anthropic/│  │  OpenAI   │  │
 │  │ cross-   │  │  async samples   │  │  GPT rubric│  │  token lp │  │
 │  │ encoder  │  │  cosine sim      │  │  +backoff  │  │  span     │  │
 │  │ batch×16 │  │  embed cache     │  │  pos-bias↓ │  │  flagging │  │
@@ -285,7 +285,7 @@ All settings via environment variables:
 | Variable                | Default                              | Description                              |
 |-------------------------|--------------------------------------|------------------------------------------|
 | `OPENAI_API_KEY`        | —                                    | Required — used for all LLM calls by default |
-| `ANTHROPIC_API_KEY`     | —                                    | Optional — set to use Claude models instead |
+| `ANTHROPIC_API_KEY`     | —                                    | Optional — set to use Anthropic models instead |
 | `OLLAMA_BASE_URL`       | `http://localhost:11434`             | Optional — prefix model IDs with `ollama:` to use local models |
 | `JUDGE_MODEL`           | `gpt-4o-mini`                        | Judge LLM model ID                       |
 | `CONSISTENCY_MODEL`     | `gpt-4o-mini`                        | Model for self-consistency sampling      |

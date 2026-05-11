@@ -1,7 +1,7 @@
 """
 LLM-as-judge detection method.
 
-Prompts a configurable judge model (Claude Haiku, gpt-4o-mini, or local Ollama)
+Prompts a configurable judge model (gpt-4o-mini, Anthropic Haiku, or local Ollama)
 to verify each atomic claim against the context using a structured rubric.
 Randomises claim order to mitigate position bias; caps context length to
 mitigate verbosity bias.
@@ -60,7 +60,7 @@ async def check_judge(
     Args:
         claims: Atomic claim strings to verify.
         context: Reference text to verify claims against.
-        model: Judge model identifier (Claude, OpenAI, or Ollama).
+        model: Judge model identifier (Anthropic, OpenAI, or Ollama).
 
     Returns:
         MethodResult with a ClaimResult per claim in original order.

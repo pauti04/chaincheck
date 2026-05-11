@@ -26,7 +26,7 @@
 ## [0.5.0] — 2025-04
 
 ### Added
-- Claude (Anthropic) judge support alongside OpenAI — set `ANTHROPIC_API_KEY` to switch
+- Anthropic judge support alongside OpenAI — set `ANTHROPIC_API_KEY` to switch
 - Proxy mode — `chaincheck serve` can forward to an upstream LLM via `PROXY_URL`
 - Feedback endpoint — thumbs up/down on any result stored in SQLite
 - Source attribution UI — per-claim badges showing which document provided evidence

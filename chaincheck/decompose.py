@@ -1,7 +1,7 @@
 """
 Atomic claim extraction from LLM responses.
 
-Uses a Claude model to decompose free-text into self-contained, verifiable
+Uses a configurable LLM to decompose free-text into self-contained, verifiable
 factual assertions. Results are cached by SHA-256 hash of the input with a
 24-hour TTL to avoid redundant API calls.
 """
