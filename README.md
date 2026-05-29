@@ -4,6 +4,7 @@
 [![CI](https://github.com/pauti04/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/pauti04/chaincheck/actions)
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![HaluEval F1](https://img.shields.io/badge/HaluEval_F1-0.788-blue)](https://github.com/pauti04/chaincheck#benchmark-results)
 [![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://chaincheck-71mh.onrender.com)
 [![GitHub Action](https://img.shields.io/badge/GitHub_Action-chaincheck--action-black?logo=github)](https://github.com/pauti04/chaincheck-action)
 
@@ -52,7 +53,7 @@ Input response (+ optional context / prompt)
                                    │
                                    ▼
                     _weighted_aggregate()
-                NLI×0.35 + cons×0.25 + judge×0.25 + lp×0.15
+                NLI×0.10 + judge×0.60 + lp×0.30  (consistency=0, disabled)
                                    │
                                    ▼
                             DetectionResult
@@ -303,7 +304,7 @@ All settings via environment variables:
 | `RISK_HIGH_THRESHOLD`   | `0.7`                                | Aggregate score at or above this → "high"|
 | `NLI_WEIGHT`            | `0.10`                               | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
 | `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
-| `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.965 |
+| `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.944 on HaluEval |
 | `LOGPROB_WEIGHT`        | `0.30`                               | Logprobs weight — useful secondary signal in ensemble |
 | `LOGPROB_MODEL`         | `gpt-4o-mini`                        | OpenAI model for logprobs method         |
 | `LOGPROB_THRESHOLD`     | `-1.5`                               | Token log-prob below this → uncertain    |
