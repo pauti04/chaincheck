@@ -26,9 +26,9 @@ echo "==> Claim-level discrimination — NLI ($CLAIM_PAIRS pairs)..."
 uv run chaincheck eval --dataset halueval-claims --method nli \
     --samples "$CLAIM_PAIRS" --output "claimlevel_nli_${OUTPUT_SUFFIX}"
 
-echo "==> TruthfulQA — Judge (200 samples)..."
+echo "==> TruthfulQA — Judge ($SAMPLES samples)..."
 uv run chaincheck eval --dataset truthfulqa --method judge \
-    --samples 200 --output "truthfulqa_judge_${OUTPUT_SUFFIX}"
+    --samples "$SAMPLES" --output "truthfulqa_judge_${OUTPUT_SUFFIX}"
 
 echo "==> All evals complete."
 echo "    HaluEval:    nli_${OUTPUT_SUFFIX}  judge_${OUTPUT_SUFFIX}  consistency_${OUTPUT_SUFFIX}"

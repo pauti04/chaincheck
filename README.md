@@ -4,13 +4,13 @@
 [![CI](https://github.com/pauti04/chaincheck/actions/workflows/ci.yml/badge.svg)](https://github.com/pauti04/chaincheck/actions)
 [![Coverage](https://codecov.io/gh/pauti04/chaincheck/branch/main/graph/badge.svg)](https://codecov.io/gh/pauti04/chaincheck)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![HaluEval F1](https://img.shields.io/badge/HaluEval_F1-0.788-blue)](https://github.com/pauti04/chaincheck#benchmark-results)
+[![HaluEval F1](https://img.shields.io/badge/HaluEval_F1-0.763-blue)](https://github.com/pauti04/chaincheck#benchmark-results)
 [![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://chaincheck-71mh.onrender.com)
 [![GitHub Action](https://img.shields.io/badge/GitHub_Action-chaincheck--action-black?logo=github)](https://github.com/pauti04/chaincheck-action)
 
 ![ChainCheck demo](docs/demo.gif)
 
-**[🔗 Live demo](https://chaincheck-71mh.onrender.com)** · **Claim-level hallucination detection for LLM outputs.** Achieves **79% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
+**[🔗 Live demo](https://chaincheck-71mh.onrender.com)** · **Claim-level hallucination detection for LLM outputs.** Achieves **76% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
 
 ---
 
@@ -70,11 +70,11 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 
 | Method      | Precision | Recall | F1        | ECE ↓  | Avg Latency | P95 Latency |
 |-------------|-----------|--------|-----------|--------|-------------|-------------|
-| NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 55 ms       | 97 ms       |
-| Judge (+ second pass) | **0.944** | 0.676  | **0.788** | 0.161  | 1125 ms     | 2045 ms     |
+| NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 60 ms       | 85 ms       |
+| Judge (+ second pass) | **0.936** | 0.644  | **0.763** | 0.177  | 1113 ms     | 2462 ms     |
 | Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 2117 ms     | 4740 ms     |
 | Logprobs    | 0.263     | 0.084  | 0.127     | —      | 1401 ms     | 2859 ms     |
-| **NLI+Judge ensemble** | — | — | **0.741** | — | ~55–1199 ms | — |
+| **NLI+Judge ensemble** | — | — | **0.741** | — | ~60–1173 ms | — |
 
 > Ensemble F1 on held-out 20% of HaluEval; weights tuned via Nelder-Mead on training 80%.
 > Consistency predicts "not hallucinated" for all samples (F1=0, ECE=0.5); excluded from default ensemble.
@@ -166,12 +166,12 @@ Each line of `inputs.jsonl` is a JSON object with `response` and optionally `con
 {"response": "Water boils at 90°C at sea level.", "context": ""}
 ```
 
-**Cascade mode (34× faster on clear-cut cases):**
+**Cascade mode (up to ~19× faster on clear-cut cases):**
 ```bash
 chaincheck check \
   --response "..." --context "..." \
   --cascade
-# runs NLI first (51 ms); escalates to judge only when score is 0.2–0.8
+# runs NLI first (60 ms); escalates to judge only when score is 0.2–0.8
 ```
 
 **Debug claim decomposition:**
@@ -304,7 +304,7 @@ All settings via environment variables:
 | `RISK_HIGH_THRESHOLD`   | `0.7`                                | Aggregate score at or above this → "high"|
 | `NLI_WEIGHT`            | `0.10`                               | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
 | `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
-| `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.944 on HaluEval |
+| `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.936 on HaluEval |
 | `LOGPROB_WEIGHT`        | `0.30`                               | Logprobs weight — useful secondary signal in ensemble |
 | `LOGPROB_MODEL`         | `gpt-4o-mini`                        | OpenAI model for logprobs method         |
 | `LOGPROB_THRESHOLD`     | `-1.5`                               | Token log-prob below this → uncertain    |
@@ -333,13 +333,13 @@ Exact claim-level precision/recall requires human-annotated atomic facts (as in 
 
 ## What we learned
 
-**NLI and judge complement each other.** NLI has high precision (0.810) at 51 ms — fast and conservative, rarely cries wolf. Judge has even higher precision (0.965) — when it flags something as hallucinated, it's right 96.5% of the time. NLI is 34× faster, making it ideal for high-throughput filtering before running the more accurate judge on borderline cases.
+**NLI and judge complement each other.** NLI has high precision (0.810) at 60 ms — fast and conservative, rarely cries wolf. Judge has even higher precision (0.936) — when it flags something as hallucinated, it's right 93.6% of the time. NLI is ~19× faster, making it ideal for high-throughput filtering before running the more accurate judge on borderline cases.
 
 **Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.168 on HaluEval — below random (accuracy 0.228). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
 
-**Latency is the real cost, not the accuracy.** NLI is 34× faster than judge (51 ms vs 1755 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~34× while keeping precision above 0.80.
+**Latency is the real cost, not the accuracy.** NLI is ~19× faster than judge (60 ms vs 1113 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~19× while keeping precision above 0.80.
 
-**Cascade cuts average latency by up to 34× on clear-cut cases.** Running NLI first (51 ms) and escalating to judge only when the score is in the 0.2–0.8 ambiguous band avoids the 1755 ms judge call for responses that are obviously clean or obviously hallucinated. Enable with `--cascade` on the CLI or `cascade=True` in the Python API.
+**Cascade cuts average latency by up to ~19× on clear-cut cases.** Running NLI first (60 ms) and escalating to judge only when the score is in the 0.2–0.8 ambiguous band avoids the ~1113 ms judge call for responses that are obviously clean or obviously hallucinated. Enable with `--cascade` on the CLI or `cascade=True` in the Python API.
 
 **Confidence calibration (ECE) is now measured.** ECE (Expected Calibration Error) measures whether a score of 0.9 actually means "90% likely to be hallucinated." Lower ECE = more trustworthy confidence numbers. Run `chaincheck eval` and check the ECE column to see how well-calibrated each method's scores are.
 

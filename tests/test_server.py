@@ -310,6 +310,7 @@ async def test_feedback_swallows_db_error(client: AsyncClient):
 async def test_lifespan_preloads_models():
     """lifespan() should call _get_model and _get_embed_model then set _models_loaded."""
     import asyncio as _aio
+
     from chaincheck.server import app, lifespan
 
     with (
@@ -455,7 +456,10 @@ async def test_proxy_wrapped_block_returns_451():
         patch("chaincheck.server._PROXY_MODE", "block"),
         patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
         patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
-        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+        patch(
+            "chaincheck.server._openai_request",
+            new=AsyncMock(return_value=_make_mock_resp(body)),
+        ),
     ):
         result = await proxy_endpoint.__wrapped__(_make_mock_request())
 
@@ -484,7 +488,10 @@ async def test_proxy_wrapped_warn_appends_warning():
         patch("chaincheck.server._PROXY_MODE", "warn"),
         patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
         patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
-        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+        patch(
+            "chaincheck.server._openai_request",
+            new=AsyncMock(return_value=_make_mock_resp(body)),
+        ),
     ):
         result = await proxy_endpoint.__wrapped__(_make_mock_request())
 
@@ -507,7 +514,10 @@ async def test_proxy_wrapped_passthrough_below_threshold():
         patch("chaincheck.server._PROXY_MODE", "block"),
         patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
         patch("chaincheck.server.detect", new=AsyncMock(return_value=_fake_result())),
-        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+        patch(
+            "chaincheck.server._openai_request",
+            new=AsyncMock(return_value=_make_mock_resp(body)),
+        ),
     ):
         result = await proxy_endpoint.__wrapped__(_make_mock_request())
 
@@ -536,7 +546,10 @@ async def test_proxy_wrapped_detect_exception_passthrough():
     with (
         patch("chaincheck.server.os.getenv", return_value="sk-fake"),
         patch("chaincheck.server.detect", side_effect=Exception("model down")),
-        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(body))),
+        patch(
+            "chaincheck.server._openai_request",
+            new=AsyncMock(return_value=_make_mock_resp(body)),
+        ),
     ):
         result = await proxy_endpoint.__wrapped__(_make_mock_request())
 
@@ -565,7 +578,10 @@ async def test_proxy_wrapped_warn_bad_payload_falls_through():
         patch("chaincheck.server._PROXY_MODE", "warn"),
         patch("chaincheck.server._PROXY_BLOCK_THRESHOLD", 0.7),
         patch("chaincheck.server.detect", new=AsyncMock(return_value=high_risk)),
-        patch("chaincheck.server._openai_request", new=AsyncMock(return_value=_make_mock_resp(bad_body))),
+        patch(
+            "chaincheck.server._openai_request",
+            new=AsyncMock(return_value=_make_mock_resp(bad_body)),
+        ),
     ):
         result = await proxy_endpoint.__wrapped__(_make_mock_request())
 

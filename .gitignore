@@ -11,11 +11,6 @@ coverage.xml
 chaincheck_history.db
 *.db
 
-# local eval output
-eval_results.json
-cascade_analysis.json
-*_eval_results.json
-
 # OS / editor
 .DS_Store
 .claude/

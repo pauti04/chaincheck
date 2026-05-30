@@ -9,7 +9,7 @@
 - **Inline document annotation UI** — pass multiple `documents` objects; the UI highlights which source document backs each claim
 - **Analytics dashboard** — scan history with aggregate score distribution and method latency charts
 - **Clickable history panel** — re-open any past result from the sidebar
-- **`cascade` field in `/check` API** — run NLI first, escalate to judge only on borderline scores (0.2–0.8); ~34× average latency reduction on clear-cut cases
+- **`cascade` field in `/check` API** — run NLI first, escalate to judge only on borderline scores (0.2–0.8); up to ~19× average latency reduction on clear-cut cases
 
 ### Changed
 - Scoring formula fixed: `mean(bad_confidence) / n_claims` instead of `bad_weight / total_weight` (old formula gave artificially high scores on low-confidence verdicts)
@@ -17,7 +17,7 @@
 - Judge model pinned to `gpt-4o-mini` (gpt-4o reasons more carefully and finds nuance, lowering recall on this benchmark)
 
 ### Benchmark
-- Judge: **F1=0.788, Precision=0.944** on HaluEval-QA n=500
+- Judge: **F1=0.763, Precision=0.936** on HaluEval-QA n=500
 - TruthfulQA fact-check: **F1=0.702, Precision=0.744** (no reference context)
 - Claim AUC: **0.913** on HaluEval claim-level pairs
 

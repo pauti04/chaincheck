@@ -88,7 +88,7 @@ async def detect(
         request_id: Optional trace ID; auto-generated if not supplied.
         cascade: If True and context is provided, run NLI first and only escalate
                  to judge when the NLI score is in the ambiguous 0.2–0.8 range.
-                 Cuts average latency by ~34× on clear-cut cases.
+                 Cuts average latency by up to ~19× on clear-cut cases.
 
     Returns:
         DetectionResult with per-claim labels, aggregate score, and risk level.

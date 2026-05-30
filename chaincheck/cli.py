@@ -52,7 +52,7 @@ def check(
         False,
         "--cascade",
         help="Run NLI first; escalate to judge only on borderline scores (0.2–0.8). "
-        "Cuts average latency ~34× on clear-cut cases.",
+        "Cuts average latency up to ~19× on clear-cut cases.",
     ),
 ) -> None:
     """Detect hallucinations in a single response and print a colour-coded table."""
