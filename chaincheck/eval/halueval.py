@@ -41,14 +41,16 @@ class EvalRun:
 
 
 async def run_halueval(
-    method: Literal["nli", "consistency", "judge"],
+    method: Literal["nli", "consistency", "judge", "logprobs", "ensemble"],
     n_samples: int = 500,
 ) -> EvalRun:
     """
     Evaluate a detection method against the HaluEval QA split.
 
     Args:
-        method: Detection method identifier.
+        method: Detection method identifier. "ensemble" runs the default
+                NLI+judge pipeline and scores its weighted aggregate —
+                exactly what `detect()` ships with out of the box.
         n_samples: Number of samples to evaluate (500 for speed, 2000 for full).
 
     Returns:
@@ -56,6 +58,7 @@ async def run_halueval(
     """
     from chaincheck.detect import detect
 
+    methods = ["nli", "judge"] if method == "ensemble" else [method]
     samples = _load_samples(_DEFAULT_SPLIT, n_samples)
 
     async def _eval_one(sample: EvalSample) -> dict:
@@ -64,7 +67,7 @@ async def run_halueval(
             sample.response,
             context=sample.context,
             prompt=sample.question,
-            methods=[method],
+            methods=methods,
         )
         latency = (time.time() - start) * 1000
         return {

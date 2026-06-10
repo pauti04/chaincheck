@@ -12,6 +12,9 @@ uv run chaincheck eval --method nli --samples "$SAMPLES" --output "nli_${OUTPUT_
 echo "==> HaluEval — Judge ($SAMPLES samples)..."
 uv run chaincheck eval --method judge --samples "$SAMPLES" --output "judge_${OUTPUT_SUFFIX}"
 
+echo "==> HaluEval — NLI+Judge ensemble ($SAMPLES samples)..."
+uv run chaincheck eval --method ensemble --samples "$SAMPLES" --output "ensemble_${OUTPUT_SUFFIX}"
+
 echo "==> HaluEval — Consistency ($SAMPLES samples)..."
 uv run chaincheck eval --method consistency --samples "$SAMPLES" --output "consistency_${OUTPUT_SUFFIX}"
 
@@ -31,6 +34,6 @@ uv run chaincheck eval --dataset truthfulqa --method judge \
     --samples "$SAMPLES" --output "truthfulqa_judge_${OUTPUT_SUFFIX}"
 
 echo "==> All evals complete."
-echo "    HaluEval:    nli_${OUTPUT_SUFFIX}  judge_${OUTPUT_SUFFIX}  consistency_${OUTPUT_SUFFIX}"
+echo "    HaluEval:    nli_${OUTPUT_SUFFIX}  judge_${OUTPUT_SUFFIX}  ensemble_${OUTPUT_SUFFIX}  consistency_${OUTPUT_SUFFIX}"
 echo "    Claim-level: claimlevel_nli_${OUTPUT_SUFFIX}"
 echo "    TruthfulQA:  truthfulqa_judge_${OUTPUT_SUFFIX}"

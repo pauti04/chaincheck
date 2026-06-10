@@ -223,3 +223,42 @@ class TestPrintReport:
     def test_claimlevel_runs_without_error(self):
         run = _fake_claimlevel_run()
         print_claimlevel_report(run)
+
+
+class TestRunHaluevalMethodRouting:
+    @pytest.mark.parametrize(
+        ("method", "expected_methods"),
+        [
+            ("nli", ["nli"]),
+            ("judge", ["judge"]),
+            ("ensemble", ["nli", "judge"]),
+        ],
+    )
+    async def test_method_maps_to_detect_methods(self, method, expected_methods, monkeypatch):
+        from unittest.mock import AsyncMock
+
+        from chaincheck.eval import halueval
+        from chaincheck.models import DetectionResult
+
+        sample = halueval.EvalSample(
+            question="q", context="ctx", response="resp", ground_truth="no"
+        )
+        monkeypatch.setattr(halueval, "_load_samples", lambda split, n: [sample])
+
+        fake_result = DetectionResult(
+            response="resp", claims=[], aggregate_score=0.1, risk_level="low"
+        )
+        # chaincheck/__init__.py rebinds the `detect` attribute from the module
+        # to the function, so resolve the module via sys.modules instead.
+        import sys
+
+        import chaincheck.detect  # noqa: F401
+
+        mock_detect = AsyncMock(return_value=fake_result)
+        monkeypatch.setattr(sys.modules["chaincheck.detect"], "detect", mock_detect)
+
+        run = await halueval.run_halueval(method=method, n_samples=1)
+
+        assert mock_detect.await_args.kwargs["methods"] == expected_methods
+        assert run.method == method
+        assert run.samples == 1

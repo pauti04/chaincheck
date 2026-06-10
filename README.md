@@ -72,12 +72,15 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 |-------------|-----------|--------|-----------|--------|-------------|-------------|
 | NLI         | 0.810     | 0.444  | 0.574     | 0.279  | 60 ms       | 85 ms       |
 | Judge (+ second pass) | **0.936** | 0.644  | **0.763** | 0.177  | 1113 ms     | 2462 ms     |
-| Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 2117 ms     | 4740 ms     |
-| Logprobs    | 0.263     | 0.084  | 0.127     | —      | 1401 ms     | 2859 ms     |
+| Consistency | 0.000     | 0.000  | 0.000     | 0.500  | 28697 ms*   | 18439 ms*   |
+| Logprobs    | 0.275     | 0.088  | 0.133     | 0.455  | 1446 ms     | 3233 ms     |
 | **NLI+Judge ensemble** | — | — | **0.741** | — | ~60–1173 ms | — |
 
-> Ensemble F1 on held-out 20% of HaluEval; weights tuned via Nelder-Mead on training 80%.
+> Ensemble F1 from the weight-tuning run: Nelder-Mead on 80% of HaluEval, scored on the held-out 20%
+> (see `config.py`). Regenerate end-to-end with `uv run chaincheck eval --method ensemble`.
 > Consistency predicts "not hallucinated" for all samples (F1=0, ECE=0.5); excluded from default ensemble.
+> \*Consistency latency has a heavy right tail — each check draws 5 LLM samples and a few runs hit long
+> retry backoffs, dragging the mean above p95. It is disabled in the ensemble, so this cost is never paid by default.
 > ECE — lower is better; 0 = perfectly calibrated confidence scores.
 
 **TruthfulQA generation** — response-level (n=500, adversarial questions, no reference context):
@@ -99,11 +102,11 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 | Halluc flagging rate ↑ | 0.525 | 52.5% of claims in hallucinated responses flagged |
 | Discrimination ratio ↑ | **4.13×** | hallucinated responses have 4× more flagged claims |
 | Claim AUC ↑ | **0.913** | per-claim NLI scores vs response-level labels |
-| Avg claims / response | 0.8 | decomposition quality proxy (short answers → fewer claims) |
+| Avg claims / response | 0.82 | decomposition quality proxy (short answers → fewer claims) |
 
 > Claim AUC of 0.913 means NLI's per-claim scores rank claims from hallucinated responses above
 > claims from correct responses 91.3% of the time — without any claim-level human annotation.
-> Avg claims/response of 0.8 reflects a known limitation: the decomposer produces fewer claims
+> Avg claims/response of 0.82 reflects a known limitation: the decomposer produces fewer claims
 > for terse answers; longer factual responses yield richer claim-level signal.
 
 > Full results: [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`truthfulqa_judge_eval_results.json`](truthfulqa_judge_eval_results.json), [`claimlevel_nli_eval_results.json`](claimlevel_nli_eval_results.json).
@@ -198,7 +201,7 @@ chaincheck serve --port 8000
 | Fast LLM check without NLI model download | `--methods qa` |
 | You want to flag borderline cases for human review | `--cascade` — runs NLI first, judge only on 0.2–0.8 scores |
 | Checking open-ended generation with no ground truth | `--methods consistency` |
-| Need the highest-precision signal (95.5%) | `--methods judge` |
+| Need the highest-precision signal (93.6%) | `--methods judge` |
 
 **QA method** (`--methods qa`) — asks the LLM "does the context support this claim? yes/no" at temperature=0. No chain-of-thought, ~3× fewer output tokens than judge. Useful when you want an LLM check but don't want to download the NLI model, or as a fast second opinion.
 
@@ -303,7 +306,7 @@ All settings via environment variables:
 | `RISK_LOW_THRESHOLD`    | `0.3`                                | Aggregate score below this → "low"       |
 | `RISK_HIGH_THRESHOLD`   | `0.7`                                | Aggregate score at or above this → "high"|
 | `NLI_WEIGHT`            | `0.10`                               | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
-| `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.168 on factual tasks) |
+| `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.0 on HaluEval — predicts all-negative) |
 | `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.936 on HaluEval |
 | `LOGPROB_WEIGHT`        | `0.30`                               | Logprobs weight — useful secondary signal in ensemble |
 | `LOGPROB_MODEL`         | `gpt-4o-mini`                        | OpenAI model for logprobs method         |
@@ -335,15 +338,15 @@ Exact claim-level precision/recall requires human-annotated atomic facts (as in 
 
 **NLI and judge complement each other.** NLI has high precision (0.810) at 60 ms — fast and conservative, rarely cries wolf. Judge has even higher precision (0.936) — when it flags something as hallucinated, it's right 93.6% of the time. NLI is ~19× faster, making it ideal for high-throughput filtering before running the more accurate judge on borderline cases.
 
-**Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.168 on HaluEval — below random (accuracy 0.228). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
+**Self-consistency does not transfer to factual benchmarks.** Consistency F1 is 0.0 on HaluEval — it predicts "not hallucinated" for every sample (accuracy 0.5 on the balanced split, matching the table above). This is expected: the method detects when a model gives *inconsistent* answers to the same question, but a confidently wrong model is consistently wrong. Consistency is most useful for detecting knowledge gaps (open-ended questions the model hallucinates answers to), not for catching facts that contradict a provided context.
 
-**Latency is the real cost, not the accuracy.** NLI is ~19× faster than judge (60 ms vs 1113 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.3–0.7 score) cuts average latency by ~19× while keeping precision above 0.80.
+**Latency is the real cost, not the accuracy.** NLI is ~19× faster than judge (60 ms vs 1113 ms) with lower but still useful F1. In a high-throughput serving context, running NLI on every request and reserving judge for borderline cases (0.2–0.8 score) cuts average latency by ~19× while keeping precision above 0.80.
 
 **Cascade cuts average latency by up to ~19× on clear-cut cases.** Running NLI first (60 ms) and escalating to judge only when the score is in the 0.2–0.8 ambiguous band avoids the ~1113 ms judge call for responses that are obviously clean or obviously hallucinated. Enable with `--cascade` on the CLI or `cascade=True` in the Python API.
 
 **Confidence calibration (ECE) is now measured.** ECE (Expected Calibration Error) measures whether a score of 0.9 actually means "90% likely to be hallucinated." Lower ECE = more trustworthy confidence numbers. Run `chaincheck eval` and check the ECE column to see how well-calibrated each method's scores are.
 
-**Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. The decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling. Logprobs F1 (0.127) reflects this: token-level uncertainty alone is not sufficient signal without claim-level grounding.
+**Claim decomposition quality is the hidden variable.** Both NLI and judge score individual claims — if decompose() merges two facts into one claim, a partially-wrong claim can still pass. The decomposition quality (measured by claim count per sentence) directly bounds downstream F1 ceiling. Logprobs F1 (0.133) reflects this: token-level uncertainty alone is not sufficient signal without claim-level grounding.
 
 ---
 
