@@ -1,8 +1,10 @@
-name: Weekly Benchmark Eval
+name: Benchmark Eval
 
+# Manual dispatch only. A weekly cron used to re-commit fresh eval JSONs, but
+# gpt-4o-mini run-to-run variance silently desynced them from the numbers
+# quoted in the README. Run deliberately, then update the README tables in the
+# same change.
 on:
-  schedule:
-    - cron: "0 2 * * 0"  # Every Sunday at 02:00 UTC
   workflow_dispatch:
 
 jobs:

@@ -10,7 +10,7 @@
 
 ![ChainCheck demo](docs/demo.gif)
 
-**[🔗 Live demo](https://chaincheck-71mh.onrender.com)** · **Claim-level hallucination detection for LLM outputs.** Achieves **76% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad.
+**[🔗 Live demo](https://chaincheck-71mh.onrender.com)** · **Claim-level hallucination detection for LLM outputs.** Achieves **76% F1 / 94% precision** on HaluEval-QA (n=500, gpt-4o-mini judge). Give ChainCheck a response and optional source context, and it tells you exactly which claims are unsupported — not just whether the whole response is bad. Or drop it in front of your existing OpenAI calls as an [OpenAI-compatible proxy](#openai-compatible-proxy) that scores every response via headers.
 
 ---
 
@@ -110,7 +110,8 @@ Evaluated on [HaluEval](https://github.com/RUCAIBox/HaluEval) QA split (balanced
 > for terse answers; longer factual responses yield richer claim-level signal.
 
 > Full results: [`nli_eval_results.json`](nli_eval_results.json), [`judge_eval_results.json`](judge_eval_results.json), [`truthfulqa_judge_eval_results.json`](truthfulqa_judge_eval_results.json), [`claimlevel_nli_eval_results.json`](claimlevel_nli_eval_results.json).
-> Reproduce with `bash scripts/run_eval.sh`. Results committed weekly by the [eval workflow](.github/workflows/eval.yml).
+> Reproduce with `bash scripts/run_eval.sh`, or trigger the [eval workflow](.github/workflows/eval.yml) (manual dispatch —
+> committed artifacts and these tables are updated together, never independently).
 
 ---
 
@@ -282,6 +283,43 @@ data: [DONE]
 
 ---
 
+## OpenAI-compatible proxy
+
+ChainCheck ships a drop-in proxy at **`POST /v1/chat/completions`** — point your existing OpenAI client at ChainCheck and every response comes back scored, with no other integration work:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="http://localhost:8000/v1")  # ← the only change
+resp = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "When was the Eiffel Tower built?"}],
+)
+```
+
+The proxy forwards the request to OpenAI, runs NLI + judge detection on the answer, and attaches headers to the unmodified response:
+
+```bash
+curl -si http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"When was the Eiffel Tower built?"}]}' \
+  | grep -i "x-hallucination\|x-risk"
+# X-Hallucination-Score: 0.0312
+# X-Risk-Level: low
+```
+
+Three modes via `PROXY_MODE`:
+
+| Mode | Behaviour when score ≥ `PROXY_BLOCK_THRESHOLD` (default 0.8) |
+|------|--------------------------------------------------------------|
+| `passthrough` (default) | Headers only — client decides what to do |
+| `warn` | Appends a visible hallucination warning to the response content |
+| `block` | Returns **HTTP 451** with the score, risk level, and request ID instead of the response |
+
+Detection failures never break the proxy — if scoring errors out, the original OpenAI response passes through untouched. Rate-limited to 30 req/min.
+
+---
+
 ## Configuration
 
 All settings via environment variables:
@@ -305,6 +343,8 @@ All settings via environment variables:
 | `CONSISTENCY_THRESHOLD` | `0.82`                               | Min similarity to consider consistent    |
 | `RISK_LOW_THRESHOLD`    | `0.3`                                | Aggregate score below this → "low"       |
 | `RISK_HIGH_THRESHOLD`   | `0.7`                                | Aggregate score at or above this → "high"|
+| `PROXY_MODE`            | `passthrough`                        | OpenAI proxy behaviour on high-risk responses: `passthrough` (headers only), `warn` (append warning), `block` (HTTP 451) |
+| `PROXY_BLOCK_THRESHOLD` | `0.8`                                | Aggregate score at or above this triggers the proxy's warn/block behaviour |
 | `NLI_WEIGHT`            | `0.10`                               | NLI weight — Nelder-Mead tuned on 80% HaluEval, held-out F1=0.741 |
 | `CONSISTENCY_WEIGHT`    | `0.0`                                | Consistency disabled in ensemble (F1=0.0 on HaluEval — predicts all-negative) |
 | `JUDGE_WEIGHT`          | `0.60`                               | Judge weight — dominant signal, precision=0.936 on HaluEval |
